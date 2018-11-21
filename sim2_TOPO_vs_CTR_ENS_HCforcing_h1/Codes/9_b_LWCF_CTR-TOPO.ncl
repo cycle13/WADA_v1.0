@@ -68,9 +68,9 @@ do i_day = 0,total_days-1
 ;do i_day = 0,1
 ;---------
  
-wks = gsn_open_wks("png","../Figures/9_b_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks = gsn_open_wks("pdf","../Figures/9_b_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks = gsn_open_wks("png","Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","../Figures/9_b_Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("pdf","../Figures/9_b_Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks_sig = gsn_open_wks("png","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 res = True

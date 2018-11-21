@@ -107,7 +107,8 @@ printVarSummary(var_std_CTR)
 end if
 
 ;========== hybrid coordinate to pressure coordinate ====
-pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+pnew = fspan(100.0,1000.0,200)
 
 P0mb = 1000.0
 ;printVarSummary(f_TOPO_mean->hyam)
@@ -197,6 +198,24 @@ printVarSummary(T_diff_TOPO_CTR)
 printVarSummary(Q_diff_TOPO_CTR)
 printVarSummary(Tadv_diff_TOPO_CTR)
 
+;------------------- selection of critical lat and lon
+lat_t = 0.0
+
+lon_1 = 260.0
+lon_2 = 320.0
+
+lev_1 = 300.0
+lev_2 = 1000.0
+;----------- Add topography ------
+f_TOPO = addfile("/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
+PHIS = f_TOPO->PHIS
+hgt = PHIS(0,{lat_t},{lon_1:lon_2})  ; metadata and dimension
+hgt = hgt/9.8
+hgt@units = "m"   ; gpm
+gp = 1013*(1-6.5/288000*hgt)^5.255  ; convert m to hPa using Standard Atmosphere
+gp@units = "hPa"
+copy_VarCoords(hgt,gp)
+printVarSummary(gp)
 ;================ plot ===========
 ;total 6 hrs in the TOPOTEST after branching
 
@@ -208,8 +227,8 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("png","4_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("png","4_Sig_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("pdf","../Figures/4_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("pdf","../Figures/4_Sig_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
@@ -225,13 +244,6 @@ res@cnLevelSpacingF = 1.0
 
 ;res@tiMainFontHeightF = 0.015
 
-lat_t = 0.0
-
-lon_1 = 260.0
-lon_2 = 320.0
-
-lev_1 = 300.0
-lev_2 = 1000.0
 
 plot(0) = gsn_csm_pres_hgt(wks,U_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(0) = gsn_csm_pres_hgt(wks_sig,U_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
@@ -246,11 +258,37 @@ res@cnLevelSpacingF = 0.02
 plot(2) = gsn_csm_pres_hgt(wks,OMEGA_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(2) = gsn_csm_pres_hgt(wks_sig,OMEGA_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
+;------add topography ----
+mres   = True
+mres@gsnLeftString       = " "
+mres@gsnRightString      = " "
+mres@gsnDraw             = False                ; do not draw the plot
+mres@gsnFrame            = False                ; do not advance the frame
+mres@xyLineThicknesses   = (/3.0/)              ; make line thicker
+mres@xyLineColors        = (/"black"/)          ; change line color
+
+mres@gsnBelowYRefLineColor = (/ "black", "black"/)  
+mres@gsnYRefLine           = (/ lev_1 ,lev_2 /)   
+
+plot_topo2  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+plot_topo2_sig = gsn_csm_xy(wks_sig,gp&lon,gp,mres)
+overlay(plot(2),plot_topo2)
+overlay(plot_sig(2),plot_topo2_sig)
+;draw(plot)
+;frame(wks)
+;----------------
+
 res@cnMinLevelValF = -1.0
 res@cnMaxLevelValF = 1.0
 res@cnLevelSpacingF = 0.2
 plot(3) = gsn_csm_pres_hgt(wks,T_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(3) = gsn_csm_pres_hgt(wks_sig,T_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+
+plot_topo3  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+plot_topo3_sig = gsn_csm_xy(wks_sig,gp&lon,gp,mres)
+overlay(plot(3),plot_topo3)
+overlay(plot_sig(3),plot_topo3_sig)
+;----------
 
 res@cnMinLevelValF = -0.0006
 res@cnMaxLevelValF = 0.0006

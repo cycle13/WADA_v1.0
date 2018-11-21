@@ -111,9 +111,9 @@ WADA_index_sig(i_day) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_sig(i_day
 
 ;---------
  
-wks = gsn_open_wks("png","Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks = gsn_open_wks("pdf","../Figures/Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks = gsn_open_wks("png","Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("pdf","../Figures/Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks_sig = gsn_open_wks("png","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
@@ -204,7 +204,7 @@ end do
 
 ;------------- WADA index line plot -------
 
-wks_WADA = gsn_open_wks("png","WADA_index_line_daily")
+wks_WADA = gsn_open_wks("pdf","../Figures/WADA_index_line_daily")
 
 data_WADA = (/WADA_index,WADA_index_sig/)
 

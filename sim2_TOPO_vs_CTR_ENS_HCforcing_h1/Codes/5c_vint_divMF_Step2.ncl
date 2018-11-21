@@ -79,9 +79,9 @@ total_days = 4
 do i_day = 0,total_days-1
 ;do i_day = 0,1
  
-wks = gsn_open_wks("png","Regional_vint_divMF_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks = gsn_open_wks("pdf","../Figures/Regional_vint_divMF_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks = gsn_open_wks("png","Global_IVT_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","Sig_Regional_vint_divMF_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("pdf","../Figures/Sig_Regional_vint_divMF_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks_sig = gsn_open_wks("png","Sig_Global_IVT_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 ;gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes

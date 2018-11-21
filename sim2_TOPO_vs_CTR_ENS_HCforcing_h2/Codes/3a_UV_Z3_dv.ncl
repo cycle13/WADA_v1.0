@@ -174,8 +174,8 @@ do i_pr = 0,dimsizes(pr_levels) - 1
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("png","3_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
-wks_sig = gsn_open_wks("png","3_Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
+wks = gsn_open_wks("pdf","../Figures/3_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
+wks_sig = gsn_open_wks("pdf","../Figures/3_Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
 
 res = True
 res@gsnDraw = False

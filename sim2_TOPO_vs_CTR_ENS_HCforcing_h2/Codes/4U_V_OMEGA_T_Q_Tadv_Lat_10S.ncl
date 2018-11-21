@@ -208,9 +208,9 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("png","4_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("pdf","../Figures/4_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks = gsn_open_wks("png","4_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("png","4_Sig_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("pdf","../Figures/4_Sig_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False

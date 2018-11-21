@@ -283,8 +283,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","6_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
-wks_sig = gsn_open_wks("png","6_Sig_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks = gsn_open_wks("pdf","../Figures/6_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks_sig = gsn_open_wks("pdf","../Figures/6_Sig_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
 
 res = True
 res@gsnDraw = False
@@ -310,6 +310,15 @@ res@gsnContourNegLineDashPattern = 1
 res@gsnContourZeroLineThicknessF = 2.
 
 res@gsnRightString = "Z3(m),"+sprintf("%4.1f",pr_levels) + "hPa"
+
+res@vpHeightF = 0.6
+res@vpWidthF = 0.3  ; suggested by Mike, to double the Y time axis.
+
+res@tmYLMode = "Manual"
+res@tmYLTickStartF = 0
+res@tmYLTickEndF = 96
+res@tmYLTickSpacingF = 4
+
 ;----------
 
 plot_var = gsn_csm_hov(wks,X_diff_TOPO_CTR_hov,res)
@@ -330,7 +339,8 @@ res@cnMaxLevelValF = 12.0
 res@cnLevelSpacingF = 0.5
 
 res@tiMainString = "CTR - TOPO, ENS(180)"
-res@gsnLeftString = "PRECT(mm/day)"
+;res@gsnLeftString = "PRECT(mm/day)"
+res@gsnLeftString = ""
 gsn_reverse_colormap(wks)
 
 plot_P = gsn_csm_hov(wks,PRECT_diff_TOPO_CTR_hov,res)

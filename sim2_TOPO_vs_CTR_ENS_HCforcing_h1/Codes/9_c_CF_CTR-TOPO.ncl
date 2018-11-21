@@ -57,8 +57,8 @@ total_day = 4
 
 do i_day = 0,total_day-1
 
-wks = gsn_open_wks("png","../Figures/9_c_Regional_CF_lowlevel_TOPO_vs_CTR_iday"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","../Figures/9_c_Sig_Regional_CF_lowlevel_TOPO_vs_CTR_iday"+tostring(i_day+1))
+wks = gsn_open_wks("pdf","../Figures/9_c_Regional_CF_lowlevel_TOPO_vs_CTR_iday"+tostring(i_day+1))
+wks_sig = gsn_open_wks("pdf","../Figures/9_c_Sig_Regional_CF_lowlevel_TOPO_vs_CTR_iday"+tostring(i_day+1))
 
 res = True
 ;res@gsnDraw = False

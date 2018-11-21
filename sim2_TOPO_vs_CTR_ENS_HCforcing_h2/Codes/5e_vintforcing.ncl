@@ -47,6 +47,11 @@ var_mean_TOPO = f_TOPO_mean->$var$
 
 printVarSummary(var_mean_TOPO)
 
+;-------- based on Mike's comment, change units -
+var_mean_TOPO = var_mean_TOPO * 1004.0    ; specific capacity of dry air 1004.0 J/(kg*K)
+var_mean_TOPO@units = "W/m2"
+
+
 ;================ plot ===========
 ;total 96 hr in the TOPOTEST after branching
 ;total_hr = 96
@@ -55,7 +60,7 @@ total_hr = 3
 do i_hr = 0,total_hr-1
 ;do i_hr = 0,1
  
-wks = gsn_open_wks("png","5_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("pdf","../Figures/5_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 gsn_define_colormap(wks,"MPL_BLues")
 gsn_reverse_colormap(wks)  
 
@@ -69,10 +74,10 @@ res@cnFillOn = True
 res@tiMainString = "vint_forcing, TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1)
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -0.5
+res@cnMinLevelValF = -500.0
 ;res@cnMaxLevelValF = 10.0e-5
 res@cnMaxLevelValF =  0.0
-res@cnLevelSpacingF = 0.01
+res@cnLevelSpacingF = 20.0
 
 res@mpMaxLatF = 60.0
 res@mpMinLatF = -60.0

@@ -143,9 +143,9 @@ WADA_index_sig(index*3+i_hr) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_si
 ;print(WADA_index)
 ;print(WADA_index_sig)
 
-wks = gsn_open_wks("x11","2_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("x11","2_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_CTR = gsn_open_wks("x11","2_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("pdf","../Figures/2_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("pdf","../Figures/2_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_CTR = gsn_open_wks("pdf","../Figures/2_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
 gsn_reverse_colormap(wks_sig)    ; blue color indicate positive precip changes
@@ -276,15 +276,19 @@ end do ; do index
 ;===============================
 ;------------- WADA index line plot -------
 
-wks_WADA = gsn_open_wks("png","WADA_index_line_hrly")
+wks_WADA = gsn_open_wks("pdf","../Figures/WADA_index_line_hrly")
 
 data_WADA = (/WADA_index,WADA_index_sig/)
 
 resWADA = True
-resWADA@xyLineThicknesses = (/  1.0,   2.0/)          ; make second line thicker
-resWADA@xyLineColors      = (/"blue","red"/)          ; change line color
+;resWADA@xyLineThicknesses = (/  1.0,   2.0/)          ; make second line thicker
+;resWADA@xyLineColors      = (/"blue","red"/)          ; change line color
+;resWADA@xyMarkers      = (/6,11/)
+resWADA@xyLineThicknesses = (/  2.0/)          ; make second line thicker
+resWADA@xyLineColors      = (/"red"/)          ; change line color
+resWADA@xyMarkers      = (/11/)
+
 resWADA@xyMarkLineMode = "MarkLines"               ; Markers *and* lines
-resWADA@xyMarkers      = (/6,11/)
 
 resWADA@pmLegendDisplayMode    = "Always"              ; turn on legend
 
@@ -297,12 +301,13 @@ resWADA@pmLegendDisplayMode    = "Always"              ; turn on legend
  resWADA@lgLabelFontHeightF     = .02                   ; change font height
  resWADA@lgPerimOn              = False                 ; no box around
 ; labels for the legend
- resWADA@xyExplicitLegendLabels = (/"WADAi","WADAi_sig"/)
+; resWADA@xyExplicitLegendLabels = (/"WADAi","WADAi_sig"/)
+ resWADA@xyExplicitLegendLabels = (/"WADAi_sig"/)
 
 resWADA@tiMainString = "WADA index"
 resWADA@tiYAxisString = "WADAi, mm/day"
 resWADA@tiXAxisString = "No. of hr"
-plotWADA  = gsn_csm_xy (wks_WADA,ispan(1,96,1),data_WADA,resWADA) ; create plot
+plotWADA  = gsn_csm_xy (wks_WADA,ispan(1,96,1),data_WADA(1,:),resWADA) ; create plot
 
 
 

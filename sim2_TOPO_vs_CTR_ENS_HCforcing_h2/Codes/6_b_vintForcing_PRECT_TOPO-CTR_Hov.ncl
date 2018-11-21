@@ -7,6 +7,7 @@
 ;Note: modified 20181002 for sim2_WADA...
 
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/shea_util.ncl"
 
 begin
 
@@ -148,6 +149,10 @@ printVarSummary(vf_TOPO_CTR)
 printVarSummary(PRECT_diff_TOPO_CTR)
 printVarSummary(PRECT_diff_TOPO_CTR_sig)
 
+;-------- based on Mike's comment, change units -
+vf_TOPO_CTR = vf_TOPO_CTR * 1004.0    ; specific capacity of dry air 1004.0 J/(kg*K)
+vf_TOPO_CTR@units = "W/m2"
+
 ;=============== average over lat (-5,5) in preparation for Hovmueler=========
 ;total_days = 11
 total_hrs = 96
@@ -172,8 +177,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","6_b_Hov_Regional_vintForcing_TOPO_vs_CTR")
-wks_sig = gsn_open_wks("png","6_b_Sig_Hov_Regional_vintForcing_TOPO_vs_CTR")
+wks = gsn_open_wks("pdf","../Figures/6_b_Hov_Regional_vintForcing_TOPO_vs_CTR")
+wks_sig = gsn_open_wks("pdf","../Figures/6_b_Sig_Hov_Regional_vintForcing_TOPO_vs_CTR")
 
 res = True
 res@gsnDraw = False
@@ -185,20 +190,31 @@ res@cnFillOn = False
 ;----------
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -0.3
-res@cnMaxLevelValF = -0.02
-res@cnLevelSpacingF = 0.01
+res@cnMinLevelValF = -300.0
+res@cnMaxLevelValF = -20.0
+res@cnLevelSpacingF = 40.0
 
 res@gsnContourNegLineDashPattern = 1
+res@gsnContourLineThicknessesScale = 3.0
 res@gsnContourZeroLineThicknessF = 2.
 res@gsnRightString = vf_TOPO_CTR@units
+
+;res@vpHeightF = 0.6
+;res@vpWidthF = 0.3  ; suggested by Mike, to double the Y time axis.
+
+res@tmYLMode = "Manual"
+res@tmYLTickStartF = 0
+res@tmYLTickEndF = 96
+res@tmYLTickSpacingF = 4
 
 vf_TOPO_CTR_hov@long_name = "" ; to avoid long_name being printed out on top of the figures
 ;----------
 
 plot_var1 = gsn_csm_hov(wks,vf_TOPO_CTR_hov,res)
+plot_var1 = ColorNegDashZeroPosContour(plot_var1,"red","magenta","blue")
 
 plot_var2 = gsn_csm_hov(wks_sig,vf_TOPO_CTR_hov,res)
+plot_var2 = ColorNegDashZeroPosContour(plot_var2,"red","magenta","blue")
 
 ;res@gsnCenterString = "siglvl=0.1"
 ;plot_var_sig = gsn_csm_hov(wks_sig,X_diff_TOPO_CTR_hov_sig,res)

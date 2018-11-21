@@ -48,7 +48,8 @@ var_mean_TOPO = f_TOPO_mean->$var$
 ;printVarSummary(var_mean_TOPO)
 
 ;========== hybrid coordinate to pressure coordinate ====
-pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+pnew = fspan(100.0,1000.0,200)
 
 P0mb = 1000.0
 ;printVarSummary(f_TOPO_mean->hyam)
@@ -66,7 +67,29 @@ var_mean_TOPO_pnew&lev_p@units = "hPa"
 
 DS_mean_TOPO  = HCforcing_mean_TOPO ; meta data
 
+DS_mean_TOPO = DS_mean_TOPO * 3600.0*24.0
+DS_mean_TOPO@units = "K/day"
+
 printVarSummary(HCforcing_mean_TOPO)
+;--------------selection of critical lat and lon ---
+;lat_t = -10.0
+lat_t = 0.0
+lon_1 = 260.0
+lon_2 = 320.0
+
+lev_1 = 300.0
+lev_2 = 1000.0
+
+;----------- Add topography ------
+f_TOPO = addfile("/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
+PHIS = f_TOPO->PHIS
+hgt = PHIS(0,{lat_t},{lon_1:lon_2})  ; metadata and dimension
+hgt = hgt/9.8
+hgt@units = "m"   ; gpm
+gp = 1013*(1-6.5/288000*hgt)^5.255  ; convert m to hPa using Standard Atmosphere
+gp@units = "hPa"
+copy_VarCoords(hgt,gp)
+printVarSummary(gp)
 
 ;================ plot ===========
 ;total 6hrs per batch in the TOPOTEST after branching
@@ -75,7 +98,7 @@ total_hrs = 3
 
 do i_hr = 0,total_hrs-1
  
-wks = gsn_open_wks("png","5_EQ_transect_HCforcing_TOPO_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("pdf","../Figures/5_EQ_transect_HCforcing_TOPO_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
@@ -85,23 +108,33 @@ res@cnLineLabelsOn = False
 res@cnFillOn = True
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -10.0e-5
-res@cnMaxLevelValF =  10.0e-5
-res@cnLevelSpacingF = 5.0e-6
+res@cnMinLevelValF = -8.0
+res@cnMaxLevelValF =  8.0
+res@cnLevelSpacingF = 2.0
 
 ;res@tiMainFontHeightF = 0.015
 
-;lat_t = -10.0
-lat_t = 0.0
-lon_1 = 260.0
-lon_2 = 320.0
-
-lev_1 = 300.0
-lev_2 = 1000.0
-
 res@gsnLeftString = "TOPO forcing"
-res@gsnRightString = "K/s"
+res@gsnRightString = "K/day"
+
 plot = gsn_csm_pres_hgt(wks,DS_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+
+;------add topography ----
+mres   = True
+mres@gsnLeftString       = " "
+mres@gsnRightString      = " "
+mres@gsnDraw             = False                ; do not draw the plot
+mres@gsnFrame            = False                ; do not advance the frame
+mres@xyLineThicknesses   = (/3.0/)              ; make line thicker
+mres@xyLineColors        = (/"black"/)          ; change line color
+
+mres@gsnBelowYRefLineColor = (/ "black", "black"/)  
+mres@gsnYRefLine           = (/ lev_1 ,lev_2 /)   
+
+plot_topo  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+overlay(plot,plot_topo)
+;draw(plot)
+;frame(wks)
 
 ;============ panel plot ====
 
