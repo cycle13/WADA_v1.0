@@ -2,9 +2,6 @@
 ;          check if Amazonian precip response to the TOPO inteference is roughtly linear.
 ;Date: 20180830
 
-
-
-
 begin
 
 ;================================
