@@ -196,16 +196,16 @@ count_end = (/"22","32","42","52","62","72","82","92","102"/)
 
 ;========== Calculate the mean and std of ensemble in TOPOTEST ======
 ;-----combine different members into a single file
-system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS."+str1+".nc")
+;system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS."+str1+".nc")
 
-;-----calculate the ensemble mean along the realization dimension
-system("ncwa -O -a realization "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc")
+;;-----calculate the ensemble mean along the realization dimension
+;system("ncwa -O -a realization "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc")
 
-;-----Calculate Anomaly -
-system("ncbo -O "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc "+out_dir+"ENS.anom."+str1+".nc")
+;;-----Calculate Anomaly -
+;system("ncbo -O "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc "+out_dir+"ENS.anom."+str1+".nc")
 
-;------Calculate the standard deviation along realization dimension-
-system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+str1+".nc")
+;;------Calculate the standard deviation along realization dimension-
+;system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+str1+".nc")
 
 ;==== CTR already done =======
 ;;;========== Calculate the mean and std of ensemble in CTR ======

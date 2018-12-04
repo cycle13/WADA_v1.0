@@ -48,33 +48,33 @@ year2008_str = (/"2008-12-01","2008-12-11","2008-12-21","2008-12-31","2009-01-10
 var_str = "PRECT,HCforcing,hyam,hybm,PS "
 var_name = "PRECT"  ; You need to add similar indicators for other vaviables later
 
-;do i_ens = 0,8
-;
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1989_sim2_" + year1989_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1989_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1990_sim2_" + year1990_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1990_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1991_sim2_" + year1991_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1991_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1992_sim2_" + year1992_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1992_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1993_sim2_" + year1993_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1993_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1994_sim2_" + year1994_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1994_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1995_sim2_" + year1995_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1995_str(i_ens)+"."+var_name+"."+str1+".nc")
-;
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1996_sim2_" + year1996_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1996_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1997_sim2_" + year1997_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1997_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1998_sim2_" + year1998_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1998_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"1999_sim2_" + year1999_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1999_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2000_sim2_" + year2000_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2000_str(i_ens)+"."+var_name+"."+str1+".nc")
-;
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2001_sim2_" + year2001_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2001_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2002_sim2_" + year2002_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2002_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2003_sim2_" + year2003_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2003_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2004_sim2_" + year2004_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2004_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2005_sim2_" + year2005_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2005_str(i_ens)+"."+var_name+"."+str1+".nc")
-;
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2006_sim2_" + year2006_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2006_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2007_sim2_" + year2007_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2007_str(i_ens)+"."+var_name+"."+str1+".nc")
-;system("ncrcat -O -D 2 -v "+var_str+in_dir+"2008_sim2_" + year2008_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2008_str(i_ens)+"."+var_name+"."+str1+".nc")
-;
-;end do
+do i_ens = 0,8
+
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1989_sim2_" + year1989_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1989_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1990_sim2_" + year1990_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1990_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1991_sim2_" + year1991_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1991_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1992_sim2_" + year1992_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1992_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1993_sim2_" + year1993_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1993_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1994_sim2_" + year1994_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1994_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1995_sim2_" + year1995_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1995_str(i_ens)+"."+var_name+"."+str1+".nc")
+
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1996_sim2_" + year1996_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1996_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1997_sim2_" + year1997_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1997_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1998_sim2_" + year1998_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1998_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"1999_sim2_" + year1999_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year1999_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2000_sim2_" + year2000_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2000_str(i_ens)+"."+var_name+"."+str1+".nc")
+
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2001_sim2_" + year2001_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2001_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2002_sim2_" + year2002_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2002_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2003_sim2_" + year2003_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2003_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2004_sim2_" + year2004_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2004_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2005_sim2_" + year2005_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2005_str(i_ens)+"."+var_name+"."+str1+".nc")
+
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2006_sim2_" + year2006_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2006_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2007_sim2_" + year2007_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2007_str(i_ens)+"."+var_name+"."+str1+".nc")
+system("ncrcat -O -D 2 -v "+var_str+in_dir+"2008_sim2_" + year2008_str(i_ens)+"_HCforcing/atm/hist/*h1*.nc -o "+out_dir+year2008_str(i_ens)+"."+var_name+"."+str1+".nc")
+
+end do
 
 ;============CTR ===============
 CTR_in_dir1989 = "/DFS-L/DATA/pritchard/hongcheq/NERSC_Cori_edison/SCRATCH/archive/F_AMIP_CAM5_WADA_CTR_1989_production_sim2/atm/hist/"
@@ -194,28 +194,28 @@ count_end = (/"22","32","42","52","62","72","82","92","102"/)
 ;;
 
 
-;;========== Calculate the mean and std of ensemble in TOPOTEST ======
-;;-----combine different members into a single file
-;system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS."+str1+".nc")
+;========== Calculate the mean and std of ensemble in TOPOTEST ======
+;-----combine different members into a single file
+system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS."+str1+".nc")
 
-;;-----calculate the ensemble mean along the realization dimension
-;system("ncwa -O -a realization "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc")
+;-----calculate the ensemble mean along the realization dimension
+system("ncwa -O -a realization "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc")
 
-;;-----Calculate Anomaly -
-;system("ncbo -O "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc "+out_dir+"ENS.anom."+str1+".nc")
+;-----Calculate Anomaly -
+system("ncbo -O "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc "+out_dir+"ENS.anom."+str1+".nc")
 
-;;------Calculate the standard deviation along realization dimension-
-;system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+str1+".nc")
+;------Calculate the standard deviation along realization dimension-
+system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+str1+".nc")
 
-;;========== Calculate the mean and std of ensemble in CTR ======
-;;-----combine different members into a single file
-system("ncecat -u realization "+CTR_out_dir+"*.nc -o "+CTR_out_dir+"ENS.CTR.nc")
-;;-----calculate the ensemble mean along the realization dimension
-system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.nc "+CTR_out_dir+"ENS.mean.CTR.nc")
-;;-----Calculate Anomaly -
-system("ncbo -O "+CTR_out_dir+"ENS.CTR.nc "+CTR_out_dir+"ENS.mean.CTR.nc "+CTR_out_dir+"ENS.anom.CTR.nc")
-;;------Calculate the standard deviation along realization dimension-
-system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.nc "+CTR_out_dir+"ENS.std.CTR.nc")
+;;;========== Calculate the mean and std of ensemble in CTR ======
+;;;-----combine different members into a single file
+;system("ncecat -u realization "+CTR_out_dir+"*.nc -o "+CTR_out_dir+"ENS.CTR.nc")
+;;;-----calculate the ensemble mean along the realization dimension
+;system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.nc "+CTR_out_dir+"ENS.mean.CTR.nc")
+;;;-----Calculate Anomaly -
+;system("ncbo -O "+CTR_out_dir+"ENS.CTR.nc "+CTR_out_dir+"ENS.mean.CTR.nc "+CTR_out_dir+"ENS.anom.CTR.nc")
+;;;------Calculate the standard deviation along realization dimension-
+;system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.nc "+CTR_out_dir+"ENS.std.CTR.nc")
 
 
 

@@ -34,15 +34,19 @@ end do  ; do i_chunk
 ;do i_num  = 0, 0
 ;do i_num  = 0, 7
 do i_num  = 0, 31
+;do i_num  = 21, 31
 
 ;======== to avoid memory problem ====
 
 T_TOPO = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
 Q_TOPO = new((/members,3,30,96,144/),double) 
 Z3_TOPO = new((/members,3,30,96,144/),double) 
+PS_TOPO = new((/members,3,96,144/),double)
+
 T_CTR = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
 Q_CTR = new((/members,3,30,96,144/),double) 
 Z3_CTR = new((/members,3,30,96,144/),double) 
+PS_CTR = new((/members,3,96,144/),double)
 
 do i_file = 0, members - 1
 ;do i_file = 0, 5
@@ -52,10 +56,12 @@ f_CTR = addfile(f_CTR_str(i_file),"r")
 T_TOPO(i_file,:,:,:,:) = f_TOPO->T(num1(i_num):num2(i_num),:,:,:)
 Q_TOPO(i_file,:,:,:,:) = f_TOPO->Q(num1(i_num):num2(i_num),:,:,:)
 Z3_TOPO(i_file,:,:,:,:) = f_TOPO->Z3(num1(i_num):num2(i_num),:,:,:)
+PS_TOPO(i_file,:,:,:) = f_TOPO->PS(num1(i_num):num2(i_num),:,:)
 
 T_CTR(i_file,:,:,:,:) = f_CTR->T(num1(i_num):num2(i_num),:,:,:)
 Q_CTR(i_file,:,:,:,:) = f_CTR->Q(num1(i_num):num2(i_num),:,:,:)
 Z3_CTR(i_file,:,:,:,:) = f_CTR->Z3(num1(i_num):num2(i_num),:,:,:)
+PS_CTR(i_file,:,:,:) = f_CTR->PS(num1(i_num):num2(i_num),:,:)
 
 end do  ; do i_fiel
 ;printVarSummary(T_TOPO)
@@ -89,8 +95,15 @@ printVarSummary(MSE_CTR)
 
 MSE_TOPO_mean = dim_avg_n_Wrap(MSE_TOPO,0)
 MSE_TOPO_std = dim_stddev_n_Wrap(MSE_TOPO,0)
+
+PS_TOPO_mean = dim_avg_n_Wrap(PS_TOPO,0)
+PS_TOPO_std = dim_stddev_n_Wrap(PS_TOPO,0)
+
 MSE_CTR_mean = dim_avg_n_Wrap(MSE_CTR,0)
 MSE_CTR_std = dim_stddev_n_Wrap(MSE_CTR,0)
+
+PS_CTR_mean = dim_avg_n_Wrap(PS_CTR,0)
+PS_CTR_std = dim_stddev_n_Wrap(PS_CTR,0)
 
 printVarSummary(MSE_TOPO_mean)
 printVarSummary(MSE_TOPO_std)
@@ -108,11 +121,24 @@ filedimdef(ncdf_TOPO,"time",-1,True)
 ncdf_TOPO->MSE_TOPO_mean = MSE_TOPO_mean
 ncdf_TOPO->MSE_TOPO_std = MSE_TOPO_std
 
+ncdf_TOPO->PS_TOPO_mean = PS_TOPO_mean
+ncdf_TOPO->PS_TOPO_std = PS_TOPO_std
+
+ncdf_TOPO->hyam = f_TOPO->hyam
+ncdf_TOPO->hybm = f_TOPO->hybm
+
+
 system("rm "+dir_CTR_out+"ENS.std.mean.CTR.MSE.time"+num1(i_num)+"-"+num2(i_num)+".nc")
 ncdf_CTR = addfile(dir_CTR_out+"ENS.std.mean.CTR.MSE.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
 filedimdef(ncdf_CTR,"time",-1,True)
 ncdf_CTR->MSE_CTR_mean = MSE_CTR_mean
 ncdf_CTR->MSE_CTR_std = MSE_CTR_std
+
+ncdf_CTR->PS_CTR_mean = PS_CTR_mean
+ncdf_CTR->PS_CTR_std = PS_CTR_std
+
+ncdf_CTR->hyam = f_CTR->hyam
+ncdf_CTR->hybm = f_CTR->hybm
 
 end do ; do i_num
 

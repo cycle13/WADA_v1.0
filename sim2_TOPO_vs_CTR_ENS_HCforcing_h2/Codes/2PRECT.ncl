@@ -31,7 +31,7 @@ str_time(i_str_time) = tostring(num1(i_str_time))+"-"+tostring(num2(i_str_time))
 end do
 
 ;============== WADA index ======
-f_SGH30 = addfile("/scratch/hongcheq/SGH30/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
+f_SGH30 = addfile("/DFS-L/DATA/pritchard/hongcheq/Topography/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
 SGH30 = f_SGH30->SGH30
 
 SGH30m = SGH30
@@ -143,9 +143,9 @@ WADA_index_sig(index*3+i_hr) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_si
 ;print(WADA_index)
 ;print(WADA_index_sig)
 
-wks = gsn_open_wks("pdf","../Figures/2_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("pdf","../Figures/2_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_CTR = gsn_open_wks("pdf","../Figures/2_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/2_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("x11","../Figures/2_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_CTR = gsn_open_wks("x11","../Figures/2_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
 gsn_reverse_colormap(wks_sig)    ; blue color indicate positive precip changes
@@ -276,7 +276,7 @@ end do ; do index
 ;===============================
 ;------------- WADA index line plot -------
 
-wks_WADA = gsn_open_wks("pdf","../Figures/WADA_index_line_hrly")
+wks_WADA = gsn_open_wks("x11","../Figures/WADA_index_line_hrly")
 
 data_WADA = (/WADA_index,WADA_index_sig/)
 
