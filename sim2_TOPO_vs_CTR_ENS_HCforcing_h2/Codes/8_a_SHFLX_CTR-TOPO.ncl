@@ -27,7 +27,14 @@ str_time = new(32,string)
 do i_str_time = 0,31
 str_time(i_str_time) = tostring(num1(i_str_time))+"-"+tostring(num2(i_str_time))
 end do
+
 ;================
+;-----Add box points to delineate area which may explain the vertical growth of temperature anomaly ----------
+Amazon_lon_test1 = (/360.0-72.0,360.0-65.0/)
+Amazon_lat_test1 = (/-10.0,2.0/)
+xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
+ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/)
+;---------------
 
 do index = 0,31
 
@@ -98,8 +105,8 @@ wks_sig = gsn_open_wks("png","../Figures/8_a_Sig_Regional_"+var+"_TOPO_vs_CTR_ih
 ;wks_sig = gsn_open_wks("png","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 res = True
-;res@gsnDraw = False
-;res@gsnFrame = False
+res@gsnDraw = False
+res@gsnFrame = False
 res@cnLinesOn = False
 res@cnLineLabelsOn = False
 res@cnFillOn = True
@@ -120,6 +127,31 @@ res@gsnLeftString = var
 plot = gsn_csm_contour_map_ce(wks,diff_TOPO_CTR(i_hr,:,:),res)
 
 plot_sig = gsn_csm_contour_map_ce(wks_sig,diff_TOPO_CTR_sig(i_hr,:,:),res)
+
+;----------- add polygon -------
+dum_Amazon = new(4,graphic)
+dum_Amazon_sig = new(4,graphic)
+;----------- Add polygons ---------
+
+; add the box
+respoly                  = True                      ; polyline mods desired
+respoly@gsLineColor      = "red"                     ; color of lines
+respoly@gsLineThicknessF = 4.0                       ; thickness of lines
+
+do i = 0 , 3
+  dum_Amazon(i)=gsn_add_polyline(wks,plot,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)
+  dum_Amazon_sig(i)=gsn_add_polyline(wks_sig,plot_sig,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)
+end do
+
+;------------------
+draw(plot)
+draw(plot_sig)
+frame(wks)
+frame(wks_sig)
+;--------------
+delete(dum_Amazon)
+delete(dum_Amazon_sig)
+
 
 end do ; do i_hr
 

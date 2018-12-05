@@ -9,6 +9,12 @@ chunk = 1
 ;num_time = 4
 num_time = 96
 
+;-----Add box points to delineate area which may explain the vertical growth of temperature anomaly ----------
+Amazon_lon_test1 = (/360.0-72.0,360.0-65.0/)
+Amazon_lat_test1 = (/-10.0,2.0/)
+xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
+ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/)
+
 ;=====================================
 TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_SHFLX_LHFLX_SWCF_LWCF/TOPO_TEST/"
 ;TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/TOPO_TEST/"
@@ -62,8 +68,8 @@ wks = gsn_open_wks("png","../Figures/9_c_Regional_CF_lowlevel_TOPO_vs_CTR_ihr"+t
 wks_sig = gsn_open_wks("png","../Figures/9_c_Sig_Regional_CF_lowlevel_TOPO_vs_CTR_ihr"+tostring(i_hr+1))
 
 res = True
-;res@gsnDraw = False
-;res@gsnFrame = False
+res@gsnDraw = False
+res@gsnFrame = False
 res@cnLinesOn = False
 res@cnLineLabelsOn = False
 res@cnFillOn = True
@@ -94,6 +100,30 @@ delete(res@gsnCenterString)
 
 plot_sig = gsn_csm_contour_map_ce(wks_sig,diff_TOPO_CTR_sig(i_hr,:,:),res)
 delete(res@gsnCenterString)
+
+;----------- add polygon -------
+dum_Amazon = new(4,graphic)
+dum_Amazon_sig = new(4,graphic)
+;----------- Add polygons ---------
+
+; add the box
+respoly                  = True                      ; polyline mods desired
+respoly@gsLineColor      = "red"                     ; color of lines
+respoly@gsLineThicknessF = 4.0                       ; thickness of lines
+
+do i = 0 , 3
+  dum_Amazon(i)=gsn_add_polyline(wks,plot,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)
+  dum_Amazon_sig(i)=gsn_add_polyline(wks_sig,plot_sig,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)
+end do
+
+;------------------
+draw(plot)
+draw(plot_sig)
+frame(wks)
+frame(wks_sig)
+;--------------
+delete(dum_Amazon)
+delete(dum_Amazon_sig)
 
 end do
 ;==============================
