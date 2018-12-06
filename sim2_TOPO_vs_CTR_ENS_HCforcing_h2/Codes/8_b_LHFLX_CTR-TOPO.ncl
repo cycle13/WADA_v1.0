@@ -37,6 +37,14 @@ xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1
 ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/)
 ;---------------
 
+;-----------add some variables to hold areal averaged LHFLX_CTR, LHFLX_TOPO, LHFLX_CTR_TOPO
+LHFLX_CTR = new(num_time,double)
+LHFLX_TOPO = new(num_time,double)
+LHFLX_CTR_TOPO = new(num_time,double)
+LHFLX_CTR!0 = "time"
+LHFLX_TOPO!0 = "time"
+LHFLX_CTR_TOPO!0 = "time"
+
 do index = 0,31
 
 TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_SHFLX_LHFLX_SWCF_LWCF/TOPO_TEST/"
@@ -153,9 +161,31 @@ frame(wks_sig)
 delete(dum_Amazon)
 delete(dum_Amazon_sig)
 
+;-------Save variales for LHFLX_CTR, LHFLX_TOPO, LHFLX_CTR_TOPO as areal average, put std aside for now------
+rad = 4.0*atan(1.0)/180.0
+clat = cos(f_TOPO_mean->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
+LHFLX_CTR(index*3+i_hr) = wgt_areaave_Wrap(var_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+LHFLX_TOPO(index*3+i_hr) = wgt_areaave_Wrap(var_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+LHFLX_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 
 end do ; do i_hr
 
 end do ; do index
+
+printVarSummary(LHFLX_CTR)
+printVarSummary(LHFLX_TOPO)
+printVarSummary(LHFLX_CTR_TOPO)
+
+;------------output nc files------------
+dir_out_nc = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/Vertical_growth_of_temperature_anomaly/CloudForcing_SurfaceFluxes/"
+fil_out_nc = "LHFLX_avg_box_hourly_96hrs.nc"
+system("rm "+dir_out_nc+fil_out_nc)
+ncdf = addfile(dir_out_nc+fil_out_nc,"c")
+filedimdef(ncdf,"time",-1,True)
+ncdf->LHFLX_CTR = LHFLX_CTR
+ncdf->LHFLX_TOPO = LHFLX_TOPO
+ncdf->LHFLX_CTR_TOPO =  LHFLX_CTR_TOPO
+
 
 end

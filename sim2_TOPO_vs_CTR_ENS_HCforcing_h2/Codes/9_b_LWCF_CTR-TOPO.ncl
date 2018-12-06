@@ -35,6 +35,13 @@ xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1
 ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/)
 ;---------------
 
+;-----------add some variables to hold areal averaged LWCF_CTR, LWCF_TOPO, LWCF_CTR_TOPO
+LWCF_CTR = new(num_time,double)
+LWCF_TOPO = new(num_time,double)
+LWCF_CTR_TOPO = new(num_time,double)
+LWCF_CTR!0 = "time"
+LWCF_TOPO!0 = "time"
+LWCF_CTR_TOPO!0 = "time"
 ;================
 do index = 0,31
 
@@ -152,8 +159,36 @@ frame(wks_sig)
 delete(dum_Amazon)
 delete(dum_Amazon_sig)
 
+;-------Save variales for SHFLX_CTR, SHFLX_TOPO, SHFLX_CTR_TOPO as areal average, put std aside for now------
+rad = 4.0*atan(1.0)/180.0
+clat = cos(f_TOPO_mean->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
+LWCF_CTR(index*3+i_hr) = wgt_areaave_Wrap(var_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+LWCF_TOPO(index*3+i_hr) = wgt_areaave_Wrap(var_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+LWCF_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+
 end do ; do i_hr
 
 end do ; do index
+
+printVarSummary(LWCF_CTR)
+printVarSummary(LWCF_TOPO)
+printVarSummary(LWCF_CTR_TOPO)
+
+;------------output nc files------------
+dir_out_nc = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/Vertical_growth_of_temperature_anomaly/CloudForcing_SurfaceFluxes/"
+fil_out_nc = "LWCF_avg_box_hourly_96hrs.nc"
+system("rm "+dir_out_nc+fil_out_nc)
+ncdf = addfile(dir_out_nc+fil_out_nc,"c")
+filedimdef(ncdf,"time",-1,True)
+ncdf->LWCF_CTR = LWCF_CTR
+ncdf->LWCF_TOPO = LWCF_TOPO
+ncdf->LWCF_CTR_TOPO =  LWCF_CTR_TOPO
+
+
+
+
+
+
 
 end

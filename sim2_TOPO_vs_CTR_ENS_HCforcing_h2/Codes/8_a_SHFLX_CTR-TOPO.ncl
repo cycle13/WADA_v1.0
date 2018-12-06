@@ -35,6 +35,15 @@ Amazon_lat_test1 = (/-10.0,2.0/)
 xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
 ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/)
 ;---------------
+;-----------add some variables to hold areal averaged SHFLX_CTR, SHFLX_TOPO, SHFLX_CTR_TOPO
+SHFLX_CTR = new(num_time,double)
+SHFLX_TOPO = new(num_time,double)
+SHFLX_CTR_TOPO = new(num_time,double)
+SHFLX_CTR!0 = "time"
+SHFLX_TOPO!0 = "time"
+SHFLX_CTR_TOPO!0 = "time"
+
+;-----------
 
 do index = 0,31
 
@@ -89,6 +98,7 @@ diff_TOPO_CTR_sig = where(prob .lt. siglvl,var_mean_CTR - var_mean_TOPO,diff_TOP
 
 printVarSummary(diff_TOPO_CTR)
 printVarSummary(diff_TOPO_CTR_sig)
+
 
 ;================ plot ===========
 ;total 12 days in the TOPOTEST after branching
@@ -153,8 +163,34 @@ delete(dum_Amazon)
 delete(dum_Amazon_sig)
 
 
+;-------Save variales for SHFLX_CTR, SHFLX_TOPO, SHFLX_CTR_TOPO as areal average, put std aside for now------
+rad = 4.0*atan(1.0)/180.0
+clat = cos(f_TOPO_mean->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
+SHFLX_CTR(index*3+i_hr) = wgt_areaave_Wrap(var_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+SHFLX_TOPO(index*3+i_hr) = wgt_areaave_Wrap(var_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+SHFLX_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+
+;------------
+
 end do ; do i_hr
 
 end do ; do index
+
+printVarSummary(SHFLX_CTR)
+printVarSummary(SHFLX_TOPO)
+printVarSummary(SHFLX_CTR_TOPO)
+
+;------------output nc files------------
+dir_out_nc = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/Vertical_growth_of_temperature_anomaly/CloudForcing_SurfaceFluxes/"
+fil_out_nc = "SHFLX_avg_box_hourly_96hrs.nc"
+system("rm "+dir_out_nc+fil_out_nc)
+ncdf = addfile(dir_out_nc+fil_out_nc,"c")
+filedimdef(ncdf,"time",-1,True)
+ncdf->SHFLX_CTR = SHFLX_CTR
+ncdf->SHFLX_TOPO = SHFLX_TOPO
+ncdf->SHFLX_CTR_TOPO =  SHFLX_CTR_TOPO
+
+
 
 end

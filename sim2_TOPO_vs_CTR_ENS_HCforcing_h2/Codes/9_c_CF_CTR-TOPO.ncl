@@ -56,6 +56,14 @@ diff_TOPO_CTR_sig = where(prob .lt. siglvl,CF_mean_CTR - CF_mean_TOPO,diff_TOPO_
 printVarSummary(diff_TOPO_CTR)
 printVarSummary(diff_TOPO_CTR_sig)
 
+;-----------add some variables to hold areal averaged CF_CTR, CF_TOPO, CF_CTR_TOPO
+CF_CTR = new(num_time,double)
+CF_TOPO = new(num_time,double)
+CF_CTR_TOPO = new(num_time,double)
+CF_CTR!0 = "time"
+CF_TOPO!0 = "time"
+CF_CTR_TOPO!0 = "time"
+
 ;================ plot ===========
 ;total 96 hr in the TOPOTEST after branching
 total_hr = 96
@@ -125,8 +133,29 @@ frame(wks_sig)
 delete(dum_Amazon)
 delete(dum_Amazon_sig)
 
+;-------Save variales for CF_CTR, CF_TOPO, CF_CTR_TOPO as areal average, put std aside for now------
+rad = 4.0*atan(1.0)/180.0
+clat = cos(f_TOPO->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
+CF_CTR(i_hr) = wgt_areaave_Wrap(CF_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+CF_TOPO(i_hr) = wgt_areaave_Wrap(CF_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+CF_CTR_TOPO(i_hr) = wgt_areaave_Wrap(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 end do
 ;==============================
+
+printVarSummary(CF_CTR)
+printVarSummary(CF_TOPO)
+printVarSummary(CF_CTR_TOPO)
+
+;------------output nc files------------
+dir_out_nc = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/Vertical_growth_of_temperature_anomaly/CloudForcing_SurfaceFluxes/"
+fil_out_nc = "CF_avg_box_hourly_96hrs.nc"
+system("rm "+dir_out_nc+fil_out_nc)
+ncdf = addfile(dir_out_nc+fil_out_nc,"c")
+filedimdef(ncdf,"time",-1,True)
+ncdf->CF_CTR = CF_CTR
+ncdf->CF_TOPO = CF_TOPO
+ncdf->CF_CTR_TOPO =  CF_CTR_TOPO
 
 
 
