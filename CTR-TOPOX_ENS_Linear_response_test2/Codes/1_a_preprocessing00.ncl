@@ -45,7 +45,7 @@ year2008_str = (/"2008-12-01","2008-12-11","2008-12-21","2008-12-31","2009-01-10
 ;------- be aware that a space in the last ---------
 ;------- Note that you tried to add PTTEND in previous layout, but maxmemory issue always occurred.-----
 ;var_str = "PRECT,FLUT,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
-var_str = "PRECT,HCforcing,hyam,hybm,PS "
+var_str = "PRECT,HCforcing,PTTEND,PTEQ,hyam,hybm,PS "
 var_name = "PRECT"  ; You need to add similar indicators for other vaviables later
 
 ;do i_ens = 0,8
@@ -105,7 +105,7 @@ CTR_out_dir = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-proces
 ;CTR_out_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
 ;CTR_out_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing_PTTEND/CTR/"
 
-var_str = "PRECT,hyam,hybm,PS " ; The CTR does not have the variable HCforcing
+var_str = "PRECT,PTTEND,PTEQ,hyam,hybm,PS " ; The CTR does not have the variable HCforcing
 
 ;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir1989+"*h1*.nc -o "+CTR_in_dir1989+"F_AMIP_CAM5_WADA_CTR_1989_production.cam.1989-11-21-00000--1990-03-12-00000."+var_name+".ncrcat.nc")
 ;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir1990+"*h1*.nc -o "+CTR_in_dir1990+"F_AMIP_CAM5_WADA_CTR_1990_production.cam.1990-11-21-00000--1991-03-12-00000."+var_name+".ncrcat.nc")
@@ -131,7 +131,8 @@ var_str = "PRECT,hyam,hybm,PS " ; The CTR does not have the variable HCforcing
 ;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir2006+"*h1*.nc -o "+CTR_in_dir2006+"F_AMIP_CAM5_WADA_CTR_2006_production.cam.2006-11-21-00000--2007-03-12-00000."+var_name+".ncrcat.nc")
 ;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir2007+"*h1*.nc -o "+CTR_in_dir2007+"F_AMIP_CAM5_WADA_CTR_2007_production.cam.2007-11-21-00000--2008-03-12-00000."+var_name+".ncrcat.nc")
 ;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir2008+"*h1*.nc -o "+CTR_in_dir2008+"F_AMIP_CAM5_WADA_CTR_2008_production.cam.2008-11-21-00000--2009-03-12-00000."+var_name+".ncrcat.nc")
-;
+;;
+
 count_start = (/"11","21","31","41","51","61","71","81","91"/)
 count_end = (/"22","32","42","52","62","72","82","92","102"/)
 
@@ -194,18 +195,17 @@ count_end = (/"22","32","42","52","62","72","82","92","102"/)
 ;;
 
 
-;========== Calculate the mean and std of ensemble in TOPOTEST ======
-;-----combine different members into a single file
-system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS."+str1+".nc")
-
-;-----calculate the ensemble mean along the realization dimension
-system("ncwa -O -a realization "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc")
+;;========== Calculate the mean and std of ensemble in TOPOTEST ======
+;;-----combine different members into a single file
+;system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS."+str1+".nc")
+;;-----calculate the ensemble mean along the realization dimension
+;system("ncwa -O -a realization "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc")
 
 ;-----Calculate Anomaly -
-system("ncbo -O "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc "+out_dir+"ENS.anom."+str1+".nc")
+;system("ncbo -O "+out_dir+"ENS."+str1+".nc "+out_dir+"ENS.mean."+str1+".nc "+out_dir+"ENS.anom."+str1+".nc")
 
 ;------Calculate the standard deviation along realization dimension-
-system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+str1+".nc")
+;system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+str1+".nc")
 
 ;;;========== Calculate the mean and std of ensemble in CTR ======
 ;;;-----combine different members into a single file
@@ -215,7 +215,7 @@ system("ncra -O -y rmssdn "+out_dir+"ENS.anom."+str1+".nc "+out_dir+"ENS.std."+s
 ;;;-----Calculate Anomaly -
 ;system("ncbo -O "+CTR_out_dir+"ENS.CTR.nc "+CTR_out_dir+"ENS.mean.CTR.nc "+CTR_out_dir+"ENS.anom.CTR.nc")
 ;;;------Calculate the standard deviation along realization dimension-
-;system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.nc "+CTR_out_dir+"ENS.std.CTR.nc")
+system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.nc "+CTR_out_dir+"ENS.std.CTR.nc")
 
 
 
