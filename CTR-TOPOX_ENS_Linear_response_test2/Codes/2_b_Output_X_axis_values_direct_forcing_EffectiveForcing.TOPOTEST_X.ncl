@@ -25,11 +25,12 @@ printVarSummary(SGH30m)
 
 ;=======================
 
-;str_PCT = (/"00","20","40","60","80"/)
-str_PCT = (/"00","20","40","60"/)
+str_PCT = (/"00","20","40","60","80"/)
+;str_PCT = (/"00","20","40","60"/)
 
 ;do i_PCT = 0,4
-do i_PCT = 1,3
+;do i_PCT = 1,3
+do i_PCT = 4,4
 
 PCT = str_PCT(i_PCT)
 
@@ -73,7 +74,7 @@ end do  ; do i_file
 
 ;-------------
 
-printVarSummary(HCforcing_TOPO)
+printVarSummary(HCforcing_TOPO)  ; in K/sec
 printVarSummary(PS_TOPO)
 printVarSummary(PRECT_TOPO)
 printVarSummary(PRECT_CTR)
