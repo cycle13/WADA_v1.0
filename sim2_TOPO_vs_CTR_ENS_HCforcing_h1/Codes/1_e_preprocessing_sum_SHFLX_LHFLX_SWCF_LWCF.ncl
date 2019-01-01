@@ -22,15 +22,15 @@ members = 180
 num_time = 4   ; 4 days
 chunk = 1
 
-SHFLX_TOPO = new((/members,4,96,144/),double)    ;members x 4 days x 30lev x 96lat x 144 lon
-LHFLX_TOPO = new((/members,4,96,144/),double) 
-SWCF_TOPO = new((/members,4,96,144/),double) 
-LWCF_TOPO = new((/members,4,96,144/),double) 
+SHFLX_TOPO = new((/members,num_time,96,144/),double)    ;members x 4 days x 30lev x 96lat x 144 lon
+LHFLX_TOPO = new((/members,num_time,96,144/),double) 
+SWCF_TOPO = new((/members,num_time,96,144/),double) 
+LWCF_TOPO = new((/members,num_time,96,144/),double) 
 
-SHFLX_CTR = new((/members,4,96,144/),double)    ;members x 4 days x 30lev x 96lat x 144 lon
-LHFLX_CTR = new((/members,4,96,144/),double) 
-SWCF_CTR = new((/members,4,96,144/),double) 
-LWCF_CTR = new((/members,4,96,144/),double) 
+SHFLX_CTR = new((/members,num_time,96,144/),double)    ;members x 4 days x 30lev x 96lat x 144 lon
+LHFLX_CTR = new((/members,num_time,96,144/),double) 
+SWCF_CTR = new((/members,num_time,96,144/),double) 
+LWCF_CTR = new((/members,num_time,96,144/),double) 
 
 ;do i_num  = 0, 0
 ;do i_num  = 0, 7
@@ -40,15 +40,15 @@ do i_file = 0, members - 1
 f_TOPO = addfile(f_TOPO_str(i_file),"r")
 f_CTR = addfile(f_CTR_str(i_file),"r")
 
-SHFLX_TOPO(i_file,:,:,:) = f_TOPO->SHFLX(0:3,:,:)
-LHFLX_TOPO(i_file,:,:,:) = f_TOPO->LHFLX(0:3,:,:)
-SWCF_TOPO(i_file,:,:,:) = f_TOPO->SWCF(0:3,:,:)
-LWCF_TOPO(i_file,:,:,:) = f_TOPO->LWCF(0:3,:,:)
+SHFLX_TOPO(i_file,:,:,:) = f_TOPO->SHFLX(0:num_time-1,:,:)
+LHFLX_TOPO(i_file,:,:,:) = f_TOPO->LHFLX(0:num_time-1,:,:)
+SWCF_TOPO(i_file,:,:,:) = f_TOPO->SWCF(0:num_time-1,:,:)
+LWCF_TOPO(i_file,:,:,:) = f_TOPO->LWCF(0:num_time-1,:,:)
 
-SHFLX_CTR(i_file,:,:,:) = f_CTR->SHFLX(0:3,:,:)
-LHFLX_CTR(i_file,:,:,:) = f_CTR->LHFLX(0:3,:,:)
-SWCF_CTR(i_file,:,:,:) = f_CTR->SWCF(0:3,:,:)
-LWCF_CTR(i_file,:,:,:) = f_CTR->LWCF(0:3,:,:)
+SHFLX_CTR(i_file,:,:,:) = f_CTR->SHFLX(0:num_time-1,:,:)
+LHFLX_CTR(i_file,:,:,:) = f_CTR->LHFLX(0:num_time-1,:,:)
+SWCF_CTR(i_file,:,:,:) = f_CTR->SWCF(0:num_time-1,:,:)
+LWCF_CTR(i_file,:,:,:) = f_CTR->LWCF(0:num_time-1,:,:)
 
 end do  ; do i_fiel
 ;printVarSummary(T_TOPO)
