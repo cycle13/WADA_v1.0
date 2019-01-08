@@ -113,8 +113,8 @@ f_gpcp = addfile("/lustre/DATA/pritchard/hongcheq/GPCP/mon/v2.3/GPCP_1989-2008_D
 pr_clim_GPCP = f_gpcp->pr_clim_GPCP
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -3.0
-res@cnMaxLevelValF = 3.0
+res@cnMinLevelValF = -6.0
+res@cnMaxLevelValF = 6.0
 res@cnLevelSpacingF = 0.5
 
 res@tiMainString = "CTR - GPCP, 1989-2008 DJF clim"
