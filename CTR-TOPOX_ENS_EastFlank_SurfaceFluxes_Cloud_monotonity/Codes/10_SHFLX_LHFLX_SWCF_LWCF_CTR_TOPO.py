@@ -65,5 +65,40 @@ plt.subplots_adjust(hspace=.3)
 #plt.show()
 
 plt.savefig('../Figures/10_'+PCT+'CTR_TOPO_SWCF_LWCF_SHFLX_LHFLX_time_series.png')
-plt.savefig('../Figures/10_'+PCT+'CTR_TOPO_SWCF_LWCF_SHFLX_LHFLX_time_series.pdf')
+#plt.savefig('../Figures/10_'+PCT+'CTR_TOPO_SWCF_LWCF_SHFLX_LHFLX_time_series.pdf')
+
+# output SWCF, LWCF, CF, SHFLX, LHFLX, FLX average day 3-7 for CTR-TOPOX for
+# further usage
+# Note that (1) index starting from 0 and slide(2,7) does not include the last
+# 7
+SWCF_avg = xr.DataArray(np.mean(Vars[0,2,2:7]))
+SWCF_avg.name = 'SWCF'
+SWCF_avg.attrs['units'] = 'W/m2'
+
+LWCF_avg = xr.DataArray(np.mean(Vars[1,2,2:7]))
+LWCF_avg.name = 'LWCF'
+LWCF_avg['units'] = 'W/m2'
+
+CF_avg = xr.DataArray(np.mean(Vars[2,2,2:7]))
+CF_avg.name = 'CF'
+CF_avg['units'] = 'W/m2'
+
+SHFLX_avg = xr.DataArray(np.mean(Vars[3,2,2:7]))
+SHFLX_avg.name = 'SHFLX'
+SHFLX_avg['units'] = 'W/m2'
+
+LHFLX_avg = xr.DataArray(np.mean(Vars[4,2,2:7]))
+LHFLX_avg.name = 'LHFLX'
+LHFLX_avg['units'] = 'W/m2'
+
+FLX_avg = xr.DataArray(np.mean(Vars[5,2,2:7]))
+FLX_avg.name = 'FLX'
+FLX_avg['units'] = 'W/m2'
+
+# save to netcdf file
+myds = xr.merge([SWCF_avg, LWCF_avg, CF_avg, SHFLX_avg, LHFLX_avg, FLX_avg])
+myds.to_netcdf('/gdata/pritchard/hongcheq/WetAndesDryAmazon/Linear_Monotonicity_TEST/CF_FLX_'+PCT+'.nc')
+print(myds)
+
+
 

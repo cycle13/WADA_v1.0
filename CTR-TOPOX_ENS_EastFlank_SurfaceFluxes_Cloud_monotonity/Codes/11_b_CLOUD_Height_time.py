@@ -10,12 +10,14 @@ Function:
 import numpy as np
 import matplotlib.pyplot as plt
 import xarray as xr
+import os
 
 #PCT = 'TOPO00'
 #PCT = 'TOPO20'
 #PCT = 'TOPO40'
 #PCT = 'TOPO60'
 PCT = 'TOPO80'
+
 
 dire = '/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post\
 -processing_h1_tapes_CLOUD/'+PCT+'/'
@@ -71,5 +73,32 @@ plt.subplots_adjust(hspace=.3)
 #plt.show()
 plt.savefig('../Figures/11_b_'+PCT+'CLOUD_Height_time_daily.pdf')
 plt.savefig('../Figures/11_b_'+PCT+'CLOUD_Height_time_daily.png')
+
+# output high, low cloud (>500hPa, or <500hPa) average 3-7 for CTR-TOPOX for
+# further usage
+# Note that (1) indexing starting from 0 and slide(2,7) does not include the
+# last 7.
+H_CLOUD_t = ds_X['CLOUD_CTR_TOPO'].sel(lev_p=slice(50,500)).isel(time=slice(2,7))
+L_CLOUD_t = ds_X['CLOUD_CTR_TOPO'].sel(lev_p=slice(500,1000)).isel(time=slice(2,7))
+print(H_CLOUD_t)
+print(L_CLOUD_t)
+H_CLOUD = H_CLOUD_t.mean(dim=('time','lev_p'))
+L_CLOUD = L_CLOUD_t.mean(dim=('time','lev_p'))
+print('-------')
+H_CLOUD.name='H_CLOUD'
+H_CLOUD.attrs['units'] = 'fraction'
+H_CLOUD.attrs['long_name'] = 'hight cloud (500hPa and above) fraction averaged \
+from day3-7, CTR-'+PCT
+
+L_CLOUD.name='L_CLOUD'
+L_CLOUD.attrs['units'] = 'fraction'
+L_CLOUD.attrs['long_name'] = 'low cloud (500hPa and below) fraction averaged \
+from day3-7, CTR-'+PCT
+print(H_CLOUD)
+print(L_CLOUD)
+#myds = H_CLOUD.to_dataset()
+myds = xr.merge([H_CLOUD, L_CLOUD])
+myds.to_netcdf('/gdata/pritchard/hongcheq/WetAndesDryAmazon/Linear_Monotonicity_TEST/H_CLOUD_L_CLOUD_'+PCT+'.nc')
+print(myds)
 
 

@@ -31,12 +31,12 @@ Lw = 2260000.0 ; J/kg ; latent heat of vaporization
 Cpair=1004.0  ; J/(kg*K)
 ;-------------------------
 
-str_PCT = (/"00","20","40","60","80"/)
-;str_PCT = (/"00","20","40","60"/)
+;str_PCT = (/"00","20","40","60","80"/)
+str_PCT = (/"40"/)
 
-do i_PCT = 0,4
+;do i_PCT = 0,4
 ;do i_PCT = 1,3
-;do i_PCT = 0,0
+do i_PCT = 0,0
 
 PCT = str_PCT(i_PCT)
 
@@ -228,7 +228,9 @@ delete(vint_PTTEND_CTR)
 delete(vint_PTEQ_CTR)
 
 ;---------------------output variables ----------
-diro_TOPO = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/WADA_CTR_TOPO_Linear_Test_data/" ; Output directory
+;diro_TOPO = "/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/WADA_CTR_TOPO_Linear_Test_data/" ; Output directory
+diro_TOPO = "/gdata/pritchard/hongcheq/WetAndesDryAmazon/WADA_CTR_TOPO_Linear_Test_data/" ; Output directory
+
 filo_TOPO = "Andes_TEST_Vint_CpairPTTEND_LwPTEQ.mean_std.avg_day3-7.TOPO"+PCT+".nc"             ; Output file
 system("rm -f "+diro_TOPO+filo_TOPO)
 ncdf_TOPO = addfile(diro_TOPO+filo_TOPO,"c")
