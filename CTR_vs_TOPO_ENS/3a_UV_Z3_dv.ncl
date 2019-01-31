@@ -11,15 +11,75 @@ begin
 TOPO_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/Old/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.nc"
 TOPO_std_str = "ENS.std.TOPOTEST.nc"
+TOPO_check = "ENS.TOPOTEST.nc"
 
 ;CTR_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
 CTR_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/Old/"
 CTR_mean_str = "ENS.mean.CTR.nc"
 CTR_std_str = "ENS.std.CTR.nc"
+CTR_check = "ENS.CTR.nc"
 
-var_str = (/"U","V","Z3","dv"/)
+;============= Check if U, V, Z3 follows normal distribution ====
+TOPO_check_file = addfile(TOPO_dir+TOPO_check,"r")
+CTR_check_file = addfile(CTR_dir+CTR_check,"r")
+;lat_check = 0
+;lon_check = 360 - 75  ; 75W
+lat_check = -5
+lon_check = 360 - 75  ; 75W
+;lev_check = 200  ; roughly 200hPa
+lev_check = 850  ; roughly 200hPa
 
-do i_var = 0, 3
+U_CTR = CTR_check_file->U(:,3,{lev_check},{lat_check},{lon_check}) ; all realization dimension, 3rd day after branching off
+V_CTR = CTR_check_file->V(:,3,{lev_check},{lat_check},{lon_check})
+Z3_CTR = CTR_check_file->Z3(:,3,{lev_check},{lat_check},{lon_check})
+
+U_TOPO = TOPO_check_file->U(:,3,{lev_check},{lat_check},{lon_check}) ; all realization dimension, 3rd day after branching off
+V_TOPO = TOPO_check_file->V(:,3,{lev_check},{lat_check},{lon_check})
+Z3_TOPO = TOPO_check_file->Z3(:,3,{lev_check},{lat_check},{lon_check})
+
+wks_check = gsn_open_wks("png","TEST_Gaussian_U_V_Z3_lev_"+tostring(lev_check)+"lat_"+tostring(lat_check)+"_lon_"+tostring(lon_check))
+
+res_check = True
+
+;res_check@gsnLeftString = "Check Gaussian on day 3, at lev="+tostring(lev_check)+", lat="+tostring(lat_check)+", lon="+tostring(lon_check) 
+
+res_check@tiMainString = "CTR" 
+
+res_check@gsnFrame = False
+res_check@gsnDraw = False
+
+CTR_Updf = pdfx(U_CTR, 30, False)
+CTR_Vpdf = pdfx(V_CTR, 30, False)
+CTR_Z3pdf = pdfx(Z3_CTR, 30, False)
+TOPO_Updf = pdfx(U_TOPO, 30, False)
+TOPO_Vpdf = pdfx(V_TOPO, 30, False)
+TOPO_Z3pdf = pdfx(Z3_TOPO, 30, False)
+
+plot_check = new(6,graphic)
+
+plot_check(0) = gsn_csm_xy(wks_check, CTR_Updf@bin_center, CTR_Updf, res_check)
+plot_check(1) = gsn_csm_xy(wks_check, CTR_Vpdf@bin_center, CTR_Vpdf, res_check)
+plot_check(2) = gsn_csm_xy(wks_check, CTR_Z3pdf@bin_center, CTR_Z3pdf, res_check)
+
+res_check@tiMainString = "TOPO" 
+
+plot_check(3) = gsn_csm_xy(wks_check, TOPO_Updf@bin_center, TOPO_Updf, res_check)
+plot_check(4) = gsn_csm_xy(wks_check, TOPO_Vpdf@bin_center, TOPO_Vpdf, res_check)
+plot_check(5) = gsn_csm_xy(wks_check, TOPO_Z3pdf@bin_center, TOPO_Z3pdf, res_check)
+
+res_p_check = True
+res_p_check@txString = "Check Gaussian on day 3, at lev="+tostring(lev_check)+", lat="+tostring(lat_check)+", lon="+tostring(lon_check) 
+
+gsn_panel(wks_check, plot_check,(/2,3/),res_p_check) 
+
+;==================================
+;===================================
+
+;var_str = (/"U","V","Z3","dv"/)
+var_str = (/"U","V","Z3"/)
+
+;do i_var = 0, 3
+do i_var = 0, 2
 
 var = var_str(i_var)
 
@@ -76,9 +136,10 @@ var_std_CTR_pnew = vinth2p(var_std_CTR,hyam,hybm,pnew,f_CTR_mean->PS,1,P0mb,1,Fa
 
 siglvl = 0.1
 indep_sample = 180
-;========= 180 samples within each ensemble, branched every 10 days, independend number of samples ~ 180
+;;========= 180 samples within each ensemble, branched every 10 days, independend number of samples ~ 180
 prob = ttest(var_mean_TOPO_pnew,var_std_TOPO_pnew^2,indep_sample,var_mean_CTR_pnew,var_std_CTR_pnew^2,indep_sample,True,False)
-;printVarSummary(prob)
+;----------
+printVarSummary(prob)
 
 ; Only retain signals of difference between TOPO and CTR with significance.
 diff_TOPO_CTR = var_mean_TOPO_pnew ; metadata
@@ -136,9 +197,9 @@ do i_pr = 0,dimsizes(pr_levels) - 1
 do i_day = 0,total_days-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("png","Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
+wks = gsn_open_wks("x11","Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
 ;wks = gsn_open_wks("png","Regional_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","Sig_Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("x11","Sig_Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
 ;wks_sig = gsn_open_wks("png","Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
 
 res = True

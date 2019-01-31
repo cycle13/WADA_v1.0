@@ -68,9 +68,9 @@ do i_day = 0,total_days-1
 ;do i_day = 0,1
  
 ;wks = gsn_open_wks("x11","Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks = gsn_open_wks("png","Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks = gsn_open_wks("x11","Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks_sig = gsn_open_wks("x11","Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("x11","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
 gsn_reverse_colormap(wks_sig)    ; blue color indicate positive precip changes

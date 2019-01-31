@@ -141,8 +141,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","6_b_Hov_Regional_vintForcing_TOPO_vs_CTR")
-wks_sig = gsn_open_wks("png","6_b_Sig_Hov_Regional_vintForcing_TOPO_vs_CTR")
+wks = gsn_open_wks("x11","6_b_Hov_Regional_vintForcing_TOPO_vs_CTR")
+wks_sig = gsn_open_wks("x11","6_b_Sig_Hov_Regional_vintForcing_TOPO_vs_CTR")
 
 res = True
 res@gsnDraw = False

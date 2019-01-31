@@ -5,12 +5,13 @@
 ;Note modified 20180725, for ENS(180)
 ;Note: modified 20180913 for Hovmueller
 ;Note: modified 20181002 for sim2_WADA...
+;Note: please_find_me_WADA
 
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/shea_util.ncl"
 
 begin
-
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 
 chunk = 32
 num_time = 96
@@ -51,13 +52,13 @@ do index = 0,31
 ;do index = 0,7
 ;do index = 0,0
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST.time"+str_time(index)+".nc"
 
 TOPO_vf_str = "vint_forcing.mean_std.TOPO."+str_time(index)+".nc"
 
-CTR_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
 CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 
