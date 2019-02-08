@@ -7,6 +7,7 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 
 chunk = 32
 num_time = 96
@@ -37,7 +38,7 @@ end do
 
 do index = 0,31
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 ;TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 ;TOPO_std_str = "ENS.std.TOPOTEST.time"+str_time(index)+".nc"
 TOPO_mean_str = "ENS.mean.TOPOTEST."+str_time(index)+".nc"
@@ -45,7 +46,7 @@ TOPO_std_str = "ENS.std.TOPOTEST."+str_time(index)+".nc"
 
 TOPO_mean_std_Tadv = "ENS.std.mean.TOPOTEST.Tadv."+str_time(index)+".nc"
 
-CTR_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
 ;CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 ;CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 CTR_mean_str = "ENS.mean.CTR."+str_time(index)+".nc"
@@ -207,7 +208,7 @@ lon_2 = 320.0
 lev_1 = 300.0
 lev_2 = 1000.0
 ;----------- Add topography ------
-f_TOPO = addfile("/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
+f_TOPO = addfile(prefix+"/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
 PHIS = f_TOPO->PHIS
 hgt = PHIS(0,{lat_t},{lon_1:lon_2})  ; metadata and dimension
 hgt = hgt/9.8
@@ -227,8 +228,8 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("pdf","../Figures/4_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("pdf","../Figures/4_Sig_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/4_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("png","../Figures/4_Sig_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False

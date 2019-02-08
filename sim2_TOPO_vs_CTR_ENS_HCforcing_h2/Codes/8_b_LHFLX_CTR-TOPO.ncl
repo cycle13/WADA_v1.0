@@ -7,6 +7,7 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 
 chunk = 32
 num_time = 96
@@ -47,13 +48,13 @@ LHFLX_CTR_TOPO!0 = "time"
 
 do index = 0,31
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_SHFLX_LHFLX_SWCF_LWCF/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_SHFLX_LHFLX_SWCF_LWCF/TOPO_TEST/"
 ;TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/TOPO_TEST/"
 ;TOPO_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/Old/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST.time"+str_time(index)+".nc"
 
-CTR_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_SHFLX_LHFLX_SWCF_LWCF/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_SHFLX_LHFLX_SWCF_LWCF/CTR/"
 ;CTR_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/CTR/"
 ;CTR_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/Old/"
 CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
@@ -122,15 +123,20 @@ res@cnFillOn = True
 
 res@tiMainString = var+", CTR - TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1)
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -40.0
-res@cnMaxLevelValF = 40.0
+res@cnMinLevelValF = -60.0
+res@cnMaxLevelValF = 60.0
 res@cnLevelSpacingF = 5.0
 
-res@mpMaxLatF = 60.0
-res@mpMinLatF = -60.0
-res@mpMaxLonF = 350.0
-res@mpMinLonF = 230.0
-;
+;res@mpMaxLatF = 60.0
+;res@mpMinLatF = -60.0
+;res@mpMaxLonF = 350.0
+;res@mpMinLonF = 230.0
+
+res@mpMaxLatF = 25.0
+res@mpMinLatF = -35.0
+res@mpMaxLonF = 360.0 - 30.0
+res@mpMinLonF = 360.0 - 110.0
+
 res@gsnLeftString = var
 
 plot = gsn_csm_contour_map_ce(wks,diff_TOPO_CTR(i_hr,:,:),res)

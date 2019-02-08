@@ -36,7 +36,8 @@ end do
 
 ;str_time = (/"0-5","6-11","12-17","18-23","24-29","30-35","36-41","42-47"/)
 
-do index = 0,31
+;do index = 0,31
+do index = 4,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 ;TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
@@ -147,14 +148,14 @@ nBoot = 400
 nDim = 0
 opt = False
 
-diffBootLow = var_CTR(0,:,:,:,:)  ; dimension data
-diffBootHi = var_CTR(0,:,:,:,:)
+diffBootLow = var_CTR_pnew(0,:,:,:,:)  ; dimension data
+diffBootHi = var_CTR_pnew(0,:,:,:,:)
 printVarSummary(diffBootLow)
 
 do i_hr = 0,2    
 print(i_hr)
-printVarSummary(var_CTR(:,i_hr,:,:,:)) ; make sure it's 4-d
-BootStrap = bootstrap_diff(var_CTR(:,i_hr,:,:,:), var_TOPO(:,i_hr,:,:,:), nBoot, nDim, opt)
+printVarSummary(var_CTR_pnew(:,i_hr,:,:,:)) ; make sure it's 4-d
+BootStrap = bootstrap_diff(var_CTR_pnew(:,i_hr,:,:,:), var_TOPO_pnew(:,i_hr,:,:,:), nBoot, nDim, opt)
 diffBoot = BootStrap[0]
 diffBootAvg = BootStrap[1]
 diffBootStd = BootStrap[2]

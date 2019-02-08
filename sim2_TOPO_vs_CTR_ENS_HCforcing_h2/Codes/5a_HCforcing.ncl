@@ -10,6 +10,7 @@ load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 begin
 ;------------
 ;=============
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 
 chunk = 32
 num_time = 96
@@ -36,7 +37,7 @@ end do
 
 do index = 0,31
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST.time"+str_time(index)+".nc"
 
@@ -65,7 +66,7 @@ str_pressure = "500hPa"
 do i_hr = 0,total_hr-1
 ;do i_hr = 0,1
  
-wks = gsn_open_wks("png","5_Regional_"+var+"_"+str_pressure+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","5_Regional_"+var+"_"+str_pressure+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 gsn_define_colormap(wks,"MPL_BLues")
 gsn_reverse_colormap(wks)  
 

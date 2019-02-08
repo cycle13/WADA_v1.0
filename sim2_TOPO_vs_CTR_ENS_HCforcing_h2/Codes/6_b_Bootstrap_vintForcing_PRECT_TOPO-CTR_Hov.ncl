@@ -229,8 +229,10 @@ res@cnFillOn = False
 ;----------
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -300.0
-res@cnMaxLevelValF = -20.0
+;res@cnMinLevelValF = -300.0
+;res@cnMaxLevelValF = -20.0
+res@cnMinLevelValF = 20.0
+res@cnMaxLevelValF = 300.0
 res@cnLevelSpacingF = 40.0
 
 res@gsnContourNegLineDashPattern = 1
@@ -238,8 +240,8 @@ res@gsnContourLineThicknessesScale = 3.0
 res@gsnContourZeroLineThicknessF = 2.
 res@gsnRightString = vf_TOPO_CTR@units
 
-;res@vpHeightF = 0.6
-;res@vpWidthF = 0.3  ; suggested by Mike, to double the Y time axis.
+res@vpHeightF = 0.6
+res@vpWidthF = 0.3  ; suggested by Mike, to double the Y time axis.
 
 res@tmYLMode = "Manual"
 res@tmYLTickStartF = 0
@@ -249,11 +251,14 @@ res@tmYLTickSpacingF = 4
 vf_TOPO_CTR_hov@long_name = "" ; to avoid long_name being printed out on top of the figures
 ;----------
 
+vf_TOPO_CTR_hov = - vf_TOPO_CTR_hov ; use CTR-TOPO values, effect of heating, rather than enforced cooling
 plot_var1 = gsn_csm_hov(wks,vf_TOPO_CTR_hov,res)
-plot_var1 = ColorNegDashZeroPosContour(plot_var1,"red","magenta","blue")
+
+;plot_var1 = ColorNegDashZeroPosContour(plot_var1,"red","magenta","blue")
 
 plot_var2 = gsn_csm_hov(wks_sig,vf_TOPO_CTR_hov,res)
-plot_var2 = ColorNegDashZeroPosContour(plot_var2,"red","magenta","blue")
+
+;plot_var2 = ColorNegDashZeroPosContour(plot_var2,"red","magenta","blue")
 
 ;res@gsnCenterString = "siglvl=0.1"
 ;plot_var_sig = gsn_csm_hov(wks_sig,X_diff_TOPO_CTR_hov_sig,res)

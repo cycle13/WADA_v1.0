@@ -10,11 +10,14 @@ import matplotlib.pyplot as plt
 import xarray as xr
 
 PCT = ['TOPO00','TOPO20','TOPO40','TOPO60','TOPO80']
+PCT_tag = ['HEAT100','HEAT80','HEAT60','HEAT40','HEAT20']
 
 name_str = ['SWCF','LWCF','CF','SHFLX','LHFLX','FLX']
 
-Xdire = '/gdata/pritchard/hongcheq/WetAndesDryAmazon/WADA_CTR_TOPO_Linear_Test_data/'
-Ydire = '/gdata/pritchard/hongcheq/WetAndesDryAmazon/Linear_Monotonicity_TEST/'
+#Xdire = '/gdata/pritchard/hongcheq/WetAndesDryAmazon/WADA_CTR_TOPO_Linear_Test_data/'
+#Ydire = '/gdata/pritchard/hongcheq/WetAndesDryAmazon/Linear_Monotonicity_TEST/'
+Xdire = '/data21/pritchard/hongcheq/WetAndesDryAmazon/WADA_CTR_TOPO_Linear_Test_data/'
+Ydire = '/data21/pritchard/hongcheq/WetAndesDryAmazon/Linear_Monotonicity_TEST/'
 
 X1 = np.zeros((5,1)) # HCforcing as x-axis
 X2 = np.zeros((5,1)) # vint(Cpair*PTTEND+Lw*PTEQ) as x-axis
@@ -50,12 +53,12 @@ plt.axis([30, 125, -10, 25])
 for i_plot in range(6):
     plt.plot(X1,Y[i_plot,:],'--o',label=name_str[i_plot])
 
-plt.title('CF, FLX VS Direct forcing, CTR-TOPOX')
+plt.title('CF, FLX VS Direct forcing, CTR-HEATX')
 plt.xlabel('Direct forcing (Andes), $ W/m^2 $')
 plt.ylabel('CloudForcing/SurfaceFlux (EastFlank), $ W/m^2 $')
 
 for i_text in range(5):
-    plt.text(X1[i_text]*0.95,Y[0,i_text]*0.9,PCT[i_text],fontsize=8)
+    plt.text(X1[i_text]*0.95,Y[0,i_text]*0.9,PCT_tag[i_text],fontsize=8)
 
 plt.grid(True)
 plt.legend(loc='upper left')
@@ -65,12 +68,12 @@ plt.axis([30, 125, -10, 25])
 for i_plot in range(6):
     plt.plot(X2,Y[i_plot,:],'--o',label=name_str[i_plot])
 
-plt.title('CF, FLX VS Total Effect, CTR-TOPOX')
+plt.title('CF, FLX VS Total Effect, CTR-HEATX')
 plt.xlabel('Vint_(Cpair*PTTEND + Lw*PTEQ) (Andes), $ W/m^2 $')
 #plt.ylabel('Cloud fraction (EastFlank), $ fraction $')
 
 for i_text in range(5):
-    plt.text(X2[i_text]*0.95,Y[0,i_text]*0.9,PCT[i_text],fontsize=8)
+    plt.text(X2[i_text]*0.95,Y[0,i_text]*0.9,PCT_tag[i_text],fontsize=8)
 
 plt.grid(True)
 plt.legend(loc='upper left')

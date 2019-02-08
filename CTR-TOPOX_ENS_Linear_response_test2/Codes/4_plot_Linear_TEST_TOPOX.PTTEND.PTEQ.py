@@ -82,12 +82,12 @@ print(PTTEND_PTEQ_CI95)
 plt.subplot(2,1,1)
 plt.axis([0.0, 260.0, -2.0, -0.0])
 plt.errorbar(PTTEND_mean, PRECT_mean, xerr=PTTEND_CI95, yerr=PRECT_CI95, fmt='--o')
-plt.title('Vint(Cpair*PTTEND) VS Precip(Amazon)_day3-7, CTR-TOPOX')
+plt.title('Vint(Cpair*PTTEND) VS Precip(Amazon)_day3-7, CTR-HEATX')
 plt.xlabel('Vint_{Cpair*PTTEND} (Andes), $ W/m^2 $')
 plt.ylabel('Precip(Amazon), mm/day')
 
-text_str = ["TOPO80","TOPO60","TOPO40","TOPO20","TOPO00"]
-#text_str = ["TOPO60","TOPO40","TOPO20","TOPO00"]
+#text_str = ["TOPO80","TOPO60","TOPO40","TOPO20","TOPO00"]
+text_str = ["HEAT20","HEAT40","HEAT60","HEAT80","HEAT100"]
 
 for i_text in range(5):
     plt.text(PTTEND_mean[i_text]*0.95,PRECT_mean[i_text]*0.9,text_str[i_text],

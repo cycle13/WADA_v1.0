@@ -10,6 +10,9 @@ load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/shea_util.ncl"
 
 begin
+
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
+
 chunk = 32
 num_time = 96
 
@@ -44,10 +47,10 @@ do index = 0,31
 ;do index = 0,7
 ;do index = 0,0
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 TOPO_vf_str = "vint_forcing.mean_std.TOPO."+str_time(index)+".nc"
 
-CTR_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
 CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 ;CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 
@@ -102,7 +105,7 @@ printVarSummary(PRECT_CTR_hov)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("pdf","../Figures/6_c_vintForcing_PRECT_CTR_Hov")
+wks = gsn_open_wks("png","../Figures/6_c_vintForcing_PRECT_CTR_Hov")
 gsn_define_colormap(wks,"MPL_BLues")
 gsn_reverse_colormap(wks)
 
@@ -124,8 +127,10 @@ res@tmYLTickSpacingF = 4
 ;----------
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -300.0
-res@cnMaxLevelValF = -20.0
+;res@cnMinLevelValF = -300.0
+;res@cnMaxLevelValF = -20.0
+res@cnMinLevelValF = 20.0
+res@cnMaxLevelValF = 300.0
 res@cnLevelSpacingF = 40.0
 
 res@gsnContourNegLineDashPattern = 1
@@ -136,8 +141,12 @@ res@gsnRightString = vf_TOPO_CTR@units
 vf_TOPO_CTR_hov@long_name = "" ; to avoid long_name being printed out on top of the figures
 ;----------
 
+
+;plot_var1 = gsn_csm_hov(wks,vf_TOPO_CTR_hov,res)
+vf_TOPO_CTR_hov = - vf_TOPO_CTR_hov
 plot_var1 = gsn_csm_hov(wks,vf_TOPO_CTR_hov,res)
 plot_var1 = ColorNegDashZeroPosContour(plot_var1,"red","magenta","blue")
+;plot_var1 = ColorNegDashZeroPosContour(plot_var1,"blue","magenta","yellow")
 
 ;res@gsnCenterString = "siglvl=0.1"
 ;plot_var_sig = gsn_csm_hov(wks_sig,X_diff_TOPO_CTR_hov_sig,res)
@@ -154,7 +163,7 @@ res@cnMaxLevelValF = 12.0
 res@cnLevelSpacingF = 1.0
 
 res@gsnCenterString = ""
-res@tiMainString = "CTR, ENS(180), PRECT, vint_forcing"
+res@tiMainString = "CTR, ENS(180), PRECT, vint_forcing_heat"
 res@gsnLeftString = "mm/day"
 
 gsn_reverse_colormap(wks)

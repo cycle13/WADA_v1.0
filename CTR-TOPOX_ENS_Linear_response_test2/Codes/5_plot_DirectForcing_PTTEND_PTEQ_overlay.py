@@ -9,7 +9,7 @@ Date: 20190109
 import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas
+#import pandas
 #import cartopy
 
 dir = '/DFS-L/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/WADA_CTR_TOPO_Linear_Test_data/'
@@ -76,15 +76,15 @@ plt.subplot(2,1,1)
 plt.axis([0.0, 150.0, -2.0, -0.0])
 plt.errorbar(DF_mean, PRECT_mean, xerr=DF_CI95, yerr=PRECT_CI95, fmt='--o',\
              label='Direct Forcing')
-plt.title('Amplification effect of direct forcing, CTR-TOPOX')
+plt.title('Amplification effect of direct forcing, CTR-HEATX')
 plt.xlabel(' DirectForcing or Vint_{Cpair*PTTEND+Lw*PTEQ} (Andean), $ W/m^2 $')
 plt.ylabel('Precip(Amazon)_avg_day3-7, mm/day')
 
 plt.errorbar(PTTEND_PTEQ_mean, PRECT_mean, xerr=PTTEND_PTEQ_CI95, yerr=PRECT_CI95, fmt='--o',\
              label='Cpair*PTTEND+Lw*PTEQ')
 
-text_str = ["TOPO80","TOPO60","TOPO40","TOPO20","TOPO00"]
-#text_str = ["TOPO60","TOPO40","TOPO20","TOPO00"]
+#text_str = ["TOPO80","TOPO60","TOPO40","TOPO20","TOPO00"]
+text_str = ["HEAT20","HEAT40","HEAT60","HEAT80","HEAT100"]
 
 for i_text in range(5):
     plt.text(DF_mean[i_text]*0.90,PRECT_mean[i_text]*0.9,text_str[i_text],

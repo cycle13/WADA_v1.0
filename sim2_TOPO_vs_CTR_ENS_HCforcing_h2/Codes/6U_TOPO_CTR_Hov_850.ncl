@@ -292,8 +292,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("x11","../Figures/6_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
-wks_sig = gsn_open_wks("x11","../Figures/6_Sig_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks = gsn_open_wks("png","../Figures/6_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks_sig = gsn_open_wks("png","../Figures/6_Sig_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
 
 res = True
 res@gsnDraw = False
@@ -310,10 +310,15 @@ res@cnLevelSelectionMode = "ManualLevels"
 ;res@cnMinLevelValF = -4.8
 ;res@cnMaxLevelValF = 1.6
 
+;res@cnMinLevelValF = -1.6  ; 
+;res@cnMaxLevelValF = 4.8  ; 
 res@cnMinLevelValF = -1.6  ; 
-res@cnMaxLevelValF = 4.8  ; 
+res@cnMaxLevelValF = 4.0  ; 
 
-res@cnLevelSpacingF = 0.1
+;res@cnLevelSpacingF = 0.1
+;res@gsnContourLineThicknessesScale = 3.0
+res@gsnContourLineThicknessesScale = 2.0
+res@cnLevelSpacingF = 0.2
 
 ;;TO avoid dense contours around the Andeans
 ;res@cnLevelSelectionMode = "ExplicitLevels"
@@ -333,7 +338,8 @@ res@tmYLTickSpacingF = 4
 
 plot_var = gsn_csm_hov(wks,X_diff_TOPO_CTR_hov,res)
 
-res@gsnCenterString = "siglvl=0.1"
+;res@gsnCenterString = "siglvl=0.1"
+res@gsnLeftString = "sig0.1"
 plot_var_sig = gsn_csm_hov(wks_sig,X_diff_TOPO_CTR_hov_sig,res)
 
 ;---------

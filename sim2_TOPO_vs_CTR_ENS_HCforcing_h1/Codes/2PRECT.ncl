@@ -8,12 +8,14 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/TOPO_TEST/"
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
+
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/TOPO_TEST/"
 ;TOPO_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/Old/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.nc"
 TOPO_std_str = "ENS.std.TOPOTEST.nc"
 
-CTR_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h1_tapes/CTR/"
 ;CTR_dir = "/lustre/DATA/pritchard/hongcheq/WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/Old/"
 CTR_mean_str = "ENS.mean.CTR.time0-5.nc"
 CTR_std_str = "ENS.std.CTR.time0-5.nc"
@@ -67,7 +69,7 @@ printVarSummary(diff_TOPO_CTR)
 printVarSummary(diff_TOPO_CTR_sig)
 
 ;============== WADA index ======
-f_SGH30 = addfile("/scratch/hongcheq/SGH30/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
+f_SGH30 = addfile(prefix+"/scratch/hongcheq/SGH30/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
 SGH30 = f_SGH30->SGH30
 
 SGH30m = SGH30
@@ -95,7 +97,9 @@ ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1
 total_days = 4
 
 WADA_index = new(total_days,double)
+Amazon_index = new(total_days,double)
 WADA_index_sig = new(total_days,double)
+Amazon_index_sig = new(total_days,double)
 
 do i_day = 0,total_days-1
 ;do i_day = 0,1
@@ -110,11 +114,14 @@ WADA_index_sig(i_day) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_sig(i_day
 ;print(WADA_index)
 ;print(WADA_index_sig)
 
+Amazon_index(i_day) = avg(diff_TOPO_CTR(i_day,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
+Amazon_index_sig(i_day) =  avg(diff_TOPO_CTR_sig(i_day,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 ;---------
  
-wks = gsn_open_wks("x11","../Figures/Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks = gsn_open_wks("png","../Figures/Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks = gsn_open_wks("png","Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("x11","../Figures/Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("png","../Figures/Sig_Regional_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 ;wks_sig = gsn_open_wks("png","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
@@ -127,7 +134,7 @@ res@cnLinesOn = False
 res@cnLineLabelsOn = False
 res@cnFillOn = True
 
-res@gsnCenterString = "WADAi="+sprintf("%5.2f",WADA_index(i_day))
+;res@gsnCenterString = "WADAi="+sprintf("%5.2f",WADA_index(i_day))
 
 res@tiMainString = var+", CTR - TOPO, ENS(180), iday="+tostring(i_day+1)
 res@cnLevelSelectionMode = "ManualLevels"
@@ -135,10 +142,14 @@ res@cnMinLevelValF = -8.0
 res@cnMaxLevelValF = 8.0
 res@cnLevelSpacingF = 1.0
 
-res@mpMaxLatF = 60.0
-res@mpMinLatF = -60.0
-res@mpMaxLonF = 350.0
-res@mpMinLonF = 230.0
+;res@mpMaxLatF = 60.0
+;res@mpMinLatF = -60.0
+;res@mpMaxLonF = 350.0
+;res@mpMinLonF = 230.0
+res@mpMaxLatF = 25.0
+res@mpMinLatF = -35.0
+res@mpMaxLonF = 360.0 - 30.
+res@mpMinLonF = 360.0 - 110.
 ;
 res@gsnLeftString = var
 
@@ -176,7 +187,7 @@ frame(wks)
 delete(dum_Amazon)
 
 ;---------------
-res@gsnCenterString = "WADAi="+sprintf("%5.2f",WADA_index_sig(i_day))
+;res@gsnCenterString = "WADAi="+sprintf("%5.2f",WADA_index_sig(i_day))
 
 plot_sig = gsn_csm_contour_map_ce(wks_sig,diff_TOPO_CTR_sig(i_day,:,:),res)
 
@@ -205,9 +216,11 @@ end do
 
 ;------------- WADA index line plot -------
 
-wks_WADA = gsn_open_wks("x11","../Figures/WADA_index_line_daily")
+;wks_WADA = gsn_open_wks("x11","../Figures/WADA_index_line_daily")
+wks_WADA = gsn_open_wks("png","../Figures/Amazon_index_line_daily")
 
-data_WADA = (/WADA_index,WADA_index_sig/)
+;data_WADA = (/WADA_index,WADA_index_sig/)
+data_WADA = (/Amazon_index,Amazon_index_sig/)
 
 resWADA = True
 resWADA@xyLineThicknesses = (/  1.0,   2.0/)          ; make second line thicker
@@ -219,17 +232,18 @@ resWADA@pmLegendDisplayMode    = "Always"              ; turn on legend
  
  resWADA@pmLegendSide           = "Top"                 ; Change location of 
  resWADA@pmLegendParallelPosF   = .80                   ; move units right
- resWADA@pmLegendOrthogonalPosF = -1.0                  ; more neg = down
+ resWADA@pmLegendOrthogonalPosF = -0.5                  ; more neg = down
  
  resWADA@pmLegendWidthF         = 0.12                  ; Change width and
  resWADA@pmLegendHeightF        = 0.25                  ; height of legend.
  resWADA@lgLabelFontHeightF     = .02                   ; change font height
  resWADA@lgPerimOn              = False                 ; no box around
 ; labels for the legend
- resWADA@xyExplicitLegendLabels = (/"WADAi","WADAi_sig"/)
+; resWADA@xyExplicitLegendLabels = (/"WADAi","WADAi_sig"/)
+ resWADA@xyExplicitLegendLabels = (/"Amazon","Amazon_sig"/)
 
-resWADA@tiMainString = "WADA index"
-resWADA@tiYAxisString = "WADAi, mm/day"
+resWADA@tiMainString = "Amazon rainfall response"
+resWADA@tiYAxisString = "Amazon precip_avg, mm/day"
 resWADA@tiXAxisString = "No. of day"
 plotWADA  = gsn_csm_xy (wks_WADA,ispan(1,4,1),data_WADA,resWADA) ; create plot
 

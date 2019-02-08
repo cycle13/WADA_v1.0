@@ -75,11 +75,11 @@ gsn_panel(wks_check, plot_check,(/2,3/),res_p_check)
 ;==================================
 ;===================================
 
-;var_str = (/"U","V","Z3","dv"/)
-var_str = (/"U","V","Z3"/)
+var_str = (/"U","V","Z3","dv"/)
+;var_str = (/"U","V","Z3"/)
 
-;do i_var = 0, 3
-do i_var = 0, 2
+do i_var = 0, 3
+;do i_var = 0, 2
 
 var = var_str(i_var)
 
@@ -143,10 +143,12 @@ printVarSummary(prob)
 
 ; Only retain signals of difference between TOPO and CTR with significance.
 diff_TOPO_CTR = var_mean_TOPO_pnew ; metadata
-diff_TOPO_CTR = var_mean_TOPO_pnew - var_mean_CTR_pnew
+;diff_TOPO_CTR = var_mean_TOPO_pnew - var_mean_CTR_pnew
+diff_TOPO_CTR = var_mean_CTR_pnew - var_mean_TOPO_pnew
 
 diff_TOPO_CTR_sig = var_mean_TOPO_pnew ; metadata
-diff_TOPO_CTR_sig = where(prob .lt. siglvl,var_mean_TOPO_pnew - var_mean_CTR_pnew,diff_TOPO_CTR_sig@_FillValue)
+;diff_TOPO_CTR_sig = where(prob .lt. siglvl,var_mean_TOPO_pnew - var_mean_CTR_pnew,diff_TOPO_CTR_sig@_FillValue)
+diff_TOPO_CTR_sig = where(prob .lt. siglvl,var_mean_CTR_pnew - var_mean_TOPO_pnew,diff_TOPO_CTR_sig@_FillValue)
 
 ;printVarSummary(diff_TOPO_CTR)
 ;printVarSummary(diff_TOPO_CTR_sig)
@@ -197,10 +199,10 @@ do i_pr = 0,dimsizes(pr_levels) - 1
 do i_day = 0,total_days-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("x11","Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
-;wks = gsn_open_wks("png","Regional_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("x11","Sig_Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
-;wks_sig = gsn_open_wks("png","Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
+;wks = gsn_open_wks("png","Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
+wks = gsn_open_wks("png","Regional_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
+;wks_sig = gsn_open_wks("png","Sig_Global_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
+wks_sig = gsn_open_wks("png","Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_iday_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_day+1))
 
 res = True
 res@gsnDraw = False
@@ -246,7 +248,7 @@ res_vc@gsnRightString            = "Wind"
 res_vc@gsnLeftString = ""
 res_vc@gsnRightString = ""
 
-res@tiMainString = "U,V (m/sec); Z3 (m); divergence (/sec) @"+tostring(pr_levels(i_pr))+"hPa, TOPO - CTR, ENS(180), iday="+tostring(i_day+1)
+res@tiMainString = "U,V (m/sec); Z3 (m); divergence (/sec) @"+tostring(pr_levels(i_pr))+"hPa, CTR - TOPO, ENS(180), iday="+tostring(i_day+1)
 res@tiMainFontHeightF = 0.015
 res@gsnLeftString = ""
 res@gsnRightString = ""
@@ -272,10 +274,10 @@ res@cnMaxLevelValF = 2.0e-6
 res@cnLevelSpacingF = 0.2e-6
 end if
 
-;res@mpMaxLatF = 60.0
-;res@mpMinLatF = -60.0
-;res@mpMaxLonF = 350.0
-;res@mpMinLonF = 230.0
+res@mpMaxLatF = 25.0
+res@mpMinLatF = -30.0
+res@mpMaxLonF = 360.0 - 30.
+res@mpMinLonF = 360.0 - 110.
 
 printVarSummary(f_TOPO_mean->lat)
 printVarSummary(f_TOPO_mean->lon)

@@ -178,8 +178,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("x11","../Figures/6_b_Hov_Regional_vintForcing_TOPO_vs_CTR")
-wks_sig = gsn_open_wks("x11","../Figures/6_b_Sig_Hov_Regional_vintForcing_TOPO_vs_CTR")
+wks = gsn_open_wks("png","../Figures/6_b_Hov_Regional_vintForcing_TOPO_vs_CTR")
+wks_sig = gsn_open_wks("png","../Figures/6_b_Sig_Hov_Regional_vintForcing_TOPO_vs_CTR")
 
 res = True
 res@gsnDraw = False
@@ -191,8 +191,10 @@ res@cnFillOn = False
 ;----------
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -300.0
-res@cnMaxLevelValF = -20.0
+;res@cnMinLevelValF = -300.0
+;res@cnMaxLevelValF = -20.0
+res@cnMinLevelValF = 20.0
+res@cnMaxLevelValF = 300.0
 res@cnLevelSpacingF = 40.0
 
 res@gsnContourNegLineDashPattern = 1
@@ -200,8 +202,8 @@ res@gsnContourLineThicknessesScale = 3.0
 res@gsnContourZeroLineThicknessF = 2.
 res@gsnRightString = vf_TOPO_CTR@units
 
-;res@vpHeightF = 0.6
-;res@vpWidthF = 0.3  ; suggested by Mike, to double the Y time axis.
+res@vpHeightF = 0.6
+res@vpWidthF = 0.3  ; suggested by Mike, to double the Y time axis.
 
 res@tmYLMode = "Manual"
 res@tmYLTickStartF = 0
@@ -211,11 +213,13 @@ res@tmYLTickSpacingF = 4
 vf_TOPO_CTR_hov@long_name = "" ; to avoid long_name being printed out on top of the figures
 ;----------
 
+vf_TOPO_CTR_hov = - vf_TOPO_CTR_hov
+
 plot_var1 = gsn_csm_hov(wks,vf_TOPO_CTR_hov,res)
-plot_var1 = ColorNegDashZeroPosContour(plot_var1,"red","magenta","blue")
+;plot_var1 = ColorNegDashZeroPosContour(plot_var1,"red","magenta","blue")
 
 plot_var2 = gsn_csm_hov(wks_sig,vf_TOPO_CTR_hov,res)
-plot_var2 = ColorNegDashZeroPosContour(plot_var2,"red","magenta","blue")
+;plot_var2 = ColorNegDashZeroPosContour(plot_var2,"red","magenta","blue")
 
 ;res@gsnCenterString = "siglvl=0.1"
 ;plot_var_sig = gsn_csm_hov(wks_sig,X_diff_TOPO_CTR_hov_sig,res)

@@ -79,12 +79,12 @@ print(EF_CI95)
 plt.subplot(2,1,1)
 plt.axis([0.0, 260.0, -2.0, -0.0])
 plt.errorbar(DF_mean, PRECT_mean, xerr=DF_CI95, yerr=PRECT_CI95, fmt='--o')
-plt.title('Forcing w/o adjustment VS Precip(Amazon)_day3-7, CTR-TOPOX')
+plt.title('Forcing w/o adjustment VS Precip(Amazon)_day3-7, CTR-HEATX')
 plt.xlabel('Direct Forcing(Andes), $ W/m^2 $')
 plt.ylabel('Precip(Amazon), mm/day')
 
-text_str = ["TOPO80","TOPO60","TOPO40","TOPO20","TOPO00"]
-#text_str = ["TOPO60","TOPO40","TOPO20","TOPO00"]
+#text_str = ["TOPO80","TOPO60","TOPO40","TOPO20","TOPO00"]
+text_str = ["HEAT20","HEAT40","HEAT60","HEAT80","HEAT100"]
 
 for i_text in range(5):
     plt.text(DF_mean[i_text]*0.95,PRECT_mean[i_text]*0.9,text_str[i_text],
@@ -104,8 +104,8 @@ plt.subplots_adjust(hspace=.4)
 
 #plt.show()
 
-plt.savefig("../Figures/Amazon_precip_response_TOPOX.pdf")
-plt.savefig("../Figures/Amazon_precip_response_TOPOX.png")
+plt.savefig("../Figures/3_Amazon_precip_response_TOPOX.pdf")
+plt.savefig("../Figures/3_Amazon_precip_response_TOPOX.png")
 
 
 
