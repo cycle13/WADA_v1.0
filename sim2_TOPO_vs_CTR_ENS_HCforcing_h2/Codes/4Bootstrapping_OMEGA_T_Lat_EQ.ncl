@@ -37,7 +37,8 @@ end do
 ;str_time = (/"0-5","6-11","12-17","18-23","24-29","30-35","36-41","42-47"/)
 
 ;do index = 0,31
-do index = 4,31
+;do index = 4,31
+do index = 23,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 ;TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
