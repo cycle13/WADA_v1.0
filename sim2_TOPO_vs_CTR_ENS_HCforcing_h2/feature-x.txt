@@ -1,7 +1,4 @@
 Feature-x to be added
 TEST TEST feature-x
-<<<<<<< HEAD
 MMMhoami
 conflict 
-=======
->>>>>>> feature-x
