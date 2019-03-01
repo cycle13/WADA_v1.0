@@ -38,7 +38,8 @@ end do
 
 ;do index = 0,31
 ;do index = 4,31
-do index = 23,31
+do index = 0,5
+print(index)
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 ;TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
@@ -56,6 +57,7 @@ CTR_check = "ENS.CTR."+str_time(index)+".nc"
 
 var_str = (/"OMEGA","T"/)
 
+;do i_var = 0, dimsizes(var_str)-1
 do i_var = 0, dimsizes(var_str)-1
 ;do i_var = 5, dimsizes(var_str)-1
 
@@ -144,7 +146,9 @@ var_CTR_pnew&lev_p@units = "hPa"
 
 ;;-------------- This is for bootstrapping test for significance test ----------
 
-nBoot = 400
+;nBoot = 400
+nBoot = 5
+
 ;nBoot = 1000
 nDim = 0
 opt = False
@@ -206,13 +210,16 @@ end do ; do ivar
 ;printVarSummary(V_diff_TOPO_CTR)
 ;printVarSummary(V_diff_TOPO_CTR_sig)
 printVarSummary(OMEGA_diff_TOPO_CTR)
+printVarSummary(OMEGA_diff_TOPO_CTR_sig)
 ;printVarSummary(OMEGA_diff_TOPO_CTR_sig)
 printVarSummary(T_diff_TOPO_CTR)
+printVarSummary(T_diff_TOPO_CTR_sig)
 ;printVarSummary(Q_diff_TOPO_CTR)
 ;printVarSummary(Tadv_diff_TOPO_CTR)
 
 ;------------------- selection of critical lat and lon
-lat_t = 0.0
+;lat_t = 0.0
+lat_t = -15.0
 
 lon_1 = 260.0
 lon_2 = 320.0
@@ -243,7 +250,7 @@ do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
 wks = gsn_open_wks("png","../Figures/4Bootstrap_EQ_OMEGA_T_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("png","../Figures/4Bootstrap_Sig_EQ_OMEGA_T__TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("x11","../Figures/4Bootstrap_Sig_EQ_OMEGA_T__TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
@@ -269,8 +276,8 @@ res@cnMinLevelValF = -0.1
 res@cnMaxLevelValF = 0.1
 res@cnLevelSpacingF = 0.02
 
-;plot(2) = gsn_csm_pres_hgt(wks,OMEGA_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-;plot_sig(2) = gsn_csm_pres_hgt(wks_sig,OMEGA_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;;plot(2) = gsn_csm_pres_hgt(wks,OMEGA_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;;plot_sig(2) = gsn_csm_pres_hgt(wks_sig,OMEGA_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot(0) = gsn_csm_pres_hgt(wks,OMEGA_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(0) = gsn_csm_pres_hgt(wks_sig,OMEGA_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
@@ -303,6 +310,7 @@ res@cnLevelSpacingF = 0.2
 ;plot_sig(3) = gsn_csm_pres_hgt(wks_sig,T_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot(1) = gsn_csm_pres_hgt(wks,T_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(1) = gsn_csm_pres_hgt(wks_sig,T_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;plot_sig(1) = gsn_csm_contour_map(wks_sig,T_diff_TOPO_CTR_sig(i_hr,{lev_2},{(lat_t-20.0):(lat_t+20.0)},{lon_1:lon_2}),res)
 
 plot_topo3  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
 plot_topo3_sig = gsn_csm_xy(wks_sig,gp&lon,gp,mres)
