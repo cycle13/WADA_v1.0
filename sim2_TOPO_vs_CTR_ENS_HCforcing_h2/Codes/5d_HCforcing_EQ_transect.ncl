@@ -78,7 +78,8 @@ lat_t = 0.0
 lon_1 = 260.0
 lon_2 = 320.0
 
-lev_1 = 300.0
+;lev_1 = 300.0
+lev_1 = 100.0
 lev_2 = 1000.0
 
 ;----------- Add topography ------
@@ -102,7 +103,7 @@ DS_mean_TOPO = -DS_mean_TOPO ; show CTR - TOPO, rather than TOPO
 do i_hr = 0,total_hrs-1
  
 ;wks = gsn_open_wks("png","../Figures/5_EQ_transect_HCforcing_TOPO_ihr_"+tostring(index*3+i_hr+1))
-wks = gsn_open_wks("png","../Figures/5_EQ_transect_HCforcing_CTRheat_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/5_EQ_transect_to100hPa_HCforcing_CTRheat_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
