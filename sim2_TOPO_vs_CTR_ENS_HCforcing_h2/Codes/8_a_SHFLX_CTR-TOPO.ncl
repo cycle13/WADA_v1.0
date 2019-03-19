@@ -37,6 +37,13 @@ Amazon_lat_test1 = (/-10.0,2.0/)
 xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
 ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/)
 ;---------------
+
+;------- Add another box which delineate where to average the dMSE/dt calculation -----
+Amazon_lon_test2 = (/360.0-80.0,360.0-75.0/)
+Amazon_lat_test2 = (/-10.0,2.0/)
+xpts_Amazon_test2 = (/Amazon_lon_test2(0),Amazon_lon_test2(1),Amazon_lon_test2(1),Amazon_lon_test2(0),Amazon_lon_test2(0)/)
+ypts_Amazon_test2 = (/Amazon_lat_test2(0),Amazon_lat_test2(0),Amazon_lat_test2(1),Amazon_lat_test2(1),Amazon_lat_test2(0)/)
+
 ;-----------add some variables to hold areal averaged SHFLX_CTR, SHFLX_TOPO, SHFLX_CTR_TOPO
 SHFLX_CTR = new(num_time,double)
 SHFLX_TOPO = new(num_time,double)
@@ -111,9 +118,9 @@ do i_hr = 0,total_hr-1
 ;do i_day = 0,1
 ;---------
  
-wks = gsn_open_wks("png","../Figures/8_a_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/8_a_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks = gsn_open_wks("png","Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
-wks_sig = gsn_open_wks("png","../Figures/8_a_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("x11","../Figures/8_a_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks_sig = gsn_open_wks("png","Sig_Global_"+var+"_TOPO_vs_CTR_iday_"+tostring(i_day+1))
 
 res = True
@@ -147,6 +154,9 @@ plot_sig = gsn_csm_contour_map_ce(wks_sig,diff_TOPO_CTR_sig(i_hr,:,:),res)
 ;----------- add polygon -------
 dum_Amazon = new(4,graphic)
 dum_Amazon_sig = new(4,graphic)
+
+dum_Amazon2 = new(4,graphic)
+dum_Amazon2_sig = new(4,graphic)
 ;----------- Add polygons ---------
 
 ; add the box
@@ -157,6 +167,11 @@ respoly@gsLineThicknessF = 4.0                       ; thickness of lines
 do i = 0 , 3
   dum_Amazon(i)=gsn_add_polyline(wks,plot,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)
   dum_Amazon_sig(i)=gsn_add_polyline(wks_sig,plot_sig,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)
+end do
+
+do i = 0 , 3
+  dum_Amazon2(i)=gsn_add_polyline(wks,plot,xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)
+  dum_Amazon2_sig(i)=gsn_add_polyline(wks_sig,plot_sig,xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)
 end do
 
 ;------------------
