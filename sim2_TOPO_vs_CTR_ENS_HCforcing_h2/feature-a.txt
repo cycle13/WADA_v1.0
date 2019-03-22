@@ -1,2 +1,0 @@
-Feature-a to be added
-I'm adding another sentence using local GP

@@ -113,9 +113,9 @@ res@cnLineLabelsOn = False
 res@cnFillOn = True
 
 res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -20.0
-res@cnMaxLevelValF =  20.0
-res@cnLevelSpacingF = 2.0
+res@cnMinLevelValF = -15.0
+res@cnMaxLevelValF =  15.0
+res@cnLevelSpacingF = 0.5
 
 ;res@tiMainFontHeightF = 0.015
 
