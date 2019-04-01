@@ -8,13 +8,13 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
-
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD/"
 ;=========== TOPOTEST ========
 
-in_dir = "/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_"
+in_dir = prefix+"/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_"
 ;in_dir = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_TOPO_"
 ;out_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
-out_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+out_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_PTTEND/TOPO_TEST/"
 
 year1989_str = (/"1989-12-01","1989-12-11","1989-12-21","1989-12-31","1990-01-10","1990-01-20","1990-01-30","1990-02-09","1990-02-19"/)
 year1990_str = (/"1990-12-01","1990-12-11","1990-12-21","1990-12-31","1991-01-10","1991-01-20","1991-01-30","1991-02-09","1991-02-19"/)
@@ -40,9 +40,8 @@ year2006_str = (/"2006-12-01","2006-12-11","2006-12-21","2006-12-31","2007-01-10
 year2007_str = (/"2007-12-01","2007-12-11","2007-12-21","2007-12-31","2008-01-10","2008-01-20","2008-01-30","2008-02-09","2008-02-19"/) 
 year2008_str = (/"2008-12-01","2008-12-11","2008-12-21","2008-12-31","2009-01-10","2009-01-20","2009-01-30","2009-02-09","2009-02-19"/) 
 
-
 ;------- be aware that a space in the last ---------
-var_str = "PRECT,HCforcing,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
+var_str = "PTTEND,Z3,hyam,hybm,PS "
 
 str_new = "_HCforcing"
 
@@ -79,33 +78,33 @@ str_new = "_HCforcing"
 ; for CTR runs, there is no HCforcing
 ; TOPO only four days, therefore, no need to join all the files.
 
-var_str = "PRECT,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
+var_str = "PTTEND,Z3,hyam,hybm,PS "
 
-CTR_in_dir1989 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1989_production_sim2/atm/hist/"
-CTR_in_dir1990 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1990_production_sim2/atm/hist/"
-CTR_in_dir1991 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1991_production_sim2/atm/hist/"
-CTR_in_dir1992 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1992_production_sim2/atm/hist/"
-CTR_in_dir1993 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1993_production_sim2/atm/hist/"
-CTR_in_dir1994 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1994_production_sim2/atm/hist/"
-CTR_in_dir1995 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1995_production_sim2/atm/hist/"
+CTR_in_dir1989 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1989_production_sim2/atm/hist/"
+CTR_in_dir1990 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1990_production_sim2/atm/hist/"
+CTR_in_dir1991 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1991_production_sim2/atm/hist/"
+CTR_in_dir1992 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1992_production_sim2/atm/hist/"
+CTR_in_dir1993 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1993_production_sim2/atm/hist/"
+CTR_in_dir1994 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1994_production_sim2/atm/hist/"
+CTR_in_dir1995 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1995_production_sim2/atm/hist/"
 
-CTR_in_dir1996 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1996_production_sim2/atm/hist/"
-CTR_in_dir1997 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1997_production_sim2/atm/hist/"
-CTR_in_dir1998 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1998_production_sim2/atm/hist/"
-CTR_in_dir1999 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1999_production_sim2/atm/hist/"
-CTR_in_dir2000 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2000_production_sim2/atm/hist/"
+CTR_in_dir1996 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1996_production_sim2/atm/hist/"
+CTR_in_dir1997 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1997_production_sim2/atm/hist/"
+CTR_in_dir1998 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1998_production_sim2/atm/hist/"
+CTR_in_dir1999 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_1999_production_sim2/atm/hist/"
+CTR_in_dir2000 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2000_production_sim2/atm/hist/"
 
-CTR_in_dir2001 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2001_production_sim2/atm/hist/"
-CTR_in_dir2002 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2002_production_sim2/atm/hist/"
-CTR_in_dir2003 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2003_production_sim2/atm/hist/"
-CTR_in_dir2004 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2004_production_sim2/atm/hist/"
-CTR_in_dir2005 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2005_production_sim2/atm/hist/"
+CTR_in_dir2001 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2001_production_sim2/atm/hist/"
+CTR_in_dir2002 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2002_production_sim2/atm/hist/"
+CTR_in_dir2003 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2003_production_sim2/atm/hist/"
+CTR_in_dir2004 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2004_production_sim2/atm/hist/"
+CTR_in_dir2005 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2005_production_sim2/atm/hist/"
 
-CTR_in_dir2006 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2006_production_sim2/atm/hist/"
-CTR_in_dir2007 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2007_production_sim2/atm/hist/"
-CTR_in_dir2008 = "/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2008_production_sim2/atm/hist/"
+CTR_in_dir2006 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2006_production_sim2/atm/hist/"
+CTR_in_dir2007 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2007_production_sim2/atm/hist/"
+CTR_in_dir2008 = prefix+"/lustre/DATA/pritchard/hongcheq/NERSC_Cori/SCRATCH/F_AMIP_CAM5_WADA_CTR_2008_production_sim2/atm/hist/"
 
-CTR_out_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_out_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_PTTEND/CTR/"
 
 CTR_in_dir_years = (/CTR_in_dir1989, CTR_in_dir1990, CTR_in_dir1991, CTR_in_dir1992, CTR_in_dir1993, CTR_in_dir1994, CTR_in_dir1995, CTR_in_dir1996, CTR_in_dir1997, CTR_in_dir1998, CTR_in_dir1999, CTR_in_dir2000, CTR_in_dir2001, CTR_in_dir2002, CTR_in_dir2003, CTR_in_dir2004, CTR_in_dir2005, CTR_in_dir2006, CTR_in_dir2007, CTR_in_dir2008/)
 ;print(CTR_in_dir_years)
@@ -115,9 +114,8 @@ year_x_str = (/year1989_str, year1990_str, year1991_str, year1992_str, year1993_
 
 yearx = (/"1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009"/)
 
-;;do i_year = 10,19
-;do i_year = 0,19
-;;;do i_year = 0,0
+;;;do i_year = 10,19
+
 ;;;
 ;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-0[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc")
 ;;;---- move by one hr so that the TOPO files and CTR files have the same time_bnds ----
@@ -161,14 +159,14 @@ yearx = (/"1989","1990","1991","1992","1993","1994","1995","1996","1997","1998",
 ;
 ;
 ;end do ; do i_year
-;;;
+;
+;;
 ;;
 ;
 ;;;========== Calculate the mean and std of ensemble in TOPOTEST ======
 
-;-----combine different members into a single file
+;;-----combine different members into a single file
 ;system("ncecat -u realization "+out_dir+"*.nc -o "+out_dir+"ENS.TOPOTEST.nc")
-
 ;------- to cut the ENS.TOPOTEST.nc into smaller chunks to avoid the memory problem ----
 ;-------- to avoid the memory issue -------------
 num_time = 96
@@ -187,21 +185,22 @@ chunk = 32
 ;  numFinished = numFinished + 1
 ;end do
 
-;;-----calculate the ensemble mean along the realization dimension
-;;do i_chunk = 0,chunk-1
+;-----calculate the ensemble mean along the realization dimension
 ;do i_chunk = 0,chunk-1
-;num1 = i_chunk * num_time/chunk
-;num2 = num1 + num_time/chunk - 1
-;;note only ncl 6.5.0 or newer verion has this function
-;;pid = subprocess("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-;system("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+do i_chunk = 0,chunk-1
+num1 = i_chunk * num_time/chunk
+num2 = num1 + num_time/chunk - 1
+;note only ncl 6.5.0 or newer verion has this function
+;pid = subprocess("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+system("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+end do
+
+;numFinished = 0
+;do while(numFinished.lt.chunk) 
+;  pid = subprocess_wait(-1, True)
+;  numFinished = numFinished + 1
 ;end do
-;
-;;numFinished = 0
-;;do while(numFinished.lt.chunk) 
-;;  pid = subprocess_wait(-1, True)
-;;  numFinished = numFinished + 1
-;;end do
+exit
 
 ;;---- Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
