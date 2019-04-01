@@ -37,6 +37,7 @@ end do
 ;str_time = (/"0-5","6-11","12-17","18-23","24-29","30-35","36-41","42-47"/)
 
 do index = 0,31
+;do index = 10,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 ;TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
@@ -205,7 +206,8 @@ lat_t = 0.0
 lon_1 = 260.0
 lon_2 = 320.0
 
-lev_1 = 300.0
+;lev_1 = 300.0
+lev_1 = 100.0
 lev_2 = 1000.0
 ;----------- Add topography ------
 f_TOPO = addfile(prefix+"/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
@@ -228,8 +230,8 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("png","../Figures/4_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("png","../Figures/4_Sig_EQ_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/4_EQ_to100hPa_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("png","../Figures/4_Sig_EQ_to100hPa_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
@@ -282,13 +284,24 @@ overlay(plot_sig(2),plot_topo2_sig)
 res@cnMinLevelValF = -1.0
 res@cnMaxLevelValF = 1.0
 res@cnLevelSpacingF = 0.2
-plot(3) = gsn_csm_pres_hgt(wks,T_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-plot_sig(3) = gsn_csm_pres_hgt(wks_sig,T_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+
+res@vcRefMagnitudeF = 3.0 ; define vector ref mag 
+res@vcRefLengthF    = 0.045 ; length of vec ref
+res@vcMinDistanceF  = 0.03 ; thin out vectors 
+res@gsnCenterString = "Vector: (U, -100 x Omega)"
+
+plot(3) = gsn_csm_pres_hgt_vector(wks,T_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}), U_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}), -100.0*OMEGA_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}) , res)
+plot_sig(3) = gsn_csm_pres_hgt_vector(wks_sig,T_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}), U_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}), -100.0*OMEGA_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}), res)
 
 plot_topo3  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
 plot_topo3_sig = gsn_csm_xy(wks_sig,gp&lon,gp,mres)
 overlay(plot(3),plot_topo3)
 overlay(plot_sig(3),plot_topo3_sig)
+
+delete(res@vcRefMagnitudeF)
+delete(res@vcRefLengthF)
+delete(res@vcMinDistanceF)
+delete(res@gsnCenterString)
 ;----------
 
 res@cnMinLevelValF = -0.0006
