@@ -32,7 +32,7 @@ end do  ; do i_chunk
 
 ;do i_num  = 0, 0
 ;do i_num  = 0, 3
-do i_num  = 0, 31
+do i_num  = 4, 31
 ;do i_num  = 21, 31
 
 ;======== to avoid memory problem ====
