@@ -30,29 +30,24 @@ num1(i_chunk) = num1_temp
 num2(i_chunk) = num2_temp
 end do  ; do i_chunk
 
-
-
-
 ;do i_num  = 0, 0
-do i_num  = 0, 3
-;do i_num  = 0, 31
+;do i_num  = 0, 3
+do i_num  = 0, 31
 ;do i_num  = 21, 31
 
 ;======== to avoid memory problem ====
 
 T_TOPO = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
-Q_TOPO = new((/members,3,30,96,144/),double) 
 Z3_TOPO = new((/members,3,30,96,144/),double) 
 PS_TOPO = new((/members,3,96,144/),double)
 
 T_CTR = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
-Q_CTR = new((/members,3,30,96,144/),double) 
 Z3_CTR = new((/members,3,30,96,144/),double) 
 PS_CTR = new((/members,3,96,144/),double)
 
-
 do i_file = 0, members - 1
 ;do i_file = 0, 5
+print(i_file)
 f_TOPO = addfile(f_TOPO_str(i_file),"r")
 f_CTR = addfile(f_CTR_str(i_file),"r")
 
@@ -60,16 +55,14 @@ hyam = f_TOPO->hyam
 hybm = f_TOPO->hybm
 
 T_TOPO(i_file,:,:,:,:) = f_TOPO->T(num1(i_num):num2(i_num),:,:,:)
-Q_TOPO(i_file,:,:,:,:) = f_TOPO->Q(num1(i_num):num2(i_num),:,:,:)
 Z3_TOPO(i_file,:,:,:,:) = f_TOPO->Z3(num1(i_num):num2(i_num),:,:,:)
 PS_TOPO(i_file,:,:,:) = f_TOPO->PS(num1(i_num):num2(i_num),:,:)
 
 T_CTR(i_file,:,:,:,:) = f_CTR->T(num1(i_num):num2(i_num),:,:,:)
-Q_CTR(i_file,:,:,:,:) = f_CTR->Q(num1(i_num):num2(i_num),:,:,:)
 Z3_CTR(i_file,:,:,:,:) = f_CTR->Z3(num1(i_num):num2(i_num),:,:,:)
 PS_CTR(i_file,:,:,:) = f_CTR->PS(num1(i_num):num2(i_num),:,:)
 
-end do  ; do i_fiel
+end do  ; do i_file
 ;printVarSummary(T_TOPO)
 ;printVarSummary(Q_TOPO)
 ;printVarSummary(Z3_TOPO)
@@ -79,66 +72,79 @@ end do  ; do i_fiel
 P0 = 100000.0
 pm_TOPO = pres_hybrid_ccm(PS_TOPO,P0,hyam,hybm)
 pm_CTR = pres_hybrid_ccm(PS_CTR,P0,hyam,hybm)
-print(pm_TOPO)
-print(pm_CTR)
+pm_TOPO@units = "Pa"
+pm_CTR@units = "Pa"
+printVarSummary(pm_TOPO)
+printVarSummary(pm_CTR)
 
-exit
+;--calculate potential temperature---
+PT_TOPO = pot_temp(pm_TOPO,T_TOPO,2,False)
+PT_CTR = pot_temp(pm_CTR,T_CTR,2,False)
+printVarSummary(PT_TOPO)
+printVarSummary(PT_CTR)
 
+;--- calculate Brunt-Vaisala frequency --
+;BV_TOPO = brunt_vaisala_atm(PT_TOPO,Z3_TOPO,0,2)
+BV_TOPO = brunt_vaisala_atm(PT_TOPO,Z3_TOPO,1,2)
+
+BV_TOPO_fre = BV_TOPO[0]
+BV_TOPO_fre = where(BV_TOPO_fre .lt. 0 , 0, BV_TOPO_fre)
+BV_TOPO_dtheta_dz = BV_TOPO[1]
+copy_VarCoords(BV_TOPO_fre, BV_TOPO_dtheta_dz)
+
+;BV_CTR = brunt_vaisala_atm(PT_CTR,Z3_CTR,0,2)
+BV_CTR = brunt_vaisala_atm(PT_CTR,Z3_CTR,1,2)
+
+BV_CTR_fre = BV_CTR[0]
+BV_CTR_fre = where(BV_CTR_fre .lt. 0 , 0, BV_CTR_fre)
+BV_CTR_dtheta_dz = BV_CTR[1]
+copy_VarCoords(BV_CTR_fre, BV_CTR_dtheta_dz)
+
+printVarSummary(BV_TOPO_fre)
+printVarSummary(BV_TOPO_dtheta_dz)
+printVarSummary(BV_CTR_fre)
+printVarSummary(BV_CTR_dtheta_dz)
 
 ;------------------------
 
-MSE_TOPO = T_TOPO ; metadata
-MSE_TOPO@long_name = "Moist Static Energy calculated by static_energy_atm"
-MSE_TOPO@units = "J/kg"
-PHIS = PHIS/9.8
-PHIS@units = "m"       ; surface geopotential
-phis = conform(Z3_TOPO,PHIS,(/3,4/))
-
-Z_TOPO = Z3_TOPO - phis  ; in meter, above surface
-copy_VarCoords(Z3_TOPO,Z_TOPO)
-SE_TOPO = static_energy_atm(T_TOPO,Q_TOPO,Z_TOPO,(/1,0/))
-MSE_TOPO = SE_TOPO[0]
-delete(SE_TOPO)
-printVarSummary(MSE_TOPO)
-
-MSE_CTR = T_CTR ; metadata
-MSE_CTR@long_name = "Moist Static Energy calculated by static_energy_atm"
-MSE_CTR@units = "J/kg"
-
-Z_CTR = Z3_CTR - phis  ; in meter, above surface
-copy_VarCoords(Z3_CTR,Z_CTR)
-SE_CTR = static_energy_atm(T_CTR,Q_CTR,Z_CTR,(/1,0/))
-MSE_CTR = SE_CTR[0]
-delete(SE_CTR)
-printVarSummary(MSE_CTR)
-
-MSE_TOPO_mean = dim_avg_n_Wrap(MSE_TOPO,0)
-MSE_TOPO_std = dim_stddev_n_Wrap(MSE_TOPO,0)
+BV_TOPO_fre_mean = dim_avg_n_Wrap(BV_TOPO_fre,0)
+BV_TOPO_fre_std = dim_stddev_n_Wrap(BV_TOPO_fre,0)
+BV_TOPO_dtheta_dz_mean = dim_avg_n_Wrap(BV_TOPO_dtheta_dz,0)
+BV_TOPO_dtheta_dz_std = dim_stddev_n_Wrap(BV_TOPO_dtheta_dz,0)
 
 PS_TOPO_mean = dim_avg_n_Wrap(PS_TOPO,0)
 PS_TOPO_std = dim_stddev_n_Wrap(PS_TOPO,0)
 
-MSE_CTR_mean = dim_avg_n_Wrap(MSE_CTR,0)
-MSE_CTR_std = dim_stddev_n_Wrap(MSE_CTR,0)
+BV_CTR_fre_mean = dim_avg_n_Wrap(BV_CTR_fre,0)
+BV_CTR_fre_std = dim_stddev_n_Wrap(BV_CTR_fre,0)
+BV_CTR_dtheta_dz_mean = dim_avg_n_Wrap(BV_CTR_dtheta_dz,0)
+BV_CTR_dtheta_dz_std = dim_stddev_n_Wrap(BV_CTR_dtheta_dz,0)
 
 PS_CTR_mean = dim_avg_n_Wrap(PS_CTR,0)
 PS_CTR_std = dim_stddev_n_Wrap(PS_CTR,0)
 
-printVarSummary(MSE_TOPO_mean)
-printVarSummary(MSE_TOPO_std)
-printVarSummary(MSE_CTR_mean)
-printVarSummary(MSE_CTR_std)
+printVarSummary(BV_TOPO_fre_mean)
+printVarSummary(BV_TOPO_fre_std)
+printVarSummary(BV_TOPO_dtheta_dz_mean)
+printVarSummary(BV_TOPO_dtheta_dz_std)
+
+printVarSummary(BV_CTR_fre_mean)
+printVarSummary(BV_CTR_fre_std)
+printVarSummary(BV_CTR_dtheta_dz_mean)
+printVarSummary(BV_CTR_dtheta_dz_std)
 
 ;====================== output to nc files ======
 ;dir_TOPO_out = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
-dir_TOPO_out = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
-dir_CTR_out = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+dir_TOPO_out = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_BruntVaisala/TOPO_TEST/"
+dir_CTR_out = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_BruntVaisala/CTR/"
 
-system("rm "+dir_TOPO_out+"ENS.std.mean.TOPOTEST.MSE.time"+num1(i_num)+"-"+num2(i_num)+".nc")
-ncdf_TOPO = addfile(dir_TOPO_out+"ENS.std.mean.TOPOTEST.MSE.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
+system("rm "+dir_TOPO_out+"ENS.std.mean.TOPOTEST.BruntVaisala.time"+num1(i_num)+"-"+num2(i_num)+".nc")
+ncdf_TOPO = addfile(dir_TOPO_out+"ENS.std.mean.TOPOTEST.BruntVaisala.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
 filedimdef(ncdf_TOPO,"time",-1,True)
-ncdf_TOPO->MSE_TOPO_mean = MSE_TOPO_mean
-ncdf_TOPO->MSE_TOPO_std = MSE_TOPO_std
+ncdf_TOPO->BV_TOPO_fre_mean = BV_TOPO_fre_mean
+ncdf_TOPO->BV_TOPO_fre_std = BV_TOPO_fre_std
+ncdf_TOPO->BV_TOPO_dtheta_dz_mean = BV_TOPO_dtheta_dz_mean
+ncdf_TOPO->BV_TOPO_dtheta_dz_std = BV_TOPO_dtheta_dz_std
 
 ncdf_TOPO->PS_TOPO_mean = PS_TOPO_mean
 ncdf_TOPO->PS_TOPO_std = PS_TOPO_std
@@ -146,12 +152,13 @@ ncdf_TOPO->PS_TOPO_std = PS_TOPO_std
 ncdf_TOPO->hyam = f_TOPO->hyam
 ncdf_TOPO->hybm = f_TOPO->hybm
 
-
-system("rm "+dir_CTR_out+"ENS.std.mean.CTR.MSE.time"+num1(i_num)+"-"+num2(i_num)+".nc")
-ncdf_CTR = addfile(dir_CTR_out+"ENS.std.mean.CTR.MSE.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
+system("rm "+dir_CTR_out+"ENS.std.mean.CTR.BruntVaisala.time"+num1(i_num)+"-"+num2(i_num)+".nc")
+ncdf_CTR = addfile(dir_CTR_out+"ENS.std.mean.CTR.BruntVaisala.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
 filedimdef(ncdf_CTR,"time",-1,True)
-ncdf_CTR->MSE_CTR_mean = MSE_CTR_mean
-ncdf_CTR->MSE_CTR_std = MSE_CTR_std
+ncdf_CTR->BV_CTR_fre_mean = BV_CTR_fre_mean
+ncdf_CTR->BV_CTR_fre_std = BV_CTR_fre_std
+ncdf_CTR->BV_CTR_dtheta_dz_mean = BV_CTR_dtheta_dz_mean
+ncdf_CTR->BV_CTR_dtheta_dz_std = BV_CTR_dtheta_dz_std
 
 ncdf_CTR->PS_CTR_mean = PS_CTR_mean
 ncdf_CTR->PS_CTR_std = PS_CTR_std
