@@ -185,22 +185,21 @@ chunk = 32
 ;  numFinished = numFinished + 1
 ;end do
 
-;-----calculate the ensemble mean along the realization dimension
+;;-----calculate the ensemble mean along the realization dimension
+;;do i_chunk = 0,chunk-1
 ;do i_chunk = 0,chunk-1
-do i_chunk = 0,chunk-1
-num1 = i_chunk * num_time/chunk
-num2 = num1 + num_time/chunk - 1
-;note only ncl 6.5.0 or newer verion has this function
-;pid = subprocess("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-system("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-end do
-
-;numFinished = 0
-;do while(numFinished.lt.chunk) 
-;  pid = subprocess_wait(-1, True)
-;  numFinished = numFinished + 1
+;num1 = i_chunk * num_time/chunk
+;num2 = num1 + num_time/chunk - 1
+;;note only ncl 6.5.0 or newer verion has this function
+;;pid = subprocess("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+;system("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
 ;end do
-exit
+;
+;;numFinished = 0
+;;do while(numFinished.lt.chunk) 
+;;  pid = subprocess_wait(-1, True)
+;;  numFinished = numFinished + 1
+;;end do
 
 ;;---- Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
@@ -229,13 +228,12 @@ exit
 ;  pid = subprocess_wait(-1, True)
 ;  numFinished = numFinished + 1
 ;end do
-
+;
 
 ;================
 ;========== Calculate the mean and std of ensemble in CTR ======
 ;-----combine different members into a single file
 ;system("ncecat -u realization "+CTR_out_dir+"*.nc -o "+CTR_out_dir+"ENS.CTR.nc")
-
 ;------- to cut the ENS.TOPOTEST.nc into smaller chunks to avoid the memory problem ----
 
 ;do i_chunk = 0,chunk-1
@@ -252,8 +250,8 @@ exit
 ;  numFinished = numFinished + 1
 ;end do
 
-;;-----calculate the ensemble mean along the realization dimension
-
+;;;-----calculate the ensemble mean along the realization dimension
+;
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
 ;num2 = num1 + num_time/chunk - 1
@@ -262,14 +260,14 @@ exit
 ;system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
 ;
 ;end do
-
+;
 ;;numFinished = 0
 ;;do while(numFinished.lt.chunk) 
 ;;  pid = subprocess_wait(-1, True)
 ;;  numFinished = numFinished + 1
 ;;end do
 ;;
-;
+
 ;;;-----Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
@@ -287,20 +285,19 @@ exit
 ;
 ;;;------Calculate the standard deviation along realization dimension-
 ;
-;do i_chunk = 0,chunk-1
-;num1 = i_chunk * num_time/chunk
-;num2 = num1 + num_time/chunk - 1
-;;note only ncl 6.5.0 or newer verion has this function
-;pid = subprocess("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.std.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-;end do
-;
-;numFinished = 0
-;do while(numFinished.lt.chunk) 
-;  pid = subprocess_wait(-1, True)
-;  numFinished = numFinished + 1
-;end do
-;
-;;system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time90-95.nc "+CTR_out_dir+"ENS.std.CTR.time90-95.nc")
-;
+do i_chunk = 0,chunk-1
+num1 = i_chunk * num_time/chunk
+num2 = num1 + num_time/chunk - 1
+;note only ncl 6.5.0 or newer verion has this function
+pid = subprocess("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.std.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+end do
+
+numFinished = 0
+do while(numFinished.lt.chunk) 
+  pid = subprocess_wait(-1, True)
+  numFinished = numFinished + 1
+end do
+
+;system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time90-95.nc "+CTR_out_dir+"ENS.std.CTR.time90-95.nc")
 
 end
