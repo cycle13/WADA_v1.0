@@ -38,8 +38,8 @@ end do
 
 ;str_time = (/"0-5","6-11","12-17","18-23","24-29","30-35","36-41","42-47"/)
 
-do index = 0,7
-;do index = 0,31
+;do index = 0,7
+do index = 0,31
 ;do index = 10,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_BruntVaisala/TOPO_TEST/"
@@ -167,8 +167,8 @@ plot_sig = new(1,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("x11","../Figures/4_EQ_to100hPa_BV_dtheta_dz_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("x11","../Figures/4_Sig_EQ_to100hPa_BV_dtheta_dz_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/4_EQ_to100hPa_BV_dtheta_dz_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("png","../Figures/4_Sig_EQ_to100hPa_BV_dtheta_dz_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
