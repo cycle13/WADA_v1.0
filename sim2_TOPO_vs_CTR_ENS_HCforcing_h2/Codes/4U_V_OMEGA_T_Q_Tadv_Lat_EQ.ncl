@@ -230,8 +230,8 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("png","../Figures/4_EQ_to100hPa_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("png","../Figures/4_Sig_EQ_to100hPa_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/4_Refine_EQ_to100hPa_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("png","../Figures/4_Refine_Sig_EQ_to100hPa_U_V_OMEGA_T_Q_Tadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False
@@ -283,7 +283,7 @@ overlay(plot_sig(2),plot_topo2_sig)
 
 res@cnMinLevelValF = -1.0
 res@cnMaxLevelValF = 1.0
-res@cnLevelSpacingF = 0.2
+res@cnLevelSpacingF = 0.05
 
 res@vcRefMagnitudeF = 3.0 ; define vector ref mag 
 res@vcRefLengthF    = 0.045 ; length of vec ref
@@ -306,13 +306,13 @@ delete(res@gsnCenterString)
 
 res@cnMinLevelValF = -0.0006
 res@cnMaxLevelValF = 0.0006
-res@cnLevelSpacingF = 0.0002
+res@cnLevelSpacingF = 0.00002
 plot(4) = gsn_csm_pres_hgt(wks,Q_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(4) = gsn_csm_pres_hgt(wks_sig,Q_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
 res@cnMinLevelValF = -0.4
 res@cnMaxLevelValF = 0.4
-res@cnLevelSpacingF = 0.05
+res@cnLevelSpacingF = 0.02
 
 plot(5) = gsn_csm_pres_hgt(wks,Tadv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(5) = gsn_csm_pres_hgt(wks_sig,Tadv_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
