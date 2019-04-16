@@ -53,7 +53,7 @@ axes[1].invert_yaxis()
 fig.colorbar(cset1,ax=axes[1])
 
 cset2 = axes[2].contourf(X, Y, np.transpose(Vars[2,:,:]), cmap='RdBu',
-                         levels=np.linspace(-0.2,0.2,11))
+                         levels=np.linspace(-0.2,0.2,41))
 axes[2].set_title(title_str[2])
 axes[2].set_ylabel('Level (hPa)')
 axes[2].invert_yaxis()
