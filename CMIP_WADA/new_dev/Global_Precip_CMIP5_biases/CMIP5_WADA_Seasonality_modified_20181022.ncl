@@ -12,6 +12,8 @@
 
 begin
 
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
+
 pr_dir_name = "/lustre/DATA/pritchard/hongcheq/CMIP5/pr/"
 
 WADA_labels = (/"CCSM4",          "CanAM4",      "ACCESS1-3",    "CNRM-CM5",    "NorESM1-M", "IPSL-CM5A-LR",\
@@ -59,7 +61,7 @@ plot = new(5,graphic)
 
 precip_clim_MMM_file = addfile("/lustre/DATA/pritchard/hongcheq/CMIP5/pr/Multi-Model-Mean_regrid_pr_clim_198201-200812.nc","r")
 
-f_SGH30 = addfile("/scratch/hongcheq/SGH30/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
+f_SGH30 = addfile(prefix+"/scratch/hongcheq/SGH30/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
 SGH30 = f_SGH30->SGH30
 
 SGH30m = SGH30
