@@ -5,6 +5,7 @@
 ;Note: modified on 20180725 with 180 members. 1989-2008 DJF
 
 ;WADAselection
+;Note: WADA_paper_figure1_CTR_GPCP 
 
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
@@ -120,7 +121,7 @@ res@cnLevelSpacingF = 0.5
 res@tiMainString = "CTR - GPCP, 1989-2008 DJF clim"
 res@gsnRightString = "mm/day"
 
-wks_clim = gsn_open_wks("png","Clim_Regional_"+var+"_CTR-GPCP")
+wks_clim = gsn_open_wks("pdf","Clim_Regional_"+var+"_CTR-GPCP")
 
 gsn_reverse_colormap(wks_clim)    ; blue color indicate positive precip changes
 

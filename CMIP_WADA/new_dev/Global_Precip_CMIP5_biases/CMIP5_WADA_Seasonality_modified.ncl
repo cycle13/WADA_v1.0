@@ -9,6 +9,7 @@
 ;Date: 20180514
 
 ;Note: WADAselection
+;Note: WADA_paper_figure1_MMM_GPCP
 
 begin
 
@@ -97,9 +98,9 @@ ypts_Amazon_test4 = (/Amazon_lat_test4(0),Amazon_lat_test4(0),Amazon_lat_test4(1
 
 ;----------- plot precipitation multi-model-mean --------
 ;wks = gsn_open_wks("x11","Seasonality_Global_precip")
-wks = gsn_open_wks("x11","Seasonality_SouthAmerica_precip")
+wks = gsn_open_wks("pdf","Seasonality_SouthAmerica_precip")
 
-wks_temp = gsn_open_wks("x11","Precip_MMM_GPCP")
+wks_temp = gsn_open_wks("pdf","Precip_MMM_GPCP")
 
 gsn_reverse_colormap(wks)
 gsn_reverse_colormap(wks_temp)
@@ -181,8 +182,6 @@ end do
 
 draw(plot)
 frame(wks)
-
-exit
 
 ;=======================
 ;----------GPCP regridded already --------
