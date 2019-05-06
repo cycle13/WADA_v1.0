@@ -126,6 +126,9 @@ printVarSummary(diff_TOPO_CTR_sig)
 var_mean_CTR = var_mean_CTR * 8.64e7
 var_mean_CTR@units = "mm/day"
 
+var_mean_TOPO = var_mean_TOPO * 8.64e7
+var_mean_TOPO@units = "mm/day"
+
 ;================ plot ===========
 ;total 96 hr in the TOPOTEST after branching
 ;total_hr = 96
@@ -144,13 +147,15 @@ WADA_index_sig(index*3+i_hr) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_si
 ;print(WADA_index)
 ;print(WADA_index_sig)
 
-wks = gsn_open_wks("x11","../Figures/2_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_sig = gsn_open_wks("x11","../Figures/2_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_CTR = gsn_open_wks("x11","../Figures/2_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/2_NEW_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_sig = gsn_open_wks("png","../Figures/2_Sig_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_CTR = gsn_open_wks("png","../Figures/2_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_TOPO = gsn_open_wks("png","../Figures/2_NEW_TOPO_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
 gsn_reverse_colormap(wks_sig)    ; blue color indicate positive precip changes
 gsn_reverse_colormap(wks_CTR)    ; blue color indicate positive precip changes
+gsn_reverse_colormap(wks_TOPO)    ; blue color indicate positive precip changes
 
 res = True
 res@gsnDraw = False
@@ -167,8 +172,8 @@ res@cnLevelSelectionMode = "ManualLevels"
 ;res@cnMinLevelValF = -4.0
 ;res@cnMaxLevelValF = 4.0
 ;res@cnLevelSpacingF = 0.5
-res@cnMinLevelValF = -10.0
-res@cnMaxLevelValF = 10.0
+res@cnMinLevelValF = -15.0
+res@cnMaxLevelValF = 15.0
 res@cnLevelSpacingF = 0.5
 
 ;res@cnMinLevelValF = -0.5
@@ -252,7 +257,7 @@ draw(plot_sig)
 frame(wks_sig)
 delete(dum_Amazon_sig)
 
-;================
+;================ CTR =================
 res@gsnFrame = True
 res@gsnDraw = True
 res@cnLevelSelectionMode = "ManualLevels"
@@ -270,6 +275,26 @@ delete(res@cnFillPalette)
 
 delete(res@gsnFrame)
 delete(res@gsnDraw)
+
+;================ TOPO =================
+res@gsnFrame = True
+res@gsnDraw = True
+res@cnLevelSelectionMode = "ManualLevels"
+res@cnMinLevelValF = 0.0
+res@cnMaxLevelValF = 20.0
+res@cnLevelSpacingF = 1.0
+
+res@cnFillPalette = "MPL_Blues"
+
+res@tiMainString = var+", TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1)
+
+plot_TOPO = gsn_csm_contour_map_ce(wks_TOPO,var_mean_TOPO(i_hr,:,:),res)
+
+delete(res@cnFillPalette)
+
+delete(res@gsnFrame)
+delete(res@gsnDraw)
+
 end do
 ;==============================
 
