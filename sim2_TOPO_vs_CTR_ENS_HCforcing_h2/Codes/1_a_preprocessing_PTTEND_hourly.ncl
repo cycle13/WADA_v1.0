@@ -114,54 +114,52 @@ year_x_str = (/year1989_str, year1990_str, year1991_str, year1992_str, year1993_
 
 yearx = (/"1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009"/)
 
-;;;do i_year = 10,19
+do i_year = 0,19
 
-;;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-0[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc")
-;;;---- move by one hr so that the TOPO files and CTR files have the same time_bnds ----
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,0)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc")
 ;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-1[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,1)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,1)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,1)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,1)+".CTR.t.nc")
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-2[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,2)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,2)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,2)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,2)+".CTR.t.nc")
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-31-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-01-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-02-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-03-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-04-00000.nc -o "+CTR_out_dir+year_x_str(i_year,3)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,3)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,3)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,3)+".CTR.t.nc")
-;;
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-1[01234]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,4)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,4)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,4)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,4)+".CTR.t.nc")
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-2[01234]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,5)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,5)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,5)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,5)+".CTR.t.nc")
-;;
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-30-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-31-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-01-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-02-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-03-00000.nc -o "+CTR_out_dir+year_x_str(i_year,6)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,6)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,6)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,6)+".CTR.t.nc")
-;;
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-09-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-10-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-11-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-12-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-13-00000.nc -o "+CTR_out_dir+year_x_str(i_year,7)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,7)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,7)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,7)+".CTR.t.nc")
-;;
-;system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-19-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-20-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-21-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-22-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-23-00000.nc -o "+CTR_out_dir+year_x_str(i_year,8)+".CTR.t.nc")
-;system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,8)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,8)+".CTR.nc")
-;system("rm "+CTR_out_dir+year_x_str(i_year,8)+".CTR.t.nc")
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-0[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc")
+;;---- move by one hr so that the TOPO files and CTR files have the same time_bnds ----
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,0)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,0)+".CTR.t.nc")
+;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-1[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,1)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,1)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,1)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,1)+".CTR.t.nc")
+;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-2[12345]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,2)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,2)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,2)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,2)+".CTR.t.nc")
+;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year)+"-12-31-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-01-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-02-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-03-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-04-00000.nc -o "+CTR_out_dir+year_x_str(i_year,3)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,3)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,3)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,3)+".CTR.t.nc")
 ;
 ;
-;end do ; do i_year
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-1[01234]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,4)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,4)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,4)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,4)+".CTR.t.nc")
 ;
-;;
-;;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-2[01234]-00000.nc -o "+CTR_out_dir+year_x_str(i_year,5)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,5)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,5)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,5)+".CTR.t.nc")
+;
+;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-30-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-01-31-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-01-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-02-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-03-00000.nc -o "+CTR_out_dir+year_x_str(i_year,6)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,6)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,6)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,6)+".CTR.t.nc")
+;
+;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-09-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-10-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-11-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-12-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-13-00000.nc -o "+CTR_out_dir+year_x_str(i_year,7)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,7)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,7)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,7)+".CTR.t.nc")
+;
+system("ncrcat -O -D 2 -v "+var_str+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-19-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-20-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-21-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-22-00000.nc "+CTR_in_dir_years(i_year)+"F_AMIP_CAM5_WADA_CTR_"+yearx(i_year)+"_production_sim2.cam.h2."+yearx(i_year+1)+"-02-23-00000.nc -o "+CTR_out_dir+year_x_str(i_year,8)+".CTR.t.nc")
+system("ncrcat -O -D 2 -d time,1,96 -v "+var_str+CTR_out_dir+year_x_str(i_year,8)+".CTR.t.nc -o "+CTR_out_dir+year_x_str(i_year,8)+".CTR.nc")
+system("rm "+CTR_out_dir+year_x_str(i_year,8)+".CTR.t.nc")
+
+
+end do ; do i_year
+exit
 ;
 ;;;========== Calculate the mean and std of ensemble in TOPOTEST ======
 
