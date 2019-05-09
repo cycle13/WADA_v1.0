@@ -131,8 +131,14 @@ diff_CTR_TOPO_inte = var_mean_CTR_inte - var_mean_TOPO_inte
 printVarSummary(diff_CTR_TOPO_inte)
 
 ;---------------------------
+PTTEND_CTR_inte = var_mean_CTR_inte ; metadata
 PTTEND_CTR_inte = var_mean_CTR_inte * 24 * 60 * 60  ; from K/sec to K/day
+printVarSummary(PTTEND_CTR_inte&lon)
+
+PTTEND_TOPO_inte = var_mean_TOPO_inte ; metadata
 PTTEND_TOPO_inte = var_mean_TOPO_inte * 24 * 60 * 60
+
+PTTEND_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte ; metadata
 PTTEND_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte * 24 * 60 * 60  ; from K/sec to K/day
 
 end do ; do ivar

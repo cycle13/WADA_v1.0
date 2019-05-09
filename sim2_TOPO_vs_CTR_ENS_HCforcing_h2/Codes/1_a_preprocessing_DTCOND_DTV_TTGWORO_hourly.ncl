@@ -1,4 +1,4 @@
-;Function: using NCO to preprocess CTR files, and TOPOTEST files.
+;Functio: using NCO to preprocess CTR files, and TOPOTEST files.
 ;Date: 20180708
 ;Note: modified 20180712 for additional members in 1996 and 2001.
 ;Note: modified 20180725 for additional 90 members. Now total member = 180.
@@ -183,25 +183,24 @@ chunk = 32
 ;end do
 
 ;;-----calculate the ensemble mean along the realization dimension
+;;do i_chunk = 0,chunk-1
 ;do i_chunk = 0,chunk-1
-do i_chunk = 0,chunk-1
-num1 = i_chunk * num_time/chunk
-num2 = num1 + num_time/chunk - 1
-;;note only ncl 6.5.0 or newer verion has this function
-;;note using this parallel causes "malloc() error is "Cannot allocate memory"" Use the regular one instead.
-;pid = subprocess("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-
-system("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-end do
-
-;;numFinished = 0
-;;do while(numFinished.lt.chunk) 
-;;  pid = subprocess_wait(-1, True)
-;;  numFinished = numFinished + 1
-;;end do
-exit
-
-;;---- Calculate Anomaly -
+;num1 = i_chunk * num_time/chunk
+;num2 = num1 + num_time/chunk - 1
+;;;note only ncl 6.5.0 or newer verion has this function
+;;;note using this parallel causes "malloc() error is "Cannot allocate memory"" Use the regular one instead.
+;;pid = subprocess("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+;
+;system("ncwa -O -a realization "+out_dir+"ENS.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.mean.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+;end do
+;
+;;;numFinished = 0
+;;;do while(numFinished.lt.chunk) 
+;;;  pid = subprocess_wait(-1, True)
+;;;  numFinished = numFinished + 1
+;;;end do
+;
+;;;---- Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
 ;num2 = num1 + num_time/chunk - 1
@@ -215,7 +214,7 @@ exit
 ;  numFinished = numFinished + 1
 ;end do
 
-;;------Calculate the standard deviation along realization dimension-
+;;;------Calculate the standard deviation along realization dimension-
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
 ;num2 = num1 + num_time/chunk - 1
@@ -253,20 +252,21 @@ exit
 ;;;-----calculate the ensemble mean along the realization dimension
 ;
 ;do i_chunk = 0,chunk-1
-;num1 = i_chunk * num_time/chunk
-;num2 = num1 + num_time/chunk - 1
-;;note only ncl 6.5.0 or newer verion has this function
-;;pid = subprocess("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-;system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-;
+do i_chunk = 9,chunk-1
+num1 = i_chunk * num_time/chunk
+num2 = num1 + num_time/chunk - 1
+;note only ncl 6.5.0 or newer verion has this function
+;pid = subprocess("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+
+end do
+exit
+;numFinished = 0
+;do while(numFinished.lt.chunk) 
+;  pid = subprocess_wait(-1, True)
+;  numFinished = numFinished + 1
 ;end do
 ;
-;;numFinished = 0
-;;do while(numFinished.lt.chunk) 
-;;  pid = subprocess_wait(-1, True)
-;;  numFinished = numFinished + 1
-;;end do
-;;
 
 ;;;-----Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
@@ -284,7 +284,7 @@ exit
 ;end do
 ;
 ;;;------Calculate the standard deviation along realization dimension-
-;
+
 do i_chunk = 0,chunk-1
 num1 = i_chunk * num_time/chunk
 num2 = num1 + num_time/chunk - 1

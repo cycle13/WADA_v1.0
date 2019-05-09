@@ -131,13 +131,19 @@ diff_CTR_TOPO_inte = var_mean_CTR_inte - var_mean_TOPO_inte
 printVarSummary(diff_CTR_TOPO_inte)
 
 ;---------------------------Proper units depending on the variable X =====
+varX_CTR_inte = var_mean_CTR_inte ;metadata
 varX_CTR_inte = var_mean_CTR_inte * 24 * 3600
+delete(varX_CTR_inte@units)
 varX_CTR_inte@units = "K/day"
 
+varX_TOPO_inte = var_mean_TOPO_inte ;metadata
 varX_TOPO_inte = var_mean_TOPO_inte * 24 * 3600
+delete(varX_TOPO_inte@units)
 varX_TOPO_inte@units = "K/day"
 
+varX_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte ;metadata
 varX_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte * 24 * 3600
+delete(varX_diff_CTR_TOPO_inte@units)
 varX_diff_CTR_TOPO_inte@units = "K/day"
 
 end do ; do ivar
