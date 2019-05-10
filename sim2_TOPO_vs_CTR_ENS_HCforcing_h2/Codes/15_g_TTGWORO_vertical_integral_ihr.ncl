@@ -44,7 +44,7 @@ CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-p
 CTR_mean_str = "ENS.mean.CTR."+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR."+str_time(index)+".nc"
 
-var_str = (/"DTCOND"/)
+var_str = (/"TTGWORO"/)
 
 do i_var = 0, dimsizes(var_str) -1
 
@@ -161,7 +161,7 @@ total_hrs = 3
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("png","../Figures/15_e_Regional_"+var_str+"_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/15_g_Regional_"+var_str+"_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 ;gsn_reverse_colormap(wks)
 
@@ -220,15 +220,15 @@ res@mpMinLonF = 230.0
 res@cnLevelSelectionMode = "ManualLevels"
 res@gsnContourNegLineDashPattern = 1
 
-res@cnMinLevelValF = -7.0
-res@cnMaxLevelValF = 7.0
-res@cnLevelSpacingF = 0.5
+res@cnMinLevelValF = -0.005
+res@cnMaxLevelValF = 0.005
+res@cnLevelSpacingF = 0.001
 
 plot(0) = gsn_csm_contour_map(wks,varX_diff_CTR_TOPO_inte(i_hr,:,:),res)
 
-res@cnMinLevelValF = -5.0
-res@cnMaxLevelValF = 5.0
-res@cnLevelSpacingF = 0.5
+res@cnMinLevelValF = 0.0
+res@cnMaxLevelValF = 0.03
+res@cnLevelSpacingF = 0.003
 
 res@tiMainString = "CTR, ENS(180)"
 

@@ -8,7 +8,7 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
-prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD/"
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 ;=========== TOPOTEST ========
 
 in_dir = prefix+"/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_"
@@ -252,23 +252,22 @@ chunk = 32
 ;;;-----calculate the ensemble mean along the realization dimension
 ;
 ;do i_chunk = 0,chunk-1
-do i_chunk = 9,chunk-1
-num1 = i_chunk * num_time/chunk
-num2 = num1 + num_time/chunk - 1
-;note only ncl 6.5.0 or newer verion has this function
-;pid = subprocess("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-
-end do
-exit
-;numFinished = 0
-;do while(numFinished.lt.chunk) 
-;  pid = subprocess_wait(-1, True)
-;  numFinished = numFinished + 1
-;end do
+;;do i_chunk = 9,chunk-1
+;num1 = i_chunk * num_time/chunk
+;num2 = num1 + num_time/chunk - 1
+;;note only ncl 6.5.0 or newer verion has this function
+;;pid = subprocess("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+;system("ncwa -O -a realization "+CTR_out_dir+"ENS.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.mean.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
 ;
+;end do
+;;numFinished = 0
+;;do while(numFinished.lt.chunk) 
+;;  pid = subprocess_wait(-1, True)
+;;  numFinished = numFinished + 1
+;;end do
+;;
 
-;;;-----Calculate Anomaly -
+;;;;-----Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
 ;num2 = num1 + num_time/chunk - 1
