@@ -286,8 +286,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","6_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
-wks_sig = gsn_open_wks("png","6_Sig_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks = gsn_open_wks("png","../Figures/6_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks_sig = gsn_open_wks("png","../Figures/6_Sig_Hov_Regional_U_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
 
 res = True
 res@gsnDraw = False
