@@ -45,7 +45,7 @@ CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-p
 CTR_mean_str = "ENS.mean.CTR."+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR."+str_time(index)+".nc"
 
-var_str = (/"PTTEND"/)
+var_str = (/"QRS"/)
 
 do i_var = 0, dimsizes(var_str) -1
 
@@ -157,7 +157,7 @@ total_hrs = 3
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("x11","../Figures/15_Regional_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/15_Regional_"+var_str+"_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks = gsn_open_wks("x11","Global_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 plot = new(3,graphic)
 
@@ -203,7 +203,7 @@ res@gsnAddCyclic = True
 
 res@tiMainString = "CTR - TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1)
 res@tiMainFontHeightF = 0.015
-res@gsnLeftString = "1000-50hPa wgt avg PTTEND"
+res@gsnLeftString = "1000-50hPa wgt avg "+var_str
 res@gsnRightString = "K/day"
 
 res@mpMaxLatF = 60.0
@@ -237,7 +237,7 @@ plot(2) = gsn_csm_contour_map(wks,PTTEND_TOPO_inte(i_hr,:,:),res)
 
 ;--------------
 resP = True
-resP@txString = "Vertically integrated PTTEND in CTR, TOPO and CTR-TOPO"
+resP@txString = "Vertically integrated "+var_str+" in CTR, TOPO and CTR-TOPO"
 gsn_panel(wks, plot, (/1,3/), resP)
 
 end do ; do i_hr
