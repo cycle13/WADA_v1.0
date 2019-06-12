@@ -1,4 +1,4 @@
-;Function: U,V,Z3 difference between TOPOTEST ensemble and CTR ensemble, with significance.
+Function: U,V,Z3 difference between TOPOTEST ensemble and CTR ensemble, with significance.
 ;Date: 20180709
 ;Note: modified 20180712
 ;Note: modified 20180718, for ENS(90)

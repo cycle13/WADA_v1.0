@@ -9,6 +9,7 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 chunk = 32
 num_time = 96
 
@@ -53,11 +54,11 @@ do index = 0,31
 ;do index = 0,7
 ;do index = 0,0
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST.time"+str_time(index)+".nc"
 
-CTR_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_dir = prefix + "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
 CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 
@@ -283,8 +284,8 @@ printVarSummary(PRECT_diff_TOPO_CTR_hov_sig)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","6_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
-wks_sig = gsn_open_wks("png","6_Sig_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks = gsn_open_wks("png","../Figures/6_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks_sig = gsn_open_wks("png","../Figures/6_Sig_Hov_Regional_Z3_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
 
 res = True
 res@gsnDraw = False

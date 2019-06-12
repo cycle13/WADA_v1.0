@@ -62,11 +62,11 @@ do index = 0,31
 ;do index = 0,7
 ;do index = 0,0
 
-TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
 TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST.time"+str_time(index)+".nc"
 
-CTR_dir = prefix+"/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
 CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 

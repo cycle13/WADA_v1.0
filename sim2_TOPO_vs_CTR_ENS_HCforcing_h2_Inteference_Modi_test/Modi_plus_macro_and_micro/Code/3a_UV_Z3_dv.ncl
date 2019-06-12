@@ -7,6 +7,7 @@
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
 
 begin
+prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
 
 U_diff_TOPO_CTR = new((/96,13,96,144/),double)
 U_diff_TOPO_CTR_sig = new((/96,13,96,144/),double)
@@ -47,11 +48,11 @@ do itime = 0,31
 ;str_time = time_label(itime)
 ;print(str_time)
 
-TOPO_dir = "/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
+TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
 TOPO_mean_str = "ENS.mean.TOPOTEST."+str_time(itime)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST."+str_time(itime)+".nc"
 
-CTR_dir = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
 CTR_mean_str = "ENS.mean.CTR."+str_time(itime)+".nc"
 CTR_std_str = "ENS.std.CTR."+str_time(itime)+".nc"
 
@@ -82,8 +83,10 @@ var_std_CTR = var_std_CTR_temp(0,:,:,:,:)   ; get rid of the first realization d
 ;printVarSummary(var_std_CTR)
 
 else
-f_TOPO_div = addfile(TOPO_dir+"ENS.std.mean.TOPOTEST.div."+str_time(itime)+".nc","r")
-f_CTR_div = addfile(CTR_dir+"ENS.std.mean.CTR.div."+str_time(itime)+".nc","r")
+div_dir = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/divergence/"
+
+f_TOPO_div = addfile(div_dir+"TOPO_TEST/ENS.std.mean.TOPOTEST.div."+str_time(itime)+".nc","r")
+f_CTR_div = addfile(div_dir+"CTR/ENS.std.mean.CTR.div."+str_time(itime)+".nc","r")
 
 var_mean_TOPO = tofloat(f_TOPO_div->div_TOPO_mean)
 var_std_TOPO = tofloat(f_TOPO_div->div_TOPO_std)
@@ -174,8 +177,8 @@ do i_pr = 0,dimsizes(pr_levels) - 1
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("pdf","../Figures/3_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
-wks_sig = gsn_open_wks("pdf","../Figures/3_Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
+wks = gsn_open_wks("png","../Figures/3_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
+wks_sig = gsn_open_wks("png","../Figures/3_Sig_Regional_U_V_Z3_dv_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
 
 res = True
 res@gsnDraw = False
