@@ -34,6 +34,27 @@ str_time(i_str_time) = "time"+tostring(num1(i_str_time))+"-"+tostring(num2(i_str
 ;time_label(i_str_time) = "time"+str_time(i_str_time)
 end do
 
+;============== ======
+f_SGH30 = addfile("/DFS-L/DATA/pritchard/hongcheq/Topography/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
+SGH30 = f_SGH30->SGH30
+
+SGH30m = SGH30
+SGH30m = SGH30@_FillValue
+SGH30m({-40:10},{270:300}) = SGH30({-40:10},{270:300})
+
+do ilat = 0,95
+   do ilon = 0,143
+      if (.not. ismissing(SGH30m(ilat,ilon)) .and. SGH30m(ilat,ilon) .lt. 200.0) then
+          SGH30m(ilat,ilon) = SGH30m@_FillValue
+      end if
+   end do
+end do
+printVarSummary(SGH30m)
+
+total_times = 96
+Andes_mean_CTR = new(total_times,double)
+Andes_mean_TOPO = new(total_times,double)
+Andes_mean_CTR_TOPO = new(total_times,double)
 
 do index = 0,31
 
@@ -131,15 +152,15 @@ diff_CTR_TOPO_inte = var_mean_CTR_inte - var_mean_TOPO_inte
 printVarSummary(diff_CTR_TOPO_inte)
 
 ;---------------------------
-PTTEND_CTR_inte = var_mean_CTR_inte ; metadata
-PTTEND_CTR_inte = var_mean_CTR_inte * 24 * 60 * 60  ; from K/sec to K/day
-printVarSummary(PTTEND_CTR_inte&lon)
+varX_CTR_inte = var_mean_CTR_inte ; metadata
+varX_CTR_inte = var_mean_CTR_inte * 24 * 60 * 60  ; from K/sec to K/day
+printVarSummary(varX_CTR_inte&lon)
 
-PTTEND_TOPO_inte = var_mean_TOPO_inte ; metadata
-PTTEND_TOPO_inte = var_mean_TOPO_inte * 24 * 60 * 60
+varX_TOPO_inte = var_mean_TOPO_inte ; metadata
+varX_TOPO_inte = var_mean_TOPO_inte * 24 * 60 * 60
 
-PTTEND_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte ; metadata
-PTTEND_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte * 24 * 60 * 60  ; from K/sec to K/day
+varX_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte ; metadata
+varX_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte * 24 * 60 * 60  ; from K/sec to K/day
 
 end do ; do ivar
 
@@ -217,7 +238,7 @@ res@cnMaxLevelValF = 2.0
 res@cnLevelSpacingF = 0.2
 res@gsnContourNegLineDashPattern = 1
 
-plot(0) = gsn_csm_contour_map(wks,PTTEND_diff_CTR_TOPO_inte(i_hr,:,:),res)
+plot(0) = gsn_csm_contour_map(wks,varX_diff_CTR_TOPO_inte(i_hr,:,:),res)
 
 ;res@cnMinLevelValF = -5.0
 ;res@cnMaxLevelValF = 5.0
@@ -229,19 +250,43 @@ res@cnMinLevelValF = -2.0
 res@cnMaxLevelValF = 2.0
 res@cnLevelSpacingF = 0.2
 
-plot(1) = gsn_csm_contour_map(wks,PTTEND_CTR_inte(i_hr,:,:),res)
+plot(1) = gsn_csm_contour_map(wks,varX_CTR_inte(i_hr,:,:),res)
 
 res@tiMainString = "TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1)
 
-plot(2) = gsn_csm_contour_map(wks,PTTEND_TOPO_inte(i_hr,:,:),res)
+plot(2) = gsn_csm_contour_map(wks,varX_TOPO_inte(i_hr,:,:),res)
 
 ;--------------
 resP = True
 resP@txString = "Vertically integrated "+var_str+" in CTR, TOPO and CTR-TOPO"
 gsn_panel(wks, plot, (/1,3/), resP)
 
+Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), varX_CTR_inte(i_hr,:,:), varX_CTR_inte@_FillValue))
+Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), varX_TOPO_inte(i_hr,:,:), varX_CTR_inte@_FillValue))
+Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), varX_diff_CTR_TOPO_inte(i_hr,:,:), varX_diff_CTR_TOPO_inte@_FillValue))
+
 end do ; do i_hr
 
 end do ; do index
+
+Andes_mean_CTR!0 = "time"
+Andes_mean_CTR&time = ispan(1,96,1)
+Andes_mean_CTR@units = "K/day"
+Andes_mean_TOPO!0 = "time"
+Andes_mean_TOPO&time = ispan(1,96,1)
+Andes_mean_TOPO@units = "K/day"
+Andes_mean_CTR_TOPO!0 = "time"
+Andes_mean_CTR_TOPO&time = ispan(1,96,1)
+Andes_mean_CTR_TOPO@units = "K/day"
+
+;=========== output nc files ========
+output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/"
+system("rm -f "+output_path+var_str+".nc")
+ncdf = addfile(output_path+var_str+".nc","c")
+filedimdef(ncdf, "time", -1, True)
+ncdf->Andes_mean_CTR = Andes_mean_CTR
+ncdf->Andes_mean_TOPO = Andes_mean_TOPO
+ncdf->Andes_mean_CTR_TOPO = Andes_mean_CTR_TOPO
+
 
 end

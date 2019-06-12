@@ -34,6 +34,27 @@ str_time(i_str_time) = "time"+tostring(num1(i_str_time))+"-"+tostring(num2(i_str
 ;time_label(i_str_time) = "time"+str_time(i_str_time)
 end do
 
+;============== ======
+f_SGH30 = addfile("/DFS-L/DATA/pritchard/hongcheq/Topography/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
+SGH30 = f_SGH30->SGH30
+
+SGH30m = SGH30
+SGH30m = SGH30@_FillValue
+SGH30m({-40:10},{270:300}) = SGH30({-40:10},{270:300})
+
+do ilat = 0,95
+   do ilon = 0,143
+      if (.not. ismissing(SGH30m(ilat,ilon)) .and. SGH30m(ilat,ilon) .lt. 200.0) then
+          SGH30m(ilat,ilon) = SGH30m@_FillValue
+      end if
+   end do
+end do
+printVarSummary(SGH30m)
+
+total_times = 96
+Andes_mean_CTR = new(total_times,double)
+Andes_mean_TOPO = new(total_times,double)
+Andes_mean_CTR_TOPO = new(total_times,double)
 
 do index = 0,31
 
@@ -157,7 +178,7 @@ total_hrs = 3
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("x11","../Figures/15_Regional_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/15_Regional_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks = gsn_open_wks("x11","Global_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 plot = new(3,graphic)
 
@@ -240,8 +261,33 @@ resP = True
 resP@txString = "Vertically integrated PTTEND in CTR, TOPO and CTR-TOPO"
 gsn_panel(wks, plot, (/1,3/), resP)
 
+Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), PTTEND_CTR_inte(i_hr,:,:), PTTEND_CTR_inte@_FillValue))
+Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), PTTEND_TOPO_inte(i_hr,:,:), PTTEND_CTR_inte@_FillValue))
+Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), PTTEND_diff_CTR_TOPO_inte(i_hr,:,:), PTTEND_diff_CTR_TOPO_inte@_FillValue))
+
+
 end do ; do i_hr
 
 end do ; do index
+
+Andes_mean_CTR!0 = "time"
+Andes_mean_CTR&time = ispan(1,96,1)
+Andes_mean_CTR@units = "K/day"
+Andes_mean_TOPO!0 = "time"
+Andes_mean_TOPO&time = ispan(1,96,1)
+Andes_mean_TOPO@units = "K/day"
+Andes_mean_CTR_TOPO!0 = "time"
+Andes_mean_CTR_TOPO&time = ispan(1,96,1)
+Andes_mean_CTR_TOPO@units = "K/day"
+
+;=========== output nc files ========
+output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/"
+system("rm -f "+output_path+var_str+".nc")
+ncdf = addfile(output_path+var_str+".nc","c")
+filedimdef(ncdf, "time", -1, True)
+ncdf->Andes_mean_CTR = Andes_mean_CTR
+ncdf->Andes_mean_TOPO = Andes_mean_TOPO
+ncdf->Andes_mean_CTR_TOPO = Andes_mean_CTR_TOPO
+
 
 end
