@@ -58,6 +58,15 @@ total_times = 96
 WADA_index = new(total_times,double)
 WADA_index_sig = new(total_times,double)
 
+;--------
+Andes_mean_CTR = new(total_times,double)
+Andes_mean_TOPO = new(total_times,double)
+Andes_mean_CTR_TOPO = new(total_times,double)
+
+Amazon_mean_CTR = new(total_times,double)
+Amazon_mean_TOPO = new(total_times,double)
+Amazon_mean_CTR_TOPO = new(total_times,double)
+
 ;=====================================
 
 do index = 0,31
@@ -145,6 +154,15 @@ WADA_index(index*3+i_hr) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR(i_hr,:
 
 WADA_index_sig(index*3+i_hr) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_sig(i_hr,:,:),diff_TOPO_CTR_sig@_FillValue))  \
         - avg(diff_TOPO_CTR_sig(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
+;calculate Amazon mean precip, and Andean mean precip in CTR, TOPO and CTR-TOPO, then output to nc files
+Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), var_mean_CTR(i_hr,:,:), var_mean_CTR@_FillValue))
+Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), var_mean_TOPO(i_hr,:,:), var_mean_TOPO@_FillValue))
+Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), diff_TOPO_CTR(i_hr,:,:), diff_TOPO_CTR@_FillValue))
+
+Amazon_mean_CTR(index*3+i_hr) = avg( var_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_TOPO(index*3+i_hr) = avg( var_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
 ;print(WADA_index)
 ;print(WADA_index_sig)
@@ -337,6 +355,39 @@ resWADA@tiYAxisString = "WADAi, mm/day"
 resWADA@tiXAxisString = "No. of hr"
 plotWADA  = gsn_csm_xy (wks_WADA,ispan(1,96,1),data_WADA(1,:),resWADA) ; create plot
 
+;===============output Amazon, Andean precip mean CTR, TOPO, CTR-TOPO----------
+Andes_mean_CTR!0 = "time"
+Andes_mean_CTR&time = ispan(1,96,1)
+Andes_mean_CTR@units = "mm/day"
+Andes_mean_TOPO!0 = "time"
+Andes_mean_TOPO&time = ispan(1,96,1)
+Andes_mean_TOPO@units = "mm/day"
+Andes_mean_CTR_TOPO!0 = "time"
+Andes_mean_CTR_TOPO&time = ispan(1,96,1)
+Andes_mean_CTR_TOPO@units = "mm/day"
+
+Amazon_mean_CTR!0 = "time"
+Amazon_mean_CTR&time = ispan(1,96,1)
+Amazon_mean_CTR@units = "mm/day"
+Amazon_mean_TOPO!0 = "time"
+Amazon_mean_TOPO&time = ispan(1,96,1)
+Amazon_mean_TOPO@units = "mm/day"
+Amazon_mean_CTR_TOPO!0 = "time"
+Amazon_mean_CTR_TOPO&time = ispan(1,96,1)
+Amazon_mean_CTR_TOPO@units = "mm/day"
+
+;=========== output nc files ========
+output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/PTTEND_budget/"
+system("rm -f "+output_path+"PRECT.nc")
+ncdf = addfile(output_path+"PRECT.nc","c")
+filedimdef(ncdf, "time", -1, True)
+ncdf->Andes_mean_CTR = Andes_mean_CTR
+ncdf->Andes_mean_TOPO = Andes_mean_TOPO
+ncdf->Andes_mean_CTR_TOPO = Andes_mean_CTR_TOPO
+
+ncdf->Amazon_mean_CTR = Amazon_mean_CTR
+ncdf->Amazon_mean_TOPO = Amazon_mean_TOPO
+ncdf->Amazon_mean_CTR_TOPO = Amazon_mean_CTR_TOPO
 
 
 end

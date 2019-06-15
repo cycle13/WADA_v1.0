@@ -56,6 +56,12 @@ Andes_mean_CTR = new(total_times,double)
 Andes_mean_TOPO = new(total_times,double)
 Andes_mean_CTR_TOPO = new(total_times,double)
 
+Amazon_lon_test1 = (/288.0,309.0/)
+Amazon_lat_test1 = (/-10.0,4.0/)
+Amazon_mean_CTR = new(total_times,double)
+Amazon_mean_TOPO = new(total_times,double)
+Amazon_mean_CTR_TOPO = new(total_times,double)
+
 do index = 0,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
@@ -265,6 +271,10 @@ Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), varX_CTR_inte(i
 Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), varX_TOPO_inte(i_hr,:,:), varX_CTR_inte@_FillValue))
 Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), varX_diff_CTR_TOPO_inte(i_hr,:,:), varX_diff_CTR_TOPO_inte@_FillValue))
 
+Amazon_mean_CTR(index*3+i_hr) = avg( varX_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_TOPO(index*3+i_hr) = avg( varX_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(varX_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
 end do ; do i_hr
 
 end do ; do index
@@ -279,8 +289,18 @@ Andes_mean_CTR_TOPO!0 = "time"
 Andes_mean_CTR_TOPO&time = ispan(1,96,1)
 Andes_mean_CTR_TOPO@units = "K/day"
 
+Amazon_mean_CTR!0 = "time"
+Amazon_mean_CTR&time = ispan(1,96,1)
+Amazon_mean_CTR@units = "K/day"
+Amazon_mean_TOPO!0 = "time"
+Amazon_mean_TOPO&time = ispan(1,96,1)
+Amazon_mean_TOPO@units = "K/day"
+Amazon_mean_CTR_TOPO!0 = "time"
+Amazon_mean_CTR_TOPO&time = ispan(1,96,1)
+Amazon_mean_CTR_TOPO@units = "K/day"
+
 ;=========== output nc files ========
-output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/"
+output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/PTTEND_budget/"
 system("rm -f "+output_path+var_str+".nc")
 ncdf = addfile(output_path+var_str+".nc","c")
 filedimdef(ncdf, "time", -1, True)
@@ -288,5 +308,8 @@ ncdf->Andes_mean_CTR = Andes_mean_CTR
 ncdf->Andes_mean_TOPO = Andes_mean_TOPO
 ncdf->Andes_mean_CTR_TOPO = Andes_mean_CTR_TOPO
 
+ncdf->Amazon_mean_CTR = Amazon_mean_CTR
+ncdf->Amazon_mean_TOPO = Amazon_mean_TOPO
+ncdf->Amazon_mean_CTR_TOPO = Amazon_mean_CTR_TOPO
 
 end

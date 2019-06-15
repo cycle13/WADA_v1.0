@@ -12,10 +12,10 @@ import xarray as xr
 import matplotlib.pyplot as plt
 
 data_path = '/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/\
-HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/'
+HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/PTTEND_budget/'
 file_names = ['PTTEND','DTCOND','DTV','QRL','QRS','TTGWORO']
 
-data_vars = np.zeros((6,96)) # 6 vars x 96 hours
+data_vars = np.zeros((len(file_names),96)) # 6 vars x 96 hours
 
 cases = ['CTR', 'TOPO', 'CTR_TOPO']
 
@@ -28,11 +28,10 @@ for i_case in range(len(cases)):
 
     # Plot the time series
     #fig = plt.figure()
-    plt.subplot(3,1,i_case+1)
+    ax1 = plt.subplot(3,1,i_case+1)
     x = np.arange(1,97,1)
     for i in range(len(data_vars[:,0])):
         plt.plot(x, data_vars[i,:], label = file_names[i])
-
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
     plt.ylabel('Heating rate, K/day')
@@ -40,8 +39,8 @@ for i_case in range(len(cases)):
     plt.grid(True)
 
 #plt.legend(loc = 'best')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
-#plt.show()
-plt.savefig('../Figures/CTR_TOPO_Andes_mean_PTTEND_decomp.pdf')
+plt.show()
+#plt.savefig('../Figures/CTR_TOPO_Andes_mean_PTTEND_decomp.png')
 

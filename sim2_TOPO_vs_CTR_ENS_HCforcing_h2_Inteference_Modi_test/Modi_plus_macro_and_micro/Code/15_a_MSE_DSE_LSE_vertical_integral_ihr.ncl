@@ -287,7 +287,25 @@ resP = True
 resP@txString = "Verti_inte MSE, DSE, LSE in CTR, TOPO and CTR-TOPO, ihr="+tostring(index*3+i_hr+1)
 gsn_panel(wks, plot, (/3,3/), resP)
 
+
 end do ; do i_hr
+
+;-------- output nc files -------
+dir_TOPO_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE/TOPO_TEST/"
+dir_CTR_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE/CTR/"
+system("rm "+dir_TOPO_out+"MSE_DSE_LE.TOPOTEST.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc")
+ncdf_TOPO = addfile(dir_TOPO_out+"MSE_DSE_LE.TOPOTEST.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","c")
+filedimdef(ncdf_TOPO,"time",-1, True)
+ncdf_TOPO->MSE_inte = MSE_TOPO_inte
+ncdf_TOPO->DSE_inte = DSE_TOPO_inte
+ncdf_TOPO->LSE_inte = LSE_TOPO_inte
+
+system("rm "+dir_CTR_out+"MSE_DSE_LE.CTR.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc")
+ncdf_CTR = addfile(dir_CTR_out+"MSE_DSE_LE.CTR.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","c")
+filedimdef(ncdf_CTR,"time",-1, True)
+ncdf_CTR->MSE_inte = MSE_CTR_inte
+ncdf_CTR->DSE_inte = DSE_CTR_inte
+ncdf_CTR->LSE_inte = LSE_CTR_inte
 
 end do ; do index
 
