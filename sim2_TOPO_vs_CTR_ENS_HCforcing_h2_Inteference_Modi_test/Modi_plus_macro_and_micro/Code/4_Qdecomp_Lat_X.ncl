@@ -176,7 +176,9 @@ printVarSummary(PTEQ_diff_CTR_TOPO2)
 ;printVarSummary(V_diff_TOPO_CTR_sig)
 
 ;------------------- selection of critical lat and lon
-lat_t = 0.0
+;lat_t = 0.0
+;lat_t = -10.0
+lat_t = -20.0
 
 lon_1 = 260.0
 lon_2 = 320.0
