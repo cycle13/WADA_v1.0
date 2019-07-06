@@ -204,8 +204,14 @@ total_hrs = nhrs
 
 pr_levels = 500.0
 
-lat_c1 = -5.0
-lat_c2 = 5.0
+;lat_c1 = -5.0
+;lat_c2 = 5.0
+
+;lat_c1 = -15.0
+;lat_c2 = -5.0
+
+lat_c1 = -25.0
+lat_c2 = -15.0
 
 lon_c1 = 260.0 
 lon_c2 = 320.0
@@ -216,7 +222,7 @@ LSE_inte_diff_TOPO_CTR_hov = dim_avg_n_Wrap(LSE_inte_diff_TOPO_CTR(0:total_hrs-1
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","../Figures/6_Hov_Regional_OMEGA500_LSE_inte_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
+wks = gsn_open_wks("png","../Figures/6_Hov_Regional_OMEGA500_LSE_"+sprintf("%4.1f",lat_c1)+"--"+sprintf("%4.1f",lat_c2)+"inte_TOPO_vs_CTR_"+sprintf("%4.1f",pr_levels)+"hPa")
 
 res = True
 res@gsnDraw = False

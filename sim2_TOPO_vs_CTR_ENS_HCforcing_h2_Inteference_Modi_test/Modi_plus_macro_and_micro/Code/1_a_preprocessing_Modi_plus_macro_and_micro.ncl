@@ -20,7 +20,7 @@ year1989_str = (/"1989-12-01","1989-12-11","1989-12-21","1989-12-31","1990-01-10
 year1990_str = (/"1990-12-01","1990-12-11","1990-12-21","1990-12-31","1991-01-10","1991-01-20","1991-01-30","1991-02-09","1991-02-19"/)
 
 ;------- be aware that a space in the last ---------
-var_str = "PRECT,HCforcing,SHFLX,LHFLX,SWCF,LWCF,QRL,QRS,PTTEND,DTCOND,DTV,TTGWORO,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
+var_str = "PRECT,HCforcing,SHFLX,LHFLX,SWCF,LWCF,QRL,QRS,PTTEND,PTEQ,QAP,TAP,DTCOND,DTV,TTGWORO,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
 
 str_new = "_HCforcing_Modi_plus_macro_and_micro"
 
@@ -30,18 +30,18 @@ str_new = "_HCforcing_Modi_plus_macro_and_micro"
 ;
 ;end do
 
-;CTR has been done in previous _Modi_plus_macro scripts
 ;===========CTR ===============
 ; for CTR runs, there is no HCforcing
 ; TOPO only four days, therefore, no need to join all the files.
 
-var_str = "PRECT,SHFLX,LHFLX,SWCF,LWCF,QRL,QRS,PTTEND,DTCOND,DTV,TTGWORO,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
+var_str = "PRECT,SHFLX,LHFLX,SWCF,LWCF,QRL,QRS,PTTEND,PTEQ,QAP,TAP,DTCOND,DTV,TTGWORO,U,V,OMEGA,T,Q,Z3,hyam,hybm,PS "
 
-CTR_in_dir_str = "/DFS-L/DATA/pritchard/hongcheq/NERSC_Cori_edison/SCRATCH/archive"
+CTR_in_dir_str = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/NERSC_Cori_WADA_simulation_Interference_Modifications/"
+;CTR_in_dir_str = "/DFS-L/DATA/pritchard/hongcheq/NERSC_Cori_edison/SCRATCH/archive"
 CTR_in_dir1989 = CTR_in_dir_str+"/F_AMIP_CAM5_WADA_CTR_1989_production_sim2/atm/hist/"
 CTR_in_dir1990 = CTR_in_dir_str+"/F_AMIP_CAM5_WADA_CTR_1990_production_sim2/atm/hist/"
 
-CTR_out_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
+CTR_out_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/CTR/"
 
 CTR_in_dir_years = (/CTR_in_dir1989, CTR_in_dir1990/)
 
@@ -96,9 +96,9 @@ yearx = (/"1989","1990"/)
 ;
 ;
 ;end do ; do i_year
+;;;;
 ;;;
-;;
-;
+
 ;;;========== Calculate the mean and std of ensemble in TOPOTEST ======
 
 ;-----combine different members into a single file
@@ -121,7 +121,7 @@ chunk = 32
 ;  numFinished = numFinished + 1
 ;end do
 
-;;-----calculate the ensemble mean along the realization dimension
+;;;-----calculate the ensemble mean along the realization dimension
 ;;;do i_chunk = 0,chunk-1
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
@@ -150,21 +150,21 @@ chunk = 32
 ;  pid = subprocess_wait(-1, True)
 ;  numFinished = numFinished + 1
 ;end do
+;exit
 
-;;------Calculate the standard deviation along realization dimension-
-do i_chunk = 0,chunk-1
-num1 = i_chunk * num_time/chunk
-num2 = num1 + num_time/chunk - 1
-;;note only ncl 6.5.0 or newer verion has this function
-pid = subprocess("ncra -O -y rmssdn "+out_dir+"ENS.anom.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.std.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-end do
-
-numFinished = 0
-do while(numFinished.lt.chunk) 
-  pid = subprocess_wait(-1, True)
-  numFinished = numFinished + 1
-end do
-exit
+;;;------Calculate the standard deviation along realization dimension-
+;do i_chunk = 0,chunk-1
+;num1 = i_chunk * num_time/chunk
+;num2 = num1 + num_time/chunk - 1
+;;;note only ncl 6.5.0 or newer verion has this function
+;pid = subprocess("ncra -O -y rmssdn "+out_dir+"ENS.anom.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc "+out_dir+"ENS.std.TOPOTEST.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+;end do
+;
+;numFinished = 0
+;do while(numFinished.lt.chunk) 
+;  pid = subprocess_wait(-1, True)
+;  numFinished = numFinished + 1
+;end do
 
 ;===============
 ;========== Calculate the mean and std of ensemble in CTR ======
@@ -185,7 +185,7 @@ exit
 ;  pid = subprocess_wait(-1, True)
 ;  numFinished = numFinished + 1
 ;end do
-
+;
 ;;-----calculate the ensemble mean along the realization dimension
 
 ;do i_chunk = 0,chunk-1
@@ -197,13 +197,13 @@ exit
 ;
 ;end do
 
-;;numFinished = 0
-;;do while(numFinished.lt.chunk) 
-;;  pid = subprocess_wait(-1, True)
-;;  numFinished = numFinished + 1
-;;end do
-;;
+;numFinished = 0
+;do while(numFinished.lt.chunk) 
+;  pid = subprocess_wait(-1, True)
+;  numFinished = numFinished + 1
+;end do
 ;
+
 ;;;-----Calculate Anomaly -
 ;do i_chunk = 0,chunk-1
 ;num1 = i_chunk * num_time/chunk
@@ -218,22 +218,24 @@ exit
 ;  pid = subprocess_wait(-1, True)
 ;  numFinished = numFinished + 1
 ;end do
-;;;------Calculate the standard deviation along realization dimension-
-;
-;do i_chunk = 0,chunk-1
-;num1 = i_chunk * num_time/chunk
-;num2 = num1 + num_time/chunk - 1
-;;note only ncl 6.5.0 or newer verion has this function
-;pid = subprocess("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.std.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
-;end do
-;
-;numFinished = 0
-;do while(numFinished.lt.chunk) 
-;  pid = subprocess_wait(-1, True)
-;  numFinished = numFinished + 1
-;end do
-;
-;;system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time90-95.nc "+CTR_out_dir+"ENS.std.CTR.time90-95.nc")
+
+;;------Calculate the standard deviation along realization dimension-
+
+do i_chunk = 0,chunk-1
+num1 = i_chunk * num_time/chunk
+num2 = num1 + num_time/chunk - 1
+;note only ncl 6.5.0 or newer verion has this function
+pid = subprocess("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc "+CTR_out_dir+"ENS.std.CTR.time"+tostring(num1)+"-"+tostring(num2)+".nc")
+end do
+
+numFinished = 0
+do while(numFinished.lt.chunk) 
+  pid = subprocess_wait(-1, True)
+  numFinished = numFinished + 1
+end do
+
+
+;system("ncra -O -y rmssdn "+CTR_out_dir+"ENS.anom.CTR.time90-95.nc "+CTR_out_dir+"ENS.std.CTR.time90-95.nc")
 
 
 end
