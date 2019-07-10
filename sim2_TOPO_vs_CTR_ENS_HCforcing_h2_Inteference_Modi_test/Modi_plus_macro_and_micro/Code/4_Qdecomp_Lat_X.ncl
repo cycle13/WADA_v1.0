@@ -204,6 +204,9 @@ total_hrs = 95
 
 do i_hr = 0,total_hrs-1   ; the first hour is not there due to QAP(i) - QAP(i-1)
 
+; if lat_t = 0.0, then use sprintf("%3.1f",lat_t)
+;wks = gsn_open_wks("png","../Figures/4_Qdecomp_Lat_"+sprintf("%3.1f",lat_t)+"_ihr_"+tostring(i_hr+2))
+; if lat_t = -10.0, or -20.0, then use sprintf("%3.1f", lat_t)
 wks = gsn_open_wks("png","../Figures/4_Qdecomp_Lat_"+sprintf("%4.1f",lat_t)+"_ihr_"+tostring(i_hr+2))
 
 res = True
@@ -219,34 +222,34 @@ res@cnMaxLevelValF = 8.0e-4
 res@cnLevelSpacingF = 1.0e-4
 
 ;res@tiMainFontHeightF = 0.015
-res@tiMainString = "partial_Q/partial_t"
+res@tiMainString = "CTR, partial_Q/partial_t"
 res@gsnLeftString = "  " ; avoid having too long names
 plot(0) = gsn_csm_pres_hgt(wks,Qt_mean_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "PTEQ: Q total physics tendency"
+res@tiMainString = "CTR, PTEQ: Q total physics tendency"
 plot(1) = gsn_csm_pres_hgt(wks,PTEQ_mean_CTR2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "Q total advection"
+res@tiMainString = "CTR, Q total advection"
 plot(2) = gsn_csm_pres_hgt(wks,Qadv_mean_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "partial_Q/partial_t"
+res@tiMainString = "TOPO, partial_Q/partial_t"
 plot(3) = gsn_csm_pres_hgt(wks,Qt_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "PTEQ: Q total physics tendency"
+res@tiMainString = "TOPO, PTEQ: Q total physics tendency"
 plot(4) = gsn_csm_pres_hgt(wks,PTEQ_mean_TOPO2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "Q total advection"
+res@tiMainString = "TOPO, Q total advection"
 plot(5) = gsn_csm_pres_hgt(wks,Qadv_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
 ;--------------------------- 
 
-res@tiMainString = "partial_Q/partial_t"
+res@tiMainString = "CTR-TOPO, partial_Q/partial_t"
 plot(6) = gsn_csm_pres_hgt(wks,Qt_diff_CTR_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "PTEQ: Q total physics tendency"
+res@tiMainString = "CTR-TOPO, PTEQ: Q total physics tendency"
 plot(7) = gsn_csm_pres_hgt(wks,PTEQ_diff_CTR_TOPO2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@tiMainString = "Q total advection"
+res@tiMainString = "CTR-TOPO, Q total advection"
 plot(8) = gsn_csm_pres_hgt(wks,Qadv_diff_CTR_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
 ;------add topography ----
