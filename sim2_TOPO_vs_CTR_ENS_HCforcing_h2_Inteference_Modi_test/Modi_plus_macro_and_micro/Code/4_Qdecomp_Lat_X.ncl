@@ -111,10 +111,7 @@ f_TOPO_std = addfile(TOPO_dir+TOPO_std_str,"r")
 
 f_CTR_mean = addfile(CTR_dir+CTR_mean_str,"r")
 f_CTR_std = addfile(CTR_dir+CTR_std_str,"r")
-if (i_var .eq. 2) then
-delete(var_mean_TOPO)
-delete(var_mean_CTR)
-end if
+
 
 var_mean_TOPO = f_TOPO_mean->$var$
 ;printVarSummary(var_mean_TOPO)
@@ -174,6 +171,8 @@ if (i_var .eq. 2) then
    PS_mean_TOPO(index*3:index*3+2,:,:) = var_mean_TOPO
 end if
 
+delete(var_mean_TOPO)
+delete(var_mean_CTR)
 
 end do ; do ivar
 
@@ -226,7 +225,7 @@ printVarSummary(PTEQ_diff_CTR_TOPO2)
 pbot = 1000.0  ; hPa, threshold of integration
 ptop = 50.0  ; hPa, threshold of integration
 
-PS_CTR = PS_mean_CTR  ; in Pa
+PS_CTR = PS_mean_CTR(1:95,:,:)  ; in Pa
 PS_CTR = PS_CTR/100.0  ; in hPa
 PS_CTR@units = "hPa"
 
@@ -239,23 +238,26 @@ Qt_mean_CTR_inte = Qt_mean_CTR_inte / (pbot - ptop)
 Qt_mean_CTR_inte@units = "kg/kg / hr"
 
 Qt_mean_CTR_inte!0 = "time"
-Qt_mean_CTR_inte&time = f_CTR_mean->time
+printVarSummary(Qt_mean_CTR_inte)
+printVarSummary(f_CTR_mean->time)
+
+Qt_mean_CTR_inte&time = ispan(2,96,1)
 Qt_mean_CTR_inte!1 = "lat"
 Qt_mean_CTR_inte&lat = f_CTR_mean->lat
 Qt_mean_CTR_inte!2 = "lon"
 Qt_mean_CTR_inte&lon = f_CTR_mean->lon
 
-PS_TOPO = PS_mean_TOPO  ; in Pa
+PS_TOPO = PS_mean_TOPO(1:95,:,:)  ; in Pa
 PS_TOPO = PS_TOPO/100.0  ; in hPa
 PS_TOPO@units = "hPa"
 
 ; must from bottom to top
-Qt_mean_TOPO_inte = vibeta(pnew(::-1), Qt_mean_TOPO_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+Qt_mean_TOPO_inte = vibeta(pnew(::-1), Qt_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
 Qt_mean_TOPO_inte = Qt_mean_TOPO_inte / (pbot - ptop)
 Qt_mean_TOPO_inte@units = "kg/kg /hr"
 
 Qt_mean_TOPO_inte!0 = "time"
-Qt_mean_TOPO_inte&time = f_TOPO_mean->time
+Qt_mean_TOPO_inte&time = ispan(2,96,1)
 Qt_mean_TOPO_inte!1 = "lat"
 Qt_mean_TOPO_inte&lat = f_TOPO_mean->lat
 Qt_mean_TOPO_inte!2 = "lon"
@@ -267,8 +269,7 @@ printVarSummary(Qt_mean_CTR_inte)
 Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte
 Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte - Qt_mean_TOPO_inte
 
-printVarSummary(diff_CTR_TOPO_inte)
-
+printVarSummary(Qt_diff_CTR_TOPO_inte)
 
 ;------------------- selection of critical lat and lon
 ;lat_t = 0.0
@@ -389,7 +390,7 @@ gsn_panel(wks,plot,(/3,3/),pres)
 
 Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_CTR_inte(i_hr,:,:), Qt_mean_CTR_inte@_FillValue))
 Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_TOPO_inte(i_hr,:,:), Qt_mean_TOPO_inte@_FillValue))
-Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_diff_CTR_TOPO_inte(i_hr,:,:), diff_CTR_TOPO_inte@_FillValue))
+Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_diff_CTR_TOPO_inte(i_hr,:,:), Qt_diff_CTR_TOPO_inte@_FillValue))
 
 Amazon_mean_CTR(i_hr) = avg( Qt_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 Amazon_mean_TOPO(i_hr) = avg( Qt_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
@@ -399,23 +400,23 @@ Amazon_mean_CTR_TOPO(i_hr) = avg(Qt_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0)
 end do ; do i_hr 
 
 Andes_mean_CTR!0 = "time"
-Andes_mean_CTR&time = ispan(1,96,1)
+Andes_mean_CTR&time = ispan(2,96,1)
 Andes_mean_CTR@units = "kg/kg /hr"
 Andes_mean_TOPO!0 = "time"
-Andes_mean_TOPO&time = ispan(1,96,1)
+Andes_mean_TOPO&time = ispan(2,96,1)
 Andes_mean_TOPO@units = "kg/kg /hr"
 Andes_mean_CTR_TOPO!0 = "time"
-Andes_mean_CTR_TOPO&time = ispan(1,96,1)
+Andes_mean_CTR_TOPO&time = ispan(2,96,1)
 Andes_mean_CTR_TOPO@units = "kg/kg /hr"
 
 Amazon_mean_CTR!0 = "time"
-Amazon_mean_CTR&time = ispan(1,96,1)
+Amazon_mean_CTR&time = ispan(2,96,1)
 Amazon_mean_CTR@units = "kg/kg /hr"
 Amazon_mean_TOPO!0 = "time"
-Amazon_mean_TOPO&time = ispan(1,96,1)
+Amazon_mean_TOPO&time = ispan(2,96,1)
 Amazon_mean_TOPO@units = "kg/kg /hr"
 Amazon_mean_CTR_TOPO!0 = "time"
-Amazon_mean_CTR_TOPO&time = ispan(1,96,1)
+Amazon_mean_CTR_TOPO&time = ispan(2,96,1)
 Amazon_mean_CTR_TOPO@units = "kg/kg /hr"
 
 ;=========== output nc files ========
