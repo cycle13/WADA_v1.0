@@ -71,16 +71,19 @@ do ilat = 0,95
 end do
 printVarSummary(SGH30m)
 
-total_times = 96
-Andes_mean_CTR = new(total_times,double)
-Andes_mean_TOPO = new(total_times,double)
-Andes_mean_CTR_TOPO = new(total_times,double)
+;total_times = 96
+total_times = 96 - 1
+
+Qt_Andes_mean_CTR = new(total_times,double)
+Qt_Andes_mean_TOPO = new(total_times,double)
+Qt_Andes_mean_CTR_TOPO = new(total_times,double)
+
+Qt_Amazon_mean_CTR = new(total_times,double)
+Qt_Amazon_mean_TOPO = new(total_times,double)
+Qt_Amazon_mean_CTR_TOPO = new(total_times,double)
 
 Amazon_lon_test1 = (/288.0,309.0/)
 Amazon_lat_test1 = (/-10.0,4.0/)
-Amazon_mean_CTR = new(total_times,double)
-Amazon_mean_TOPO = new(total_times,double)
-Amazon_mean_CTR_TOPO = new(total_times,double)
 
 ;--------------------
 
@@ -111,7 +114,6 @@ f_TOPO_std = addfile(TOPO_dir+TOPO_std_str,"r")
 
 f_CTR_mean = addfile(CTR_dir+CTR_mean_str,"r")
 f_CTR_std = addfile(CTR_dir+CTR_std_str,"r")
-
 
 var_mean_TOPO = f_TOPO_mean->$var$
 ;printVarSummary(var_mean_TOPO)
@@ -388,49 +390,51 @@ pres@txString = "CTR vs TOPO, ENS(9), ihr="+tostring(i_hr+2) +", LST_75W ("+str_
 
 gsn_panel(wks,plot,(/3,3/),pres)
 
-Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_CTR_inte(i_hr,:,:), Qt_mean_CTR_inte@_FillValue))
-Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_TOPO_inte(i_hr,:,:), Qt_mean_TOPO_inte@_FillValue))
-Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_diff_CTR_TOPO_inte(i_hr,:,:), Qt_diff_CTR_TOPO_inte@_FillValue))
+Qt_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_CTR_inte(i_hr,:,:), Qt_mean_CTR_inte@_FillValue))
+Qt_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_TOPO_inte(i_hr,:,:), Qt_mean_TOPO_inte@_FillValue))
+Qt_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_diff_CTR_TOPO_inte(i_hr,:,:), Qt_diff_CTR_TOPO_inte@_FillValue))
 
-Amazon_mean_CTR(i_hr) = avg( Qt_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_TOPO(i_hr) = avg( Qt_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_CTR_TOPO(i_hr) = avg(Qt_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Qt_Amazon_mean_CTR(i_hr) = avg( Qt_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Qt_Amazon_mean_TOPO(i_hr) = avg( Qt_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Qt_Amazon_mean_CTR_TOPO(i_hr) = avg(Qt_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
 
 end do ; do i_hr 
 
-Andes_mean_CTR!0 = "time"
-Andes_mean_CTR&time = ispan(2,96,1)
-Andes_mean_CTR@units = "kg/kg /hr"
-Andes_mean_TOPO!0 = "time"
-Andes_mean_TOPO&time = ispan(2,96,1)
-Andes_mean_TOPO@units = "kg/kg /hr"
-Andes_mean_CTR_TOPO!0 = "time"
-Andes_mean_CTR_TOPO&time = ispan(2,96,1)
-Andes_mean_CTR_TOPO@units = "kg/kg /hr"
+printVarSummary(Qt_Andes_mean_CTR)
 
-Amazon_mean_CTR!0 = "time"
-Amazon_mean_CTR&time = ispan(2,96,1)
-Amazon_mean_CTR@units = "kg/kg /hr"
-Amazon_mean_TOPO!0 = "time"
-Amazon_mean_TOPO&time = ispan(2,96,1)
-Amazon_mean_TOPO@units = "kg/kg /hr"
-Amazon_mean_CTR_TOPO!0 = "time"
-Amazon_mean_CTR_TOPO&time = ispan(2,96,1)
-Amazon_mean_CTR_TOPO@units = "kg/kg /hr"
+Qt_Andes_mean_CTR!0 = "time"
+Qt_Andes_mean_CTR&time = ispan(2,96,1)
+Qt_Andes_mean_CTR@units = "kg/kg /hr"
+Qt_Andes_mean_TOPO!0 = "time"
+Qt_Andes_mean_TOPO&time = ispan(2,96,1)
+Qt_Andes_mean_TOPO@units = "kg/kg /hr"
+Qt_Andes_mean_CTR_TOPO!0 = "time"
+Qt_Andes_mean_CTR_TOPO&time = ispan(2,96,1)
+Qt_Andes_mean_CTR_TOPO@units = "kg/kg /hr"
+
+Qt_Amazon_mean_CTR!0 = "time"
+Qt_Amazon_mean_CTR&time = ispan(2,96,1)
+Qt_Amazon_mean_CTR@units = "kg/kg /hr"
+Qt_Amazon_mean_TOPO!0 = "time"
+Qt_Amazon_mean_TOPO&time = ispan(2,96,1)
+Qt_Amazon_mean_TOPO@units = "kg/kg /hr"
+Qt_Amazon_mean_CTR_TOPO!0 = "time"
+Qt_Amazon_mean_CTR_TOPO&time = ispan(2,96,1)
+Qt_Amazon_mean_CTR_TOPO@units = "kg/kg /hr"
 
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/"
 system("rm -f "+output_path+"Qt_test"+".nc")
 ncdf = addfile(output_path+"Qt_test"+".nc","c")
 filedimdef(ncdf, "time", -1, True)
-ncdf->Andes_mean_CTR = Andes_mean_CTR
-ncdf->Andes_mean_TOPO = Andes_mean_TOPO
-ncdf->Andes_mean_CTR_TOPO = Andes_mean_CTR_TOPO
+ncdf->Qt_Andes_mean_CTR = Qt_Andes_mean_CTR
+ncdf->Qt_Andes_mean_TOPO = Qt_Andes_mean_TOPO
+ncdf->Qt_Andes_mean_CTR_TOPO = Qt_Andes_mean_CTR_TOPO
 
-ncdf->Amazon_mean_CTR = Amazon_mean_CTR
-ncdf->Amazon_mean_TOPO = Amazon_mean_TOPO
-ncdf->Amazon_mean_CTR_TOPO = Amazon_mean_CTR_TOPO
+ncdf->Qt_Amazon_mean_CTR = Qt_Amazon_mean_CTR
+ncdf->Qt_Amazon_mean_TOPO = Qt_Amazon_mean_TOPO
+ncdf->Qt_Amazon_mean_CTR_TOPO = Qt_Amazon_mean_CTR_TOPO
 
 
 
