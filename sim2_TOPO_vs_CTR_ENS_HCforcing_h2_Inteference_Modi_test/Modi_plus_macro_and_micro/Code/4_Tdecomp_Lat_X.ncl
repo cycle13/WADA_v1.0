@@ -50,6 +50,58 @@ Tadv_mean_CTR = new((/95, 30, 96, 144/),double)  ; Tt - PTTEND
 Tadv_mean_TOPO = new((/95, 30, 96, 144/),double)
 Tadv_diff_CTR_TOPO = new((/95, 30, 96, 144/),double)
 
+; to calculate vertical integral
+PS_mean_CTR = new((/96, 96, 144/),double)  ;
+PS_mean_TOPO = new((/96, 96, 144/),double)
+
+;============== ======
+f_SGH30 = addfile("/DFS-L/DATA/pritchard/hongcheq/Topography/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
+SGH30 = f_SGH30->SGH30
+
+SGH30m = SGH30
+SGH30m = SGH30@_FillValue
+SGH30m({-40:10},{270:300}) = SGH30({-40:10},{270:300})
+
+do ilat = 0,95
+   do ilon = 0,143
+      if (.not. ismissing(SGH30m(ilat,ilon)) .and. SGH30m(ilat,ilon) .lt. 200.0) then
+          SGH30m(ilat,ilon) = SGH30m@_FillValue
+      end if
+   end do
+end do
+printVarSummary(SGH30m)
+
+total_times = 96 - 1
+
+Tt_Andes_mean_CTR = new(total_times,double)
+Tt_Andes_mean_TOPO = new(total_times,double)
+Tt_Andes_mean_CTR_TOPO = new(total_times,double)
+
+Tt_Amazon_mean_CTR = new(total_times,double)
+Tt_Amazon_mean_TOPO = new(total_times,double)
+Tt_Amazon_mean_CTR_TOPO = new(total_times,double)
+
+PTTEND_Andes_mean_CTR = new(total_times,double)
+PTTEND_Andes_mean_TOPO = new(total_times,double)
+PTTEND_Andes_mean_CTR_TOPO = new(total_times,double)
+
+PTTEND_Amazon_mean_CTR = new(total_times,double)
+PTTEND_Amazon_mean_TOPO = new(total_times,double)
+PTTEND_Amazon_mean_CTR_TOPO = new(total_times,double)
+
+Tadv_Andes_mean_CTR = new(total_times,double)
+Tadv_Andes_mean_TOPO = new(total_times,double)
+Tadv_Andes_mean_CTR_TOPO = new(total_times,double)
+
+Tadv_Amazon_mean_CTR = new(total_times,double)
+Tadv_Amazon_mean_TOPO = new(total_times,double)
+Tadv_Amazon_mean_CTR_TOPO = new(total_times,double)
+
+Amazon_lon_test1 = (/288.0,309.0/)
+Amazon_lat_test1 = (/-10.0,4.0/)
+
+;-----------------------
+
 do index = 0,31
 ;do index = 10,31
 
@@ -65,7 +117,7 @@ CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-p
 CTR_mean_str = "ENS.mean.CTR."+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR."+str_time(index)+".nc"
 
-var_str = (/"TAP","PTTEND"/)
+var_str = (/"TAP","PTTEND","PS"/)
 
 do i_var = 0, dimsizes(var_str)-1
 ;do i_var = 5, dimsizes(var_str)-1
@@ -104,6 +156,8 @@ P0mb = 1000.0
 hyam = f_TOPO_mean->hyam
 hybm = f_TOPO_mean->hybm
 
+if (i_var .ne. 2) then
+
 var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS,1,P0mb,1,False)
 var_mean_TOPO_pnew&lev_p@units = "hPa" 
 ;printVarSummary(var_mean_TOPO_pnew&lev_p)
@@ -111,6 +165,7 @@ var_mean_TOPO_pnew&lev_p@units = "hPa"
 var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_CTR_mean->PS,1,P0mb,1,False)
 var_mean_CTR_pnew&lev_p@units = "hPa"
 ;printVarSummary(var_mean_CTR_pnew)
+end if
 
 diff_CTR_TOPO = var_mean_TOPO_pnew ; metadata
 ;diff_TOPO_CTR = var_mean_TOPO_pnew - var_mean_CTR_pnew
@@ -128,6 +183,13 @@ if (i_var .eq. 1) then
    PTTEND_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO_pnew
    PTTEND_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = diff_CTR_TOPO
 end if
+if (i_var .eq. 2) then
+   PS_mean_CTR(index*3:index*3+2,:,:) = var_mean_CTR
+   PS_mean_TOPO(index*3:index*3+2,:,:) = var_mean_TOPO
+end if
+
+delete(var_mean_TOPO)
+delete(var_mean_CTR)
 
 end do ; do ivar
 
@@ -174,6 +236,105 @@ printVarSummary(Tadv_diff_CTR_TOPO)
 printVarSummary(PTTEND_diff_CTR_TOPO)
 printVarSummary(PTTEND_diff_CTR_TOPO2)
 ;printVarSummary(V_diff_TOPO_CTR_sig)
+
+;-------------------- Vertically integrated --------------------
+;====================== 1000-50hPa weighted average =================
+pbot = 1000.0  ; hPa, threshold of integration
+ptop = 50.0  ; hPa, threshold of integration
+
+;------------------------- Tt -------------
+PS_CTR = PS_mean_CTR(1:95,:,:)  ; in Pa
+PS_CTR = PS_CTR/100.0  ; in hPa
+PS_CTR@units = "hPa"
+
+PS_TOPO = PS_mean_TOPO(1:95,:,:)  ; in Pa
+PS_TOPO = PS_TOPO/100.0  ; in hPa
+PS_TOPO@units = "hPa"
+
+; must from bottom to top
+printVarSummary(PS_CTR)
+printVarSummary(Tt_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
+
+Tt_mean_CTR_inte = vibeta(pnew(::-1), Tt_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+Tt_mean_CTR_inte = Tt_mean_CTR_inte / (pbot - ptop)
+Tt_mean_CTR_inte@units = "kg/kg / hr"
+Tt_mean_CTR_inte!0 = "time"
+printVarSummary(Tt_mean_CTR_inte)
+printVarSummary(f_CTR_mean->time)
+Tt_mean_CTR_inte&time = ispan(2,96,1)
+Tt_mean_CTR_inte!1 = "lat"
+Tt_mean_CTR_inte&lat = f_CTR_mean->lat
+Tt_mean_CTR_inte!2 = "lon"
+Tt_mean_CTR_inte&lon = f_CTR_mean->lon
+
+; must from bottom to top
+Tt_mean_TOPO_inte = vibeta(pnew(::-1), Tt_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+Tt_mean_TOPO_inte = Tt_mean_TOPO_inte / (pbot - ptop)
+Tt_mean_TOPO_inte@units = "kg/kg /hr"
+Tt_mean_TOPO_inte!0 = "time"
+Tt_mean_TOPO_inte&time = ispan(2,96,1)
+Tt_mean_TOPO_inte!1 = "lat"
+Tt_mean_TOPO_inte&lat = f_TOPO_mean->lat
+Tt_mean_TOPO_inte!2 = "lon"
+Tt_mean_TOPO_inte&lon = f_TOPO_mean->lon
+
+printVarSummary(Tt_mean_TOPO_inte)
+printVarSummary(Tt_mean_CTR_inte)
+
+Tt_diff_CTR_TOPO_inte = Tt_mean_CTR_inte
+Tt_diff_CTR_TOPO_inte = Tt_mean_CTR_inte - Tt_mean_TOPO_inte
+
+printVarSummary(Tt_diff_CTR_TOPO_inte)
+
+;------------------------ PTTEND ---------------------
+PTTEND_mean_CTR_inte = vibeta(pnew(::-1), PTTEND_mean_CTR2(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+PTTEND_mean_CTR_inte = PTTEND_mean_CTR_inte / (pbot - ptop)
+PTTEND_mean_CTR_inte@units = "kg/kg / hr"
+PTTEND_mean_CTR_inte!0 = "time"
+PTTEND_mean_CTR_inte&time = ispan(2,96,1)
+PTTEND_mean_CTR_inte!1 = "lat"
+PTTEND_mean_CTR_inte&lat = f_CTR_mean->lat
+PTTEND_mean_CTR_inte!2 = "lon"
+PTTEND_mean_CTR_inte&lon = f_CTR_mean->lon
+
+; must from bottom to top
+PTTEND_mean_TOPO_inte = vibeta(pnew(::-1), PTTEND_mean_TOPO2(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+PTTEND_mean_TOPO_inte = PTTEND_mean_TOPO_inte / (pbot - ptop)
+PTTEND_mean_TOPO_inte@units = "kg/kg /hr"
+PTTEND_mean_TOPO_inte!0 = "time"
+PTTEND_mean_TOPO_inte&time = ispan(2,96,1)
+PTTEND_mean_TOPO_inte!1 = "lat"
+PTTEND_mean_TOPO_inte&lat = f_TOPO_mean->lat
+PTTEND_mean_TOPO_inte!2 = "lon"
+PTTEND_mean_TOPO_inte&lon = f_TOPO_mean->lon
+
+PTTEND_diff_CTR_TOPO_inte = PTTEND_mean_CTR_inte
+PTTEND_diff_CTR_TOPO_inte = PTTEND_mean_CTR_inte - PTTEND_mean_TOPO_inte
+
+;-------------Tadv------------------
+Tadv_mean_CTR_inte = vibeta(pnew(::-1), Tadv_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+Tadv_mean_CTR_inte = Tadv_mean_CTR_inte / (pbot - ptop)
+Tadv_mean_CTR_inte@units = "kg/kg / hr"
+Tadv_mean_CTR_inte!0 = "time"
+Tadv_mean_CTR_inte&time = ispan(2,96,1)
+Tadv_mean_CTR_inte!1 = "lat"
+Tadv_mean_CTR_inte&lat = f_CTR_mean->lat
+Tadv_mean_CTR_inte!2 = "lon"
+Tadv_mean_CTR_inte&lon = f_CTR_mean->lon
+
+; must from bottom to top
+Tadv_mean_TOPO_inte = vibeta(pnew(::-1), Tadv_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+Tadv_mean_TOPO_inte = Tadv_mean_TOPO_inte / (pbot - ptop)
+Tadv_mean_TOPO_inte@units = "kg/kg /hr"
+Tadv_mean_TOPO_inte!0 = "time"
+Tadv_mean_TOPO_inte&time = ispan(2,96,1)
+Tadv_mean_TOPO_inte!1 = "lat"
+Tadv_mean_TOPO_inte&lat = f_TOPO_mean->lat
+Tadv_mean_TOPO_inte!2 = "lon"
+Tadv_mean_TOPO_inte&lon = f_TOPO_mean->lon
+
+Tadv_diff_CTR_TOPO_inte = Tadv_mean_CTR_inte
+Tadv_diff_CTR_TOPO_inte = Tadv_mean_CTR_inte - Tadv_mean_TOPO_inte
 
 ;------------------- selection of critical lat and lon
 ;lat_t = 0.0
@@ -292,9 +453,130 @@ pres@txString = "CTR vs TOPO, ENS(9), ihr="+tostring(i_hr+2) +", LST_75W ("+str_
 
 gsn_panel(wks,plot,(/3,3/),pres)
 
+;--------------------- Tt ------------------
+Tt_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Tt_mean_CTR_inte(i_hr,:,:), Tt_mean_CTR_inte@_FillValue))
+Tt_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Tt_mean_TOPO_inte(i_hr,:,:), Tt_mean_TOPO_inte@_FillValue))
+Tt_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Tt_diff_CTR_TOPO_inte(i_hr,:,:), Tt_diff_CTR_TOPO_inte@_FillValue))
+Tt_Amazon_mean_CTR(i_hr) = avg( Tt_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Tt_Amazon_mean_TOPO(i_hr) = avg( Tt_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Tt_Amazon_mean_CTR_TOPO(i_hr) = avg(Tt_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
+;--------------------- PTTEND -----------
+PTTEND_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), PTTEND_mean_CTR_inte(i_hr,:,:), PTTEND_mean_CTR_inte@_FillValue))
+PTTEND_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), PTTEND_mean_TOPO_inte(i_hr,:,:), PTTEND_mean_TOPO_inte@_FillValue))
+PTTEND_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), PTTEND_diff_CTR_TOPO_inte(i_hr,:,:), PTTEND_diff_CTR_TOPO_inte@_FillValue))
+PTTEND_Amazon_mean_CTR(i_hr) = avg( PTTEND_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+PTTEND_Amazon_mean_TOPO(i_hr) = avg( PTTEND_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+PTTEND_Amazon_mean_CTR_TOPO(i_hr) = avg(PTTEND_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
+;-------------------- Tadv --------------------
+Tadv_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Tadv_mean_CTR_inte(i_hr,:,:), Tadv_mean_CTR_inte@_FillValue))
+Tadv_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Tadv_mean_TOPO_inte(i_hr,:,:), Tadv_mean_TOPO_inte@_FillValue))
+Tadv_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Tadv_diff_CTR_TOPO_inte(i_hr,:,:), Tadv_diff_CTR_TOPO_inte@_FillValue))
+Tadv_Amazon_mean_CTR(i_hr) = avg( Tadv_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Tadv_Amazon_mean_TOPO(i_hr) = avg( Tadv_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Tadv_Amazon_mean_CTR_TOPO(i_hr) = avg(Tadv_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+;--------------------
 
 end do ; do i_hr 
+
+printVarSummary(Tt_Andes_mean_CTR)
+
+;--------- Tt ----------
+Tt_Andes_mean_CTR!0 = "time"
+Tt_Andes_mean_CTR&time = ispan(2,96,1)
+Tt_Andes_mean_CTR@units = "K /hr"
+Tt_Andes_mean_TOPO!0 = "time"
+Tt_Andes_mean_TOPO&time = ispan(2,96,1)
+Tt_Andes_mean_TOPO@units = "K /hr"
+Tt_Andes_mean_CTR_TOPO!0 = "time"
+Tt_Andes_mean_CTR_TOPO&time = ispan(2,96,1)
+Tt_Andes_mean_CTR_TOPO@units = "K /hr"
+
+Tt_Amazon_mean_CTR!0 = "time"
+Tt_Amazon_mean_CTR&time = ispan(2,96,1)
+Tt_Amazon_mean_CTR@units = "K /hr"
+Tt_Amazon_mean_TOPO!0 = "time"
+Tt_Amazon_mean_TOPO&time = ispan(2,96,1)
+Tt_Amazon_mean_TOPO@units = "K /hr"
+Tt_Amazon_mean_CTR_TOPO!0 = "time"
+Tt_Amazon_mean_CTR_TOPO&time = ispan(2,96,1)
+Tt_Amazon_mean_CTR_TOPO@units = "K /hr"
+
+;----------- PTTEND -------------
+PTTEND_Andes_mean_CTR!0 = "time"
+PTTEND_Andes_mean_CTR&time = ispan(2,96,1)
+PTTEND_Andes_mean_CTR@units = "K /hr"
+PTTEND_Andes_mean_TOPO!0 = "time"
+PTTEND_Andes_mean_TOPO&time = ispan(2,96,1)
+PTTEND_Andes_mean_TOPO@units = "K /hr"
+PTTEND_Andes_mean_CTR_TOPO!0 = "time"
+PTTEND_Andes_mean_CTR_TOPO&time = ispan(2,96,1)
+PTTEND_Andes_mean_CTR_TOPO@units = "K /hr"
+
+PTTEND_Amazon_mean_CTR!0 = "time"
+PTTEND_Amazon_mean_CTR&time = ispan(2,96,1)
+PTTEND_Amazon_mean_CTR@units = "K /hr"
+PTTEND_Amazon_mean_TOPO!0 = "time"
+PTTEND_Amazon_mean_TOPO&time = ispan(2,96,1)
+PTTEND_Amazon_mean_TOPO@units = "K /hr"
+PTTEND_Amazon_mean_CTR_TOPO!0 = "time"
+PTTEND_Amazon_mean_CTR_TOPO&time = ispan(2,96,1)
+PTTEND_Amazon_mean_CTR_TOPO@units = "K /hr"
+
+;------------------ Tadv -----------------------
+Tadv_Andes_mean_CTR!0 = "time"
+Tadv_Andes_mean_CTR&time = ispan(2,96,1)
+Tadv_Andes_mean_CTR@units = "K /hr"
+Tadv_Andes_mean_TOPO!0 = "time"
+Tadv_Andes_mean_TOPO&time = ispan(2,96,1)
+Tadv_Andes_mean_TOPO@units = "K /hr"
+Tadv_Andes_mean_CTR_TOPO!0 = "time"
+Tadv_Andes_mean_CTR_TOPO&time = ispan(2,96,1)
+Tadv_Andes_mean_CTR_TOPO@units = "K /hr"
+
+Tadv_Amazon_mean_CTR!0 = "time"
+Tadv_Amazon_mean_CTR&time = ispan(2,96,1)
+Tadv_Amazon_mean_CTR@units = "K /hr"
+Tadv_Amazon_mean_TOPO!0 = "time"
+Tadv_Amazon_mean_TOPO&time = ispan(2,96,1)
+Tadv_Amazon_mean_TOPO@units = "K /hr"
+Tadv_Amazon_mean_CTR_TOPO!0 = "time"
+Tadv_Amazon_mean_CTR_TOPO&time = ispan(2,96,1)
+Tadv_Amazon_mean_CTR_TOPO@units = "K /hr"
+
+;=========== output nc files ========
+output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Tadv/"
+system("rm -f "+output_path+"Tt_PTTEND_Tadv"+".nc")
+ncdf = addfile(output_path+"Tt_PTTEND_Tadv"+".nc","c")
+filedimdef(ncdf, "time", -1, True)
+
+;--------- Tt -------------
+ncdf->Tt_Andes_mean_CTR = Tt_Andes_mean_CTR
+ncdf->Tt_Andes_mean_TOPO = Tt_Andes_mean_TOPO
+ncdf->Tt_Andes_mean_CTR_TOPO = Tt_Andes_mean_CTR_TOPO
+
+ncdf->Tt_Amazon_mean_CTR = Tt_Amazon_mean_CTR
+ncdf->Tt_Amazon_mean_TOPO = Tt_Amazon_mean_TOPO
+ncdf->Tt_Amazon_mean_CTR_TOPO = Tt_Amazon_mean_CTR_TOPO
+
+;--------- PTTEND ---------------
+ncdf->PTTEND_Andes_mean_CTR = PTTEND_Andes_mean_CTR
+ncdf->PTTEND_Andes_mean_TOPO = PTTEND_Andes_mean_TOPO
+ncdf->PTTEND_Andes_mean_CTR_TOPO = PTTEND_Andes_mean_CTR_TOPO
+
+ncdf->PTTEND_Amazon_mean_CTR = PTTEND_Amazon_mean_CTR
+ncdf->PTTEND_Amazon_mean_TOPO = PTTEND_Amazon_mean_TOPO
+ncdf->PTTEND_Amazon_mean_CTR_TOPO = PTTEND_Amazon_mean_CTR_TOPO
+
+;--------- Tadv ---------------
+ncdf->Tadv_Andes_mean_CTR = Tadv_Andes_mean_CTR
+ncdf->Tadv_Andes_mean_TOPO = Tadv_Andes_mean_TOPO
+ncdf->Tadv_Andes_mean_CTR_TOPO = Tadv_Andes_mean_CTR_TOPO
+
+ncdf->Tadv_Amazon_mean_CTR = Tadv_Amazon_mean_CTR
+ncdf->Tadv_Amazon_mean_TOPO = Tadv_Amazon_mean_TOPO
+ncdf->Tadv_Amazon_mean_CTR_TOPO = Tadv_Amazon_mean_CTR_TOPO
 
 
 end
