@@ -210,13 +210,98 @@ printVarSummary(QRS_diff_CTR_TOPO)
 printVarSummary(QRL_mean_CTR)
 printVarSummary(QRL_mean_TOPO)
 printVarSummary(QRL_diff_CTR_TOPO)
+
 ;====== Step 2. calculate Fs term (SHFLX, LHFLX),  R term (QRL, QRS) =========
+;-------------------- Vertically integrated --------------
+;================= 1000-50hPa weighted average ========
+pbot = 1000.0  ; hPa, threshold of integration
+ptop = 50.0  ; hPa, threshold of integration
+
+;------------------------- QRS -------------
+PS_CTR = PS_mean_CTR(:,:,:)  ; in Pa
+PS_CTR = PS_CTR/100.0  ; in hPa
+PS_CTR@units = "hPa"
+
+PS_TOPO = PS_mean_TOPO(:,:,:)  ; in Pa
+PS_TOPO = PS_TOPO/100.0  ; in hPa
+PS_TOPO@units = "hPa"
+
+; must from bottom to top
+printVarSummary(PS_CTR)
+printVarSummary(QRS_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
+
+QRS_mean_CTR_inte = vibeta(pnew(::-1), QRS_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+QRS_mean_CTR_inte = QRS_mean_CTR_inte / (pbot - ptop)
+QRS_mean_CTR_inte@units = QRS_mean_CTR@units
+QRS_mean_CTR_inte!0 = "time"
+printVarSummary(QRS_mean_CTR_inte)
+printVarSummary(f_CTR_mean->time)
+QRS_mean_CTR_inte&time = ispan(1,96,1)
+QRS_mean_CTR_inte!1 = "lat"
+QRS_mean_CTR_inte&lat = f_CTR_mean->lat
+QRS_mean_CTR_inte!2 = "lon"
+QRS_mean_CTR_inte&lon = f_CTR_mean->lon
+
+; must from bottom to top
+QRS_mean_TOPO_inte = vibeta(pnew(::-1), QRS_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+QRS_mean_TOPO_inte = QRS_mean_TOPO_inte / (pbot - ptop)
+QRS_mean_TOPO_inte@units = QRS_mean_TOPO@units
+QRS_mean_TOPO_inte!0 = "time"
+QRS_mean_TOPO_inte&time = ispan(1,96,1)
+QRS_mean_TOPO_inte!1 = "lat"
+QRS_mean_TOPO_inte&lat = f_TOPO_mean->lat
+QRS_mean_TOPO_inte!2 = "lon"
+QRS_mean_TOPO_inte&lon = f_TOPO_mean->lon
+
+printVarSummary(QRS_mean_TOPO_inte)
+printVarSummary(QRS_mean_CTR_inte)
+
+QRS_diff_CTR_TOPO_inte = QRS_mean_CTR_inte
+QRS_diff_CTR_TOPO_inte = QRS_mean_CTR_inte - QRS_mean_TOPO_inte
+
+printVarSummary(QRS_diff_CTR_TOPO_inte)
+
+;---------- QRL ----------
+printVarSummary(QRL_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
+
+QRL_mean_CTR_inte = vibeta(pnew(::-1), QRL_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+QRL_mean_CTR_inte = QRL_mean_CTR_inte / (pbot - ptop)
+QRL_mean_CTR_inte@units = QRL_mean_CTR@units
+QRL_mean_CTR_inte!0 = "time"
+printVarSummary(QRL_mean_CTR_inte)
+printVarSummary(f_CTR_mean->time)
+QRL_mean_CTR_inte&time = ispan(1,96,1)
+QRL_mean_CTR_inte!1 = "lat"
+QRL_mean_CTR_inte&lat = f_CTR_mean->lat
+QRL_mean_CTR_inte!2 = "lon"
+QRL_mean_CTR_inte&lon = f_CTR_mean->lon
+
+; must from bottom to top
+QRL_mean_TOPO_inte = vibeta(pnew(::-1), QRL_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+QRL_mean_TOPO_inte = QRL_mean_TOPO_inte / (pbot - ptop)
+QRL_mean_TOPO_inte@units = QRL_mean_TOPO@units
+QRL_mean_TOPO_inte!0 = "time"
+QRL_mean_TOPO_inte&time = ispan(1,96,1)
+QRL_mean_TOPO_inte!1 = "lat"
+QRL_mean_TOPO_inte&lat = f_TOPO_mean->lat
+QRL_mean_TOPO_inte!2 = "lon"
+QRL_mean_TOPO_inte&lon = f_TOPO_mean->lon
+
+printVarSummary(QRL_mean_TOPO_inte)
+printVarSummary(QRL_mean_CTR_inte)
+
+QRL_diff_CTR_TOPO_inte = QRL_mean_CTR_inte
+QRL_diff_CTR_TOPO_inte = QRL_mean_CTR_inte - QRL_mean_TOPO_inte
+
+printVarSummary(QRL_diff_CTR_TOPO_inte)
+
+;------------ Convert SHFLX, LHFLX, QRL, QRS terms to be consistent with Fs + R units 
+;------------ all convert to Joule/(sec * m2)
 
 
 
-
-
-;======= Step 3. Calculate Fs_Andes, Fs_Amazon, R_Andes, R_Amazon, average over the Andes, Amazon =======
+;======= Step 3. Calculate Fs_LH_Andes, Fs_SH_Andes, Fs_LH_Amazon, Fs_SH_Amazon =====
+;=======  R_QRS_Andes, R_QRL_Andes, R_QRS_Amazon, R_QRL_Amazon average over the Andes, Amazon =======
 
 
 
