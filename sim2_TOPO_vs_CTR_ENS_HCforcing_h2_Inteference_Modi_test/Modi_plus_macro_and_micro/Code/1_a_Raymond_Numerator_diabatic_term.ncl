@@ -103,6 +103,15 @@ LHFLX_Amazon_mean_CTR = new(total_times,double)
 LHFLX_Amazon_mean_TOPO = new(total_times,double)
 LHFLX_Amazon_mean_CTR_TOPO = new(total_times,double)
 
+;-------- DH: total diabatic heating = (SHFLX+LHFLX) + vertial_integral (QRS+QRL) ----
+DH_Andes_mean_CTR = new(total_times,double)
+DH_Andes_mean_TOPO = new(total_times,double)
+DH_Andes_mean_CTR_TOPO = new(total_times,double)
+
+DH_Amazon_mean_CTR = new(total_times,double)
+DH_Amazon_mean_TOPO = new(total_times,double)
+DH_Amazon_mean_CTR_TOPO = new(total_times,double)
+
 Amazon_lon_test1 = (/288.0,309.0/)
 Amazon_lat_test1 = (/-10.0,4.0/)
 
@@ -217,6 +226,8 @@ printVarSummary(QRL_diff_CTR_TOPO)
 pbot = 1000.0  ; hPa, threshold of integration
 ptop = 50.0  ; hPa, threshold of integration
 
+Cp_air = 1005.7 ; J/(kg*K)
+
 ;------------------------- QRS -------------
 PS_CTR = PS_mean_CTR(:,:,:)  ; in Pa
 PS_CTR = PS_CTR/100.0  ; in hPa
@@ -231,8 +242,9 @@ printVarSummary(PS_CTR)
 printVarSummary(QRS_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
 
 QRS_mean_CTR_inte = vibeta(pnew(::-1), QRS_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
-QRS_mean_CTR_inte = QRS_mean_CTR_inte / (pbot - ptop)
-QRS_mean_CTR_inte@units = QRS_mean_CTR@units
+QRS_mean_CTR_inte = QRS_mean_CTR_inte * 100.0  ; from Kelvin/sec * hPa to Kelvin/sec * Pa
+QRS_mean_CTR_inte = QRS_mean_CTR_inte / 9.8 * Cp_air 
+QRS_mean_CTR_inte@units = "Watt/m2" ; 1/g * K/sec * Pa * Cp_air = Watt/m2
 QRS_mean_CTR_inte!0 = "time"
 printVarSummary(QRS_mean_CTR_inte)
 printVarSummary(f_CTR_mean->time)
@@ -244,8 +256,9 @@ QRS_mean_CTR_inte&lon = f_CTR_mean->lon
 
 ; must from bottom to top
 QRS_mean_TOPO_inte = vibeta(pnew(::-1), QRS_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
-QRS_mean_TOPO_inte = QRS_mean_TOPO_inte / (pbot - ptop)
-QRS_mean_TOPO_inte@units = QRS_mean_TOPO@units
+QRS_mean_TOPO_inte = QRS_mean_TOPO_inte * 100.0
+QRS_mean_TOPO_inte = QRS_mean_TOPO_inte / 9.8 * Cp_air 
+QRS_mean_TOPO_inte@units = "Watt/m2" 
 QRS_mean_TOPO_inte!0 = "time"
 QRS_mean_TOPO_inte&time = ispan(1,96,1)
 QRS_mean_TOPO_inte!1 = "lat"
@@ -265,8 +278,9 @@ printVarSummary(QRS_diff_CTR_TOPO_inte)
 printVarSummary(QRL_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
 
 QRL_mean_CTR_inte = vibeta(pnew(::-1), QRL_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
-QRL_mean_CTR_inte = QRL_mean_CTR_inte / (pbot - ptop)
-QRL_mean_CTR_inte@units = QRL_mean_CTR@units
+QRL_mean_CTR_inte = QRL_mean_CTR_inte * 100.0
+QRL_mean_CTR_inte = QRL_mean_CTR_inte / 9.8 * Cp_air
+QRL_mean_CTR_inte@units = "Watt/m2"
 QRL_mean_CTR_inte!0 = "time"
 printVarSummary(QRL_mean_CTR_inte)
 printVarSummary(f_CTR_mean->time)
@@ -278,8 +292,9 @@ QRL_mean_CTR_inte&lon = f_CTR_mean->lon
 
 ; must from bottom to top
 QRL_mean_TOPO_inte = vibeta(pnew(::-1), QRL_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
-QRL_mean_TOPO_inte = QRL_mean_TOPO_inte / (pbot - ptop)
-QRL_mean_TOPO_inte@units = QRL_mean_TOPO@units
+QRL_mean_TOPO_inte = QRL_mean_TOPO_inte * 100.0
+QRL_mean_TOPO_inte = QRL_mean_TOPO_inte / 9.8 * Cp_air 
+QRL_mean_TOPO_inte@units = "Watt/m2"
 QRL_mean_TOPO_inte!0 = "time"
 QRL_mean_TOPO_inte&time = ispan(1,96,1)
 QRL_mean_TOPO_inte!1 = "lat"
@@ -295,24 +310,174 @@ QRL_diff_CTR_TOPO_inte = QRL_mean_CTR_inte - QRL_mean_TOPO_inte
 
 printVarSummary(QRL_diff_CTR_TOPO_inte)
 
-;------------ Convert SHFLX, LHFLX, QRL, QRS terms to be consistent with Fs + R units 
-;------------ all convert to Joule/(sec * m2)
-
-
-
+;------------ all already converted to Watt/m2 -----
 ;======= Step 3. Calculate Fs_LH_Andes, Fs_SH_Andes, Fs_LH_Amazon, Fs_SH_Amazon =====
 ;=======  R_QRS_Andes, R_QRL_Andes, R_QRS_Amazon, R_QRL_Amazon average over the Andes, Amazon =======
+do i_hr = 0, dimsizes(SHFLX_mean_CTR&time) - 1
+;----------SHFLX----------
+SHFLX_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), SHFLX_mean_CTR(i_hr,:,:), SHFLX_mean_CTR@_FillValue))
+SHFLX_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), SHFLX_mean_TOPO(i_hr,:,:), SHFLX_mean_TOPO@_FillValue))
+SHFLX_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), SHFLX_diff_CTR_TOPO(i_hr,:,:), SHFLX_diff_CTR_TOPO@_FillValue))
 
+SHFLX_Amazon_mean_CTR(i_hr) = avg( SHFLX_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
+SHFLX_Amazon_mean_TOPO(i_hr) = avg( SHFLX_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+SHFLX_Amazon_mean_CTR_TOPO(i_hr) = avg( SHFLX_diff_CTR_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
+SHFLX_Andes_mean_CTR@units = "Watt/m2"
+SHFLX_Andes_mean_TOPO@units = "Watt/m2"
+SHFLX_Andes_mean_CTR_TOPO@units = "Watt/m2"
 
+SHFLX_Amazon_mean_CTR@units = "Watt/m2"
+SHFLX_Amazon_mean_TOPO@units = "Watt/m2"
+SHFLX_Amazon_mean_CTR_TOPO@units = "Watt/m2"
 
+;-----------LHFLX--------------
+LHFLX_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), LHFLX_mean_CTR(i_hr,:,:), LHFLX_mean_CTR@_FillValue))
+LHFLX_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), LHFLX_mean_TOPO(i_hr,:,:), LHFLX_mean_TOPO@_FillValue))
+LHFLX_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), LHFLX_diff_CTR_TOPO(i_hr,:,:), LHFLX_diff_CTR_TOPO@_FillValue))
 
+LHFLX_Amazon_mean_CTR(i_hr) = avg( LHFLX_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
+LHFLX_Amazon_mean_TOPO(i_hr) = avg( LHFLX_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+LHFLX_Amazon_mean_CTR_TOPO(i_hr) = avg( LHFLX_diff_CTR_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
+LHFLX_Andes_mean_CTR@units = "Watt/m2"
+LHFLX_Andes_mean_TOPO@units = "Watt/m2"
+LHFLX_Andes_mean_CTR_TOPO@units = "Watt/m2"
+
+LHFLX_Amazon_mean_CTR@units = "Watt/m2"
+LHFLX_Amazon_mean_TOPO@units = "Watt/m2"
+LHFLX_Amazon_mean_CTR_TOPO@units = "Watt/m2"
+
+;----------- QRS ------------
+QRS_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), QRS_mean_CTR_inte(i_hr,:,:), QRS_mean_CTR_inte@_FillValue))
+QRS_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), QRS_mean_TOPO_inte(i_hr,:,:), QRS_mean_TOPO_inte@_FillValue))
+QRS_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), QRS_diff_CTR_TOPO_inte(i_hr,:,:), QRS_diff_CTR_TOPO_inte@_FillValue))
+
+QRS_Amazon_mean_CTR(i_hr) = avg( QRS_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
+QRS_Amazon_mean_TOPO(i_hr) = avg( QRS_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+QRS_Amazon_mean_CTR_TOPO(i_hr) = avg( QRS_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
+QRS_Andes_mean_CTR@units = "Watt/m2"
+QRS_Andes_mean_TOPO@units = "Watt/m2"
+QRS_Andes_mean_CTR_TOPO@units = "Watt/m2"
+
+QRS_Amazon_mean_CTR@units = "Watt/m2"
+QRS_Amazon_mean_TOPO@units = "Watt/m2"
+QRS_Amazon_mean_CTR_TOPO@units = "Watt/m2"
+
+;----------- QRL -----------
+QRL_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), QRL_mean_CTR_inte(i_hr,:,:), QRL_mean_CTR_inte@_FillValue))
+QRL_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), QRL_mean_TOPO_inte(i_hr,:,:), QRL_mean_TOPO_inte@_FillValue))
+QRL_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), QRL_diff_CTR_TOPO_inte(i_hr,:,:), QRL_diff_CTR_TOPO_inte@_FillValue))
+
+QRL_Amazon_mean_CTR(i_hr) = avg( QRL_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
+QRL_Amazon_mean_TOPO(i_hr) = avg( QRL_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+QRL_Amazon_mean_CTR_TOPO(i_hr) = avg( QRL_diff_CTR_TOPO_inte(:,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+
+QRL_Andes_mean_CTR@units = "Watt/m2"
+QRL_Andes_mean_TOPO@units = "Watt/m2"
+QRL_Andes_mean_CTR_TOPO@units = "Watt/m2"
+
+QRL_Amazon_mean_CTR@units = "Watt/m2"
+QRL_Amazon_mean_TOPO@units = "Watt/m2"
+QRL_Amazon_mean_CTR_TOPO@units = "Watt/m2"
+
+;--------- total diabatic heating term ----
+DH_Andes_mean_CTR = SHFLX_Andes_mean_CTR ; metadata
+DH_Andes_mean_CTR = SHFLX_Andes_mean_CTR + LHFLX_Andes_mean_CTR + QRS_Andes_mean_CTR + QRL_Andes_mean_CTR
+
+DH_Andes_mean_TOPO = SHFLX_Andes_mean_TOPO
+DH_Andes_mean_TOPO = SHFLX_Andes_mean_TOPO + LHFLX_Andes_mean_TOPO + QRS_Andes_mean_TOPO + QRL_Andes_mean_TOPO
+
+DH_Andes_mean_CTR_TOPO = SHFLX_Andes_mean_CTR_TOPO
+DH_Andes_mean_CTR_TOPO = SHFLX_Andes_mean_CTR_TOPO + LHFLX_Andes_mean_CTR_TOPO + QRS_Andes_mean_CTR_TOPO + QRL_Andes_mean_CTR_TOPO 
+
+DH_Amazon_mean_CTR = SHFLX_Amazon_mean_CTR ; metadata
+DH_Amazon_mean_CTR = SHFLX_Amazon_mean_CTR + LHFLX_Amazon_mean_CTR + QRS_Amazon_mean_CTR + QRL_Amazon_mean_CTR
+
+DH_Amazon_mean_TOPO = SHFLX_Amazon_mean_TOPO
+DH_Amazon_mean_TOPO = SHFLX_Amazon_mean_TOPO + LHFLX_Amazon_mean_TOPO + QRS_Amazon_mean_TOPO + QRL_Amazon_mean_TOPO
+
+DH_Amazon_mean_CTR_TOPO = SHFLX_Amazon_mean_CTR_TOPO
+DH_Amazon_mean_CTR_TOPO = SHFLX_Amazon_mean_CTR_TOPO + LHFLX_Amazon_mean_CTR_TOPO + QRS_Amazon_mean_CTR_TOPO + QRL_Amazon_mean_CTR_TOPO 
+
+end do ; do i_hr
+
+printVarSummary(SHFLX_Andes_mean_CTR)
+printVarSummary(SHFLX_Andes_mean_CTR_TOPO)
+printVarSummary(SHFLX_Amazon_mean_CTR)
+printVarSummary(SHFLX_Amazon_mean_CTR_TOPO)
+
+printVarSummary(LHFLX_Andes_mean_CTR)
+printVarSummary(LHFLX_Andes_mean_CTR_TOPO)
+printVarSummary(LHFLX_Amazon_mean_CTR)
+printVarSummary(LHFLX_Amazon_mean_CTR_TOPO)
+
+printVarSummary(QRS_Andes_mean_CTR)
+printVarSummary(QRS_Andes_mean_CTR_TOPO)
+printVarSummary(QRS_Amazon_mean_CTR)
+printVarSummary(QRS_Amazon_mean_CTR_TOPO)
+
+printVarSummary(QRL_Andes_mean_CTR)
+printVarSummary(QRL_Andes_mean_CTR_TOPO)
+printVarSummary(QRL_Amazon_mean_CTR)
+printVarSummary(QRL_Amazon_mean_CTR_TOPO)
+
+printVarSummary(DH_Andes_mean_CTR)
+printVarSummary(DH_Andes_mean_CTR_TOPO)
+printVarSummary(DH_Amazon_mean_CTR)
+printVarSummary(DH_Amazon_mean_CTR_TOPO)
 
 ;======= Step 4. output to nc files =========
+output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Raymond/"
+system("rm -f "+output_path+"Raymond_numerator"+".nc")
+ncdf = addfile(output_path+"Raymond_numerator"+".nc","c")
+filedimdef(ncdf, "time", -1, True)
 
+;-------- SHFLX ------
+ncdf->SHFLX_Andes_mean_CTR = SHFLX_Andes_mean_CTR
+ncdf->SHFLX_Andes_mean_TOPO = SHFLX_Andes_mean_TOPO
+ncdf->SHFLX_Andes_mean_CTR_TOPO = SHFLX_Andes_mean_CTR_TOPO
 
+ncdf->SHFLX_Amazon_mean_CTR = SHFLX_Amazon_mean_CTR
+ncdf->SHFLX_Amazon_mean_TOPO = SHFLX_Amazon_mean_TOPO
+ncdf->SHFLX_Amazon_mean_CTR_TOPO = SHFLX_Amazon_mean_CTR_TOPO
 
+;-------- LHFLX -------
+ncdf->LHFLX_Andes_mean_CTR = LHFLX_Andes_mean_CTR
+ncdf->LHFLX_Andes_mean_TOPO = LHFLX_Andes_mean_TOPO
+ncdf->LHFLX_Andes_mean_CTR_TOPO = LHFLX_Andes_mean_CTR_TOPO
 
+ncdf->LHFLX_Amazon_mean_CTR = LHFLX_Amazon_mean_CTR
+ncdf->LHFLX_Amazon_mean_TOPO = LHFLX_Amazon_mean_TOPO
+ncdf->LHFLX_Amazon_mean_CTR_TOPO = LHFLX_Amazon_mean_CTR_TOPO
+
+;------- QRS --------
+ncdf->QRS_Andes_mean_CTR = QRS_Andes_mean_CTR
+ncdf->QRS_Andes_mean_TOPO = QRS_Andes_mean_TOPO
+ncdf->QRS_Andes_mean_CTR_TOPO = QRS_Andes_mean_CTR_TOPO
+
+ncdf->QRS_Amazon_mean_CTR = QRS_Amazon_mean_CTR
+ncdf->QRS_Amazon_mean_TOPO = QRS_Amazon_mean_TOPO
+ncdf->QRS_Amazon_mean_CTR_TOPO = QRS_Amazon_mean_CTR_TOPO
+
+;------- QRL -------
+ncdf->QRL_Andes_mean_CTR = QRL_Andes_mean_CTR
+ncdf->QRL_Andes_mean_TOPO = QRL_Andes_mean_TOPO
+ncdf->QRL_Andes_mean_CTR_TOPO = QRL_Andes_mean_CTR_TOPO
+
+ncdf->QRL_Amazon_mean_CTR = QRL_Amazon_mean_CTR
+ncdf->QRL_Amazon_mean_TOPO = QRL_Amazon_mean_TOPO
+ncdf->QRL_Amazon_mean_CTR_TOPO = QRL_Amazon_mean_CTR_TOPO
+
+;----------- DH ------------
+ncdf->DH_Andes_mean_CTR = DH_Andes_mean_CTR
+ncdf->DH_Andes_mean_TOPO = DH_Andes_mean_TOPO
+ncdf->DH_Andes_mean_CTR_TOPO = DH_Andes_mean_CTR_TOPO
+
+ncdf->DH_Amazon_mean_CTR = DH_Amazon_mean_CTR
+ncdf->DH_Amazon_mean_TOPO = DH_Amazon_mean_TOPO
+ncdf->DH_Amazon_mean_CTR_TOPO = DH_Amazon_mean_CTR_TOPO
 
 
 end
