@@ -239,7 +239,7 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("png","../Figures/4_Refine_EQ_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/4_Refine_EQ_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 wks_sig = gsn_open_wks("png","../Figures/4_Refine_Sig_EQ_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
