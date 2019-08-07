@@ -107,27 +107,35 @@ Q_CTR = f_CTR_mean->Q
 Z3_CTR = f_CTR_mean->Z3
 PS_CTR = f_CTR_mean->PS
 
-cinfo_TOPO = wrf_cape_2d(pm_TOPO,T_TOPO,Q_TOPO,Z3_TOPO,Zsfc,PS_TOPO,True)
-cinfo_CTR = wrf_cape_2d(pm_CTR,T_CTR,Q_CTR,Z3_CTR,Zsfc,PS_CTR,True)
+;cinfo_TOPO = wrf_cape_2d(pm_TOPO,T_TOPO,Q_TOPO,Z3_TOPO,Zsfc,PS_TOPO,True)
+;cinfo_CTR = wrf_cape_2d(pm_CTR,T_CTR,Q_CTR,Z3_CTR,Zsfc,PS_CTR,True)
 ; Note https://www.ncl.ucar.edu/Document/Functions/Built-in/wrf_cape_2d.shtml
 ; This is maximum CAPE and maximum CIN
 
+cinfo_TOPO = wrf_cape_3d(pm_TOPO,T_TOPO,Q_TOPO,Z3_TOPO,Zsfc,PS_TOPO,True)
+cinfo_CTR = wrf_cape_3d(pm_CTR,T_CTR,Q_CTR,Z3_CTR,Zsfc,PS_CTR,True)
+
 printVarSummary(cinfo_TOPO)
+;print(T_TOPO&lev(25:29))
 printVarSummary(cinfo_CTR)
 
-CAPE_TOPO = cinfo_TOPO(0,:,:,:)
+CAPE_TOPO = cinfo_TOPO(0,:,29,:,:)
+;CAPE_TOPO = cinfo_TOPO(0,:,:,:)
 copy_VarCoords(PS_TOPO,CAPE_TOPO)
 CAPE_TOPO@units = "J/kg"
 
-CIN_TOPO = cinfo_TOPO(1,:,:,:)
+CIN_TOPO = cinfo_TOPO(1,:,29,:,:)
+;CIN_TOPO = cinfo_TOPO(1,:,:,:)
 copy_VarCoords(PS_TOPO,CIN_TOPO)
 CIN_TOPO@units = "J/kg"
 
-CAPE_CTR = cinfo_CTR(0,:,:,:)
+CAPE_CTR = cinfo_CTR(0,:,29,:,:)
+;CAPE_CTR = cinfo_CTR(0,:,:,:)
 copy_VarCoords(PS_CTR,CAPE_CTR)
 CAPE_CTR@units = "J/kg"
 
-CIN_CTR = cinfo_CTR(1,:,:,:)
+CIN_CTR = cinfo_CTR(1,:,29,:,:)
+;CIN_CTR = cinfo_CTR(1,:,:,:)
 copy_VarCoords(PS_CTR,CIN_CTR)
 CIN_CTR@units = "J/kg"
 
@@ -230,17 +238,17 @@ printVarSummary(CAPE_CTR_TOPO_AM)
 
 ;------------output nc files------------
 dir_out_nc = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/CAPE_CIN/"
-fil_out_nc = "CAPE_CIN_avg_box_hourly_96hrs.nc"
+fil_out_nc = "LowestLevel_using_wrf_cape_3d_CAPE_CIN_avg_box_hourly_96hrs.nc"
 system("rm "+dir_out_nc+fil_out_nc)
 ncdf = addfile(dir_out_nc+fil_out_nc,"c")
 filedimdef(ncdf,"time",-1,True)
-ncdf->MCAPE_CTR_AM = CAPE_CTR_AM
-ncdf->MCAPE_TOPO_AM = CAPE_TOPO_AM
-ncdf->MCAPE_CTR_TOPO_AM = CAPE_CTR_TOPO_AM
+ncdf->CAPE_CTR_AM = CAPE_CTR_AM
+ncdf->CAPE_TOPO_AM = CAPE_TOPO_AM
+ncdf->CAPE_CTR_TOPO_AM = CAPE_CTR_TOPO_AM
 
-ncdf->MCIN_CTR_AM = CIN_CTR_AM
-ncdf->MCIN_TOPO_AM = CIN_TOPO_AM
-ncdf->MCIN_CTR_TOPO_AM = CIN_CTR_TOPO_AM
+ncdf->CIN_CTR_AM = CIN_CTR_AM
+ncdf->CIN_TOPO_AM = CIN_TOPO_AM
+ncdf->CIN_CTR_TOPO_AM = CIN_CTR_TOPO_AM
 
 
 
