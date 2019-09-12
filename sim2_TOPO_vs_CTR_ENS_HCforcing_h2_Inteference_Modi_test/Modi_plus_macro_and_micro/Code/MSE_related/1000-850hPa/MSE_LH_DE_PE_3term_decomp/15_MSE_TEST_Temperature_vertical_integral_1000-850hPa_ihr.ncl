@@ -27,7 +27,8 @@ str_time(i_str_time) = "time"+tostring(num1(i_str_time))+"-"+tostring(num2(i_str
 ;time_label(i_str_time) = "time"+str_time(i_str_time)
 end do
 
-do index = 0,31
+;do index = 0,31
+do index = 0,0
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
 TOPO_mean_str = "ENS.mean.TOPOTEST."+str_time(index)+".nc"
@@ -54,9 +55,6 @@ var_mean_TOPO = f_TOPO_mean->$var$
 var_mean_CTR = f_CTR_mean->$var$
 ;printVarSummary(var_mean_CTR)
 
-var_mean_TOPO@_FillValue = -9999
-var_mean_CTR@_FillValue = -9999
-
 printVarSummary(var_mean_TOPO)
 printVarSummary(var_mean_CTR)
 
@@ -70,19 +68,23 @@ P0mb = 1000.0
 
 hyam = f_TOPO_mean->hyam
 hybm = f_TOPO_mean->hybm
+printVarSummary(var_mean_TOPO)
 
-var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_PS_mean_TOPO->PS_mean,1,P0mb,1,False)
-var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_PS_mean_CTR->PS_mean,1,P0mb,1,False)
+var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_PS_mean_TOPO->PS_mean,1,P0mb,1,True)
+var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_PS_mean_CTR->PS_mean,1,P0mb,1,True)
 
-var_mean_TOPO_pnew@_FillValue = -9999
-var_mean_CTR_pnew@_FillValue = -9999
+;var_mean_TOPO_pnew@_FillValue = 9.969209968386869e+36
+;var_mean_CTR_pnew@_FillValue = 9.969209968386869e+36
+var_mean_TOPO_pnew@_FillValue = 9.96921e+36
+var_mean_CTR_pnew@_FillValue = 9.96921e+36
 printVarSummary(var_mean_CTR_pnew)
+printVarSummary(var_mean_TOPO_pnew)
 
 ;================= 1000-50hPa weighted average ========
 pbot = 1000.0  ; hPa, threshold of integration
-ptop = 50.0  ; hPa, threshold of integration
-;ptop = 850.0  ; hPa, threshold of integration
-;ptop = 150.0  ; hPa, threshold of integration
+;ptop = 50.0  ; hPa, threshold of integration
+ptop = 850.0  ; hPa, threshold of integration
+;ptop = 700.0  ; hPa, threshold of integration
 
 PS_CTR = f_PS_mean_CTR->PS_mean  ; in Pa
 PS_CTR = PS_CTR/100.0  ; in hPa
@@ -90,6 +92,8 @@ PS_CTR@units = "hPa"
 ; must from bottom to top
 ;dp = dpres_plevel(pnew, PS_CTR, ptop, 0)
 ;var_mean_CTR_inte =  wgt_vertical_n(var_mean_CTR_pnew , dp, 0, 1 )
+;print(max(var_mean_CTR_inte))
+;print(min(var_mean_CTR_inte))
 
 ;var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
 var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev|::-1),1,PS_CTR,pbot,ptop)
@@ -128,22 +132,20 @@ diff_CTR_TOPO_inte = var_mean_CTR_inte - var_mean_TOPO_inte
 printVarSummary(diff_CTR_TOPO_inte)
 
 ;---------------------------
-if (i_var .eq. 0) then
 T_CTR_inte = var_mean_CTR_inte ; metadata
 T_CTR_inte@units = "Kelvin"
-T_CTR_inte&lat = f_CTR_mean->lat
-T_CTR_inte&lon = f_CTR_mean->lon
+;T_CTR_inte&lat = f_CTR_mean->lat
+;T_CTR_inte&lon = f_CTR_mean->lon
 
 T_TOPO_inte = var_mean_TOPO_inte; metadata
 T_TOPO_inte@units = "Kelvin"
-T_TOPO_inte&lat = f_TOPO_mean->lat
-T_TOPO_inte&lon = f_TOPO_mean->lon
+;T_TOPO_inte&lat = f_TOPO_mean->lat
+;T_TOPO_inte&lon = f_TOPO_mean->lon
 
 T_diff_CTR_TOPO_inte = diff_CTR_TOPO_inte ; metadata
 T_diff_CTR_TOPO_inte@units = "Kelvin"
-T_diff_CTR_TOPO_inte&lat = f_CTR_mean->lat
-T_diff_CTR_TOPO_inte&lon = f_CTR_mean->lon
-end if
+;T_diff_CTR_TOPO_inte&lat = f_CTR_mean->lat
+;T_diff_CTR_TOPO_inte&lon = f_CTR_mean->lon
 
 end do ; do ivar
 
@@ -156,9 +158,9 @@ total_hrs = 3
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("x11","../Figures/15_Regional_T_TEST__TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/15_Regional_T_TEST_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks = gsn_open_wks("x11","Global_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-plot = new(3,graphic)
+plot = new(6,graphic)
 
 res = True
 res@gsnDraw = False
@@ -171,38 +173,60 @@ res@cnLinesOn = False
 
 res@tiMainString = "ENS(9), ihr="+tostring(index*3+i_hr+1)
 res@tiMainFontHeightF = 0.015
-res@gsnLeftString = "wgt avg T, CTR"
+res@gsnLeftString = "1000-850hPa, wgt avg T, CTR"
 res@gsnRightString = "Kelvin"
 
-res@mpMaxLatF = 60.0
-res@mpMinLatF = -60.0
-res@mpMaxLonF = 350.0
-res@mpMinLonF = 230.0
+;res@mpMaxLatF = 60.0
+;res@mpMinLatF = -60.0
+;res@mpMaxLonF = 350.0
+;res@mpMinLonF = 230.0
 
-;res@cnLevelSelectionMode = "ManualLevels"
-;res@cnMinLevelValF = 260.0
-;res@cnMaxLevelValF = 300.0
-;res@cnLevelSpacingF = 5.0
+res@cnLevelSelectionMode = "ManualLevels"
+res@cnMinLevelValF = 200.0
+res@cnMaxLevelValF = 300.0
+res@cnLevelSpacingF = 5.0
 
 plot(0) = gsn_csm_contour_map(wks,T_CTR_inte(i_hr,:,:),res)
 ;plot(0) = gsn_csm_contour_map(wks,var_mean_CTR(i_hr,{900.0},:,:),res)
 
-res@gsnLeftString = " wgt avg T, TOPO"
+res@gsnLeftString = "1000-850hPa, wgt avg T, TOPO"
 plot(1) = gsn_csm_contour_map(wks,T_TOPO_inte(i_hr,:,:),res)
 ;plot(1) = gsn_csm_contour_map(wks,var_mean_TOPO(i_hr,{900.0},:,:),res)
 
-res@gsnLeftString = " wgt avg T, CTR-TOPO"
+res@gsnLeftString = "1000-850hPa, wgt avg T, CTR-TOPO"
 
-;res@cnMinLevelValF = -3.0
-;res@cnMaxLevelValF = 3.0
-;res@cnLevelSpacingF = 0.5
+res@cnMinLevelValF = -2.0
+res@cnMaxLevelValF = 2.0
+res@cnLevelSpacingF = 0.4
 plot(2) = gsn_csm_contour_map(wks,T_diff_CTR_TOPO_inte(i_hr,:,:),res)
 ;plot(2) = gsn_csm_contour_map(wks,temp,res)
 
+res@cnMinLevelValF = 200.0
+res@cnMaxLevelValF = 300.0
+res@cnLevelSpacingF = 5.
+
+res@gsnLeftString = "TEST, wgt avg T, CTR"
+plot(3) = gsn_csm_contour_map(wks,var_mean_CTR_pnew(i_hr,{900.0},:,:),res)
+res@gsnLeftString = "TEST, wgt avg T, TOPO"
+plot(4) = gsn_csm_contour_map(wks,var_mean_TOPO_pnew(i_hr,{900.0},:,:),res)
+
+res@cnMinLevelValF = -2.0
+res@cnMaxLevelValF = 2.0
+res@cnLevelSpacingF = 0.4
+;
+res@gsnLeftString = "TEST, wgt avg T, CTR-TOPO"
+temp_test = var_mean_CTR_pnew(i_hr,{900.0},:,:)
+temp_test = var_mean_CTR_pnew(i_hr,{900.0},:,:) - var_mean_TOPO_pnew(i_hr,{900.0},:,:)
+plot(5) = gsn_csm_contour_map(wks,temp_test,res)
+
+delete(res@cnMinLevelValF)
+delete(res@cnMaxLevelValF)
+delete(res@cnLevelSpacingF)
+
 ;--------------
 resP = True
-resP@txString = "wgt_avg T in CTR, TOPO and CTR-TOPO, ihr="+tostring(index*3+i_hr+1)
-gsn_panel(wks, plot, (/3,1/), resP)
+resP@txString = "1000-850hPa, wgt_avg T in CTR, TOPO and CTR-TOPO, ihr="+tostring(index*3+i_hr+1)
+gsn_panel(wks, plot, (/2,3/), resP)
 
 
 end do ; do i_hr

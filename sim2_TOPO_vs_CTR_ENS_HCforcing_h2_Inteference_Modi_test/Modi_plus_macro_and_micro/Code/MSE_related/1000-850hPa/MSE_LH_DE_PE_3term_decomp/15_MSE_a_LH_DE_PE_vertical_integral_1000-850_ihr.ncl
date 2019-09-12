@@ -72,7 +72,7 @@ var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS_mean,1
 ;printVarSummary(var_mean_TOPO_pnew)
 
 var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_CTR_mean->PS_mean,1,P0mb,1,False)
-;printVarSummary(var_mean_CTR_pnew)
+;printVarSummary(min(var_mean_CTR_pnew))
 
 ;================= 1000-50hPa weighted average ========
 pbot = 1000.0  ; hPa, threshold of integration
@@ -87,9 +87,6 @@ PS_CTR@units = "hPa"
 var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev|::-1),1,PS_CTR,pbot,ptop)
 var_mean_CTR_inte = var_mean_CTR_inte / (pbot - ptop)  
 var_mean_CTR_inte@units = "K/sec"
-printVarSummary(var_mean_CTR_inte)
-print(var_mean_CTR_inte)
-exit
 
 PS_TOPO = f_TOPO_mean->PS_mean  ; in Pa
 PS_TOPO = PS_TOPO/100.0  ; in hPa
