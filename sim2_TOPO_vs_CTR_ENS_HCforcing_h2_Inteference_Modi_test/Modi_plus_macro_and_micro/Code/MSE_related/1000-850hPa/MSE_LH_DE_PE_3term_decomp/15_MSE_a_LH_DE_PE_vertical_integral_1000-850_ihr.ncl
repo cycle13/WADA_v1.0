@@ -59,7 +59,8 @@ var_mean_CTR = f_CTR_mean->$var$
 ;printVarSummary(var_mean_CTR)
 
 ;========== hybrid coordinate to pressure coordinate ====
-pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+pnew = f_CTR_mean->lev
+;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
 P0mb = 1000.0
 ;printVarSummary(f_TOPO_mean->hyam)
 ;printVarSummary(f_TOPO_mean->PS)
@@ -82,15 +83,20 @@ PS_CTR = f_CTR_mean->PS_mean  ; in Pa
 PS_CTR = PS_CTR/100.0  ; in hPa
 PS_CTR@units = "hPa"
 ; must from bottom to top
-var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+;var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev|::-1),1,PS_CTR,pbot,ptop)
 var_mean_CTR_inte = var_mean_CTR_inte / (pbot - ptop)  
 var_mean_CTR_inte@units = "K/sec"
+printVarSummary(var_mean_CTR_inte)
+print(var_mean_CTR_inte)
+exit
 
 PS_TOPO = f_TOPO_mean->PS_mean  ; in Pa
 PS_TOPO = PS_TOPO/100.0  ; in hPa
 PS_TOPO@units = "hPa"
 ; must from bottom to top
-var_mean_TOPO_inte = vibeta(pnew(::-1), var_mean_TOPO_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+;var_mean_TOPO_inte = vibeta(pnew(::-1), var_mean_TOPO_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+var_mean_TOPO_inte = vibeta(pnew(::-1), var_mean_TOPO_pnew(time|:,lat|:,lon|:,lev|::-1),1,PS_TOPO,pbot,ptop)
 var_mean_TOPO_inte = var_mean_TOPO_inte / (pbot - ptop)  
 var_mean_TOPO_inte@units = "K/sec"
 

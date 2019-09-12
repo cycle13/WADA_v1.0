@@ -46,7 +46,8 @@ do ilat = 0,95
    do ilon = 0,143
       if (.not. ismissing(SGH30m(ilat,ilon)) .and. SGH30m(ilat,ilon) .lt. 200.0) then
           SGH30m(ilat,ilon) = SGH30m@_FillValue
-      end if end do
+      end if 
+   end do
 end do
 printVarSummary(SGH30m)
 

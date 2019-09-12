@@ -59,7 +59,8 @@ var_mean_CTR = f_CTR_mean->$var$
 ;printVarSummary(var_mean_CTR)
 
 ;========== hybrid coordinate to pressure coordinate ====
-pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+pnew = f_CTR_mean->lev
+;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
 P0mb = 1000.0
 ;printVarSummary(f_TOPO_mean->hyam)
 ;printVarSummary(f_TOPO_mean->PS)
@@ -82,7 +83,8 @@ PS_CTR = f_CTR_mean->PS_mean  ; in Pa
 PS_CTR = PS_CTR/100.0  ; in hPa
 PS_CTR@units = "hPa"
 ; must from bottom to top
-var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+;var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+var_mean_CTR_inte = vibeta(pnew(::-1), var_mean_CTR_pnew(time|:,lat|:,lon|:,lev|::-1),1,PS_CTR,pbot,ptop)
 var_mean_CTR_inte = var_mean_CTR_inte / (pbot - ptop)  
 var_mean_CTR_inte@units = "K/sec"
 
@@ -90,7 +92,8 @@ PS_TOPO = f_TOPO_mean->PS_mean  ; in Pa
 PS_TOPO = PS_TOPO/100.0  ; in hPa
 PS_TOPO@units = "hPa"
 ; must from bottom to top
-var_mean_TOPO_inte = vibeta(pnew(::-1), var_mean_TOPO_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+;var_mean_TOPO_inte = vibeta(pnew(::-1), var_mean_TOPO_pnew(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+var_mean_TOPO_inte = vibeta(pnew(::-1), var_mean_TOPO_pnew(time|:,lat|:,lon|:,lev|::-1),1,PS_TOPO,pbot,ptop)
 var_mean_TOPO_inte = var_mean_TOPO_inte / (pbot - ptop)  
 var_mean_TOPO_inte@units = "K/sec"
 
@@ -177,7 +180,7 @@ total_hrs = 3
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
  
-wks = gsn_open_wks("png","../Figures/15_Regional_MSE_DSE_LSE_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/15_Regional_MSE_DSE_LSE_850-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;wks = gsn_open_wks("x11","Global_PTTEND_50-1000hPa_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 plot = new(9,graphic)
 
@@ -223,7 +226,7 @@ res@gsnAddCyclic = True
 
 res@tiMainString = "CTR, ENS(9), ihr="+tostring(index*3+i_hr+1)
 res@tiMainFontHeightF = 0.015
-res@gsnLeftString = "1000-50hPa wgt avg MSE"
+res@gsnLeftString = "1000-850hPa wgt avg MSE"
 res@gsnRightString = "kJ/kg"
 
 res@mpMaxLatF = 60.0
@@ -238,10 +241,10 @@ res@cnLevelSpacingF = 10.0
 
 plot(0) = gsn_csm_contour_map(wks,MSE_CTR_inte(i_hr,:,:),res)
 
-res@gsnLeftString = "1000-50hPa wgt avg DSE"
+res@gsnLeftString = "1000-850hPa wgt avg DSE"
 plot(1) = gsn_csm_contour_map(wks,DSE_CTR_inte(i_hr,:,:),res)
 
-res@gsnLeftString = "1000-50hPa wgt avg LSE"
+res@gsnLeftString = "1000-850hPa wgt avg LSE"
 
 res@cnMinLevelValF = 0.0
 res@cnMaxLevelValF = 15.0
@@ -250,16 +253,16 @@ plot(2) = gsn_csm_contour_map(wks,LSE_CTR_inte(i_hr,:,:),res)
 
 res@tiMainString = "TOPO, ENS(9), ihr="+tostring(index*3+i_hr+1)
 
-res@gsnLeftString = "1000-50hPa wgt avg MSE"
+res@gsnLeftString = "1000-850hPa wgt avg MSE"
 res@cnMinLevelValF = 160.0
 res@cnMaxLevelValF = 360.0
 res@cnLevelSpacingF = 10.0
 plot(3) = gsn_csm_contour_map(wks,MSE_TOPO_inte(i_hr,:,:),res)
 
-res@gsnLeftString = "1000-50hPa wgt avg DSE"
+res@gsnLeftString = "1000-850hPa wgt avg DSE"
 plot(4) = gsn_csm_contour_map(wks,DSE_TOPO_inte(i_hr,:,:),res)
 
-res@gsnLeftString = "1000-50hPa wgt avg LSE"
+res@gsnLeftString = "1000-850hPa wgt avg LSE"
 res@cnMinLevelValF = 0.0
 res@cnMaxLevelValF = 15.0
 res@cnLevelSpacingF = 1.0
@@ -270,17 +273,17 @@ plot(5) = gsn_csm_contour_map(wks,LSE_TOPO_inte(i_hr,:,:),res)
 ;res@cnLevelSpacingF = 0.4
 res@tiMainString = "CTR - TOPO, ENS(9), ihr="+tostring(index*3+i_hr+1)
 
-res@gsnLeftString = "1000-50hPa wgt avg MSE"
+res@gsnLeftString = "1000-850hPa wgt avg MSE"
 
 res@cnMinLevelValF = -1.6
 res@cnMaxLevelValF = 1.6
 res@cnLevelSpacingF = 0.2
 plot(6) = gsn_csm_contour_map(wks,MSE_diff_CTR_TOPO_inte(i_hr,:,:),res)
 
-res@gsnLeftString = "1000-50hPa wgt avg DSE"
+res@gsnLeftString = "1000-850hPa wgt avg DSE"
 plot(7) = gsn_csm_contour_map(wks,DSE_diff_CTR_TOPO_inte(i_hr,:,:),res)
 
-res@gsnLeftString = "1000-50hPa wgt avg LSE"
+res@gsnLeftString = "1000-850hPa wgt avg LSE"
 plot(8) = gsn_csm_contour_map(wks,LSE_diff_CTR_TOPO_inte(i_hr,:,:),res)
 
 ;--------------
