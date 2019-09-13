@@ -59,28 +59,51 @@ printVarSummary(var_mean_TOPO)
 printVarSummary(var_mean_CTR)
 
 ;========== hybrid coordinate to pressure coordinate ====
-pnew = f_CTR_mean->lev
-pnew@units = "hPa"
+;pnew = f_CTR_mean->lev
+;pnew@units = "hPa"
 ;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
-P0mb = 1000.0
+;P0mb = 1000.0
 ;printVarSummary(f_TOPO_mean->hyam)
 ;printVarSummary(f_TOPO_mean->PS)
 
-hyam = f_TOPO_mean->hyam
-hybm = f_TOPO_mean->hybm
-printVarSummary(var_mean_TOPO)
+;hyam = f_TOPO_mean->hyam
+;hybm = f_TOPO_mean->hybm
+;printVarSummary(var_mean_TOPO)
 
-var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_PS_mean_TOPO->PS_mean,1,P0mb,1,True)
-var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_PS_mean_CTR->PS_mean,1,P0mb,1,True)
+;var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_PS_mean_TOPO->PS_mean,1,P0mb,1,False)
+;var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_PS_mean_CTR->PS_mean,1,P0mb,1,False)
 
 ;var_mean_TOPO_pnew@_FillValue = 9.969209968386869e+36
 ;var_mean_CTR_pnew@_FillValue = 9.969209968386869e+36
-var_mean_TOPO_pnew@_FillValue = 9.96921e+36
-var_mean_CTR_pnew@_FillValue = 9.96921e+36
-printVarSummary(var_mean_CTR_pnew)
-printVarSummary(var_mean_TOPO_pnew)
+;var_mean_TOPO_pnew@_FillValue = 9.96921e+36
+;var_mean_CTR_pnew@_FillValue = 9.96921e+36
+;printVarSummary(var_mean_CTR_pnew)
+;printVarSummary(var_mean_TOPO_pnew)
 
-;================ plot ===========
+;------------- 
+hyai = f_TOPO_mean->hyai
+hybi = f_TOPO_mean->hybi
+
+PS_TOPO = f_PS_mean_TOPO->PS_mean
+P0 = 100000.0 ; Pa
+dph_TOPO = dpres_hybrid_ccm(PS_TOPO,P0,hyai,hybi)
+printVarSummary(PS_TOPO)
+printVarSummary(dph_TOPO)
+print(f_TOPO_mean->lev)
+print(dph_TOPO(2,:,50,80))
+exit
+
+PS_CTR = f_PS_mean_CTR->PS_mean
+dph_CTR = dpres_hybrid_ccm(PS_CTR,P0,hyai,hybi)
+
+;----- lowest five layers ------
+lowest_lev = 5
+
+;var_inte_TOPO = dim_avg_n(var_mean_TOPO(:,30-lowest_lev:29,:,:) * dph_TOPO(:,30-lowest_lev:29,:,:), 1)/dim_sum_n(dps_TOPO&dplev(30-lowets_lev:29),)
+exit
+
+
+;=============== plot ===========
 ;total 12 days in the TOPOTEST after branching
 
 ;total_days = 12
