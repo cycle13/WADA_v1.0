@@ -69,8 +69,8 @@ dir_CTR_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim
 
 do index = 0,31
 ;-----read files, (MSE inte already calculated)
-ncdf_TOPO = addfile(dir_TOPO_out+"LH_DE_PE.TOPOTEST.1000-850.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
-ncdf_CTR = addfile(dir_CTR_out+"LH_DE_PE.CTR.1000-850.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+ncdf_TOPO = addfile(dir_TOPO_out+"LH_DE_PE.TOPOTEST.L5.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+ncdf_CTR = addfile(dir_CTR_out+"LH_DE_PE.CTR.L5.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
 
 PE_CTR_inte = ncdf_CTR->PE_inte
 PE_TOPO_inte = ncdf_TOPO->PE_inte
@@ -116,8 +116,8 @@ Amazon_mean_CTR_TOPO@units = "kJ/kg"
 
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE_decomp_Andes_Amazon/"
-system("rm -f "+output_path+var_str+"1000-850.nc")
-ncdf = addfile(output_path+var_str+"1000-850.nc","c")
+system("rm -f "+output_path+var_str+"L5.nc")
+ncdf = addfile(output_path+var_str+"L5.nc","c")
 filedimdef(ncdf, "time", -1, True)
 ncdf->Andes_mean_CTR = Andes_mean_CTR
 ncdf->Andes_mean_TOPO = Andes_mean_TOPO

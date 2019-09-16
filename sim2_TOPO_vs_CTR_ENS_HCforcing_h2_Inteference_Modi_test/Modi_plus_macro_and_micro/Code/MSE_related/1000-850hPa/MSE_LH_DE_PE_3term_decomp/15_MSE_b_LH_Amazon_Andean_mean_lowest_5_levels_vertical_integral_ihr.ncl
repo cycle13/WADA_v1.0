@@ -46,7 +46,7 @@ do ilat = 0,95
    do ilon = 0,143
       if (.not. ismissing(SGH30m(ilat,ilon)) .and. SGH30m(ilat,ilon) .lt. 200.0) then
           SGH30m(ilat,ilon) = SGH30m@_FillValue
-      end if
+      end if 
    end do
 end do
 printVarSummary(SGH30m)
@@ -62,77 +62,32 @@ Amazon_mean_CTR = new(total_times,double)
 Amazon_mean_TOPO = new(total_times,double)
 Amazon_mean_CTR_TOPO = new(total_times,double)
 
-var_str = "DE"
+var_str = "LH"
 
 dir_TOPO_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE/TOPO_TEST/"
 dir_CTR_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE/CTR/"
 
 do index = 0,31
 ;-----read files, (MSE inte already calculated)
-ncdf_TOPO = addfile(dir_TOPO_out+"LH_DE_PE.TOPOTEST.1000-850.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
-ncdf_CTR = addfile(dir_CTR_out+"LH_DE_PE.CTR.1000-850.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+ncdf_TOPO = addfile(dir_TOPO_out+"LH_DE_PE.TOPOTEST.L5.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+ncdf_CTR = addfile(dir_CTR_out+"LH_DE_PE.CTR.L5.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
 
-DE_CTR_inte = ncdf_CTR->DE_inte
-DE_TOPO_inte = ncdf_TOPO->DE_inte
-DE_diff_CTR_TOPO_inte = DE_CTR_inte
-DE_diff_CTR_TOPO_inte = DE_CTR_inte - DE_TOPO_inte
+LH_CTR_inte = ncdf_CTR->LH_inte
+LH_TOPO_inte = ncdf_TOPO->LH_inte
+LH_diff_CTR_TOPO_inte = LH_CTR_inte
+LH_diff_CTR_TOPO_inte = LH_CTR_inte - LH_TOPO_inte
 
 ;----------
 total_hrs = 3
 
-;------ Plot and see what the DE_CTR_inte, DE_TOPO_inte and DE_diff_CTR_TOPO look like --------
-do i_hr = 0, total_hrs-1
-wks = gsn_open_wks("png","./Figures/15_MSE_c_DE_Amazon_Andean_mean_1000-850hPa_vertical_integral_ihr_"+tostring(index*3+i_hr))
-
-plot = new(3,graphic)
-
-res = True
-
-res@gsnDraw = False
-res@gsnFrame = False
-rescnInfoLabelOn = False
-res@cnFillOn = True
-;res@lbLabelBarOn = False
-
-res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = 100.0 
-res@cnMaxLevelValF = 300.0
-res@cnLevelSpacingF = 20.0
-
-res@mpMaxLatF = 60.0
-res@mpMinLatF = -60.0
-res@mpMaxLonF = 350.0
-res@mpMinLonF = 230.0
-
-res@tiMainString = "CTR"
-plot(0) = gsn_csm_contour_map(wks,DE_CTR_inte(i_hr,:,:),res)
-
-res@tiMainString = "TOPO"
-plot(1) = gsn_csm_contour_map(wks,DE_TOPO_inte(i_hr,:,:),res)
-
-res@cnMinLevelValF = -2.0 
-res@cnMaxLevelValF = 2.0
-res@cnLevelSpacingF = 0.4
-
-res@tiMainString = "CTR-TOPO"
-plot(2) = gsn_csm_contour_map(wks,DE_diff_CTR_TOPO_inte(i_hr,:,:),res)
-
-
-resP = True
-resP@txString = "Dry Air Enthalpy, 1000-850hPa, kJ/kg, ihr="+sprintf("%5.2f",index*3+i_hr)
-
-gsn_panel(wks,plot,(/3,1/),resP)
-end do; do i_hr
-
-;---------------------
 do i_hr = 0,total_hrs-1
-Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), DE_CTR_inte(i_hr,:,:), DE_CTR_inte@_FillValue))
-Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), DE_TOPO_inte(i_hr,:,:), DE_TOPO_inte@_FillValue))
-Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), DE_diff_CTR_TOPO_inte(i_hr,:,:), DE_diff_CTR_TOPO_inte@_FillValue))
+Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LH_CTR_inte(i_hr,:,:), LH_CTR_inte@_FillValue))
+Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LH_TOPO_inte(i_hr,:,:), LH_TOPO_inte@_FillValue))
+Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LH_diff_CTR_TOPO_inte(i_hr,:,:), LH_diff_CTR_TOPO_inte@_FillValue))
 
-Amazon_mean_CTR(index*3+i_hr) = avg( DE_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_TOPO(index*3+i_hr) = avg( DE_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(DE_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR(index*3+i_hr) = avg( LH_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_TOPO(index*3+i_hr) = avg( LH_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(LH_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
 
 end do ; do i_hr
@@ -161,8 +116,8 @@ Amazon_mean_CTR_TOPO@units = "kJ/kg"
 
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE_decomp_Andes_Amazon/"
-system("rm -f "+output_path+var_str+"1000-850.nc")
-ncdf = addfile(output_path+var_str+"1000-850.nc","c")
+system("rm -f "+output_path+var_str+"L5.nc")
+ncdf = addfile(output_path+var_str+"L5.nc","c")
 filedimdef(ncdf, "time", -1, True)
 ncdf->Andes_mean_CTR = Andes_mean_CTR
 ncdf->Andes_mean_TOPO = Andes_mean_TOPO
