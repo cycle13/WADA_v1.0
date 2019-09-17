@@ -21,7 +21,7 @@ cases = ['CTR', 'TOPO', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
     for i in range(len(file_names)):
-        ds = xr.open_dataset(data_path+file_names[i]+'1000-850.nc', decode_times=False)
+        ds = xr.open_dataset(data_path+file_names[i]+'L5.nc', decode_times=False)
         data_vars[i,:] = ds['Andes_mean_'+cases[i_case]]
         print(data_vars[i,:])
         print('==')
@@ -35,12 +35,12 @@ for i_case in range(len(cases)):
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
     plt.ylabel('kJ/kg')
-    plt.title(cases[i_case]+', Andes avg, 1000-850hPa')
+    plt.title(cases[i_case]+', Andes avg, lowest 5 layers')
     plt.grid(True)
 
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
 #plt.show()
-plt.savefig('../Figures/CTR_TOPO_Andes_mean_MSE_1000-850hPa_decomp.png')
+plt.savefig('../Figures/CTR_TOPO_Andes_mean_MSE_L5_decomp.png')
 

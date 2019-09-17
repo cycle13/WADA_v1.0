@@ -62,32 +62,34 @@ Amazon_mean_CTR = new(total_times,double)
 Amazon_mean_TOPO = new(total_times,double)
 Amazon_mean_CTR_TOPO = new(total_times,double)
 
-var_str = "LSE"
+var_str = "DSE"
 
 dir_TOPO_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE/TOPO_TEST/"
 dir_CTR_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE/CTR/"
 
 do index = 0,31
 ;-----read files, (MSE inte already calculated)
-ncdf_TOPO = addfile(dir_TOPO_out+"MSE_DSE_LE.TOPOTEST.1000-850.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
-ncdf_CTR = addfile(dir_CTR_out+"MSE_DSE_LE.CTR.1000-850.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+;ncdf_TOPO = addfile(dir_TOPO_out+"MSE_DSE_LE.TOPOTEST.L5.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+;ncdf_CTR = addfile(dir_CTR_out+"MSE_DSE_LE.CTR.L5.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+ncdf_TOPO = addfile(dir_TOPO_out+"MSE_DSE_LE.TOPOTEST.L10.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
+ncdf_CTR = addfile(dir_CTR_out+"MSE_DSE_LE.CTR.L10.time"+tostring(index*3)+"-"+tostring(index*3+2)+".nc","r")
 
-LSE_CTR_inte = ncdf_CTR->LSE_inte
-LSE_TOPO_inte = ncdf_TOPO->LSE_inte
-LSE_diff_CTR_TOPO_inte = LSE_CTR_inte
-LSE_diff_CTR_TOPO_inte = LSE_CTR_inte - LSE_TOPO_inte
+DSE_CTR_inte = ncdf_CTR->DSE_inte
+DSE_TOPO_inte = ncdf_TOPO->DSE_inte
+DSE_diff_CTR_TOPO_inte = DSE_CTR_inte
+DSE_diff_CTR_TOPO_inte = DSE_CTR_inte - DSE_TOPO_inte
 
 ;----------
 total_hrs = 3
 
 do i_hr = 0,total_hrs-1
-Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LSE_CTR_inte(i_hr,:,:), LSE_CTR_inte@_FillValue))
-Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LSE_TOPO_inte(i_hr,:,:), LSE_TOPO_inte@_FillValue))
-Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LSE_diff_CTR_TOPO_inte(i_hr,:,:), LSE_diff_CTR_TOPO_inte@_FillValue))
+Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), DSE_CTR_inte(i_hr,:,:), DSE_CTR_inte@_FillValue))
+Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), DSE_TOPO_inte(i_hr,:,:), DSE_TOPO_inte@_FillValue))
+Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), DSE_diff_CTR_TOPO_inte(i_hr,:,:), DSE_diff_CTR_TOPO_inte@_FillValue))
 
-Amazon_mean_CTR(index*3+i_hr) = avg( LSE_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_TOPO(index*3+i_hr) = avg( LSE_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(LSE_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR(index*3+i_hr) = avg( DSE_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_TOPO(index*3+i_hr) = avg( DSE_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(DSE_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
 
 end do ; do i_hr
@@ -116,8 +118,10 @@ Amazon_mean_CTR_TOPO@units = "kJ/kg"
 
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/MSE_decomp_Andes_Amazon/"
-system("rm -f "+output_path+var_str+"1000-850.nc")
-ncdf = addfile(output_path+var_str+"1000-850.nc","c")
+;system("rm -f "+output_path+var_str+"L5.nc")
+;ncdf = addfile(output_path+var_str+"L5.nc","c")
+system("rm -f "+output_path+var_str+"L10.nc")
+ncdf = addfile(output_path+var_str+"L10.nc","c")
 filedimdef(ncdf, "time", -1, True)
 ncdf->Andes_mean_CTR = Andes_mean_CTR
 ncdf->Andes_mean_TOPO = Andes_mean_TOPO
