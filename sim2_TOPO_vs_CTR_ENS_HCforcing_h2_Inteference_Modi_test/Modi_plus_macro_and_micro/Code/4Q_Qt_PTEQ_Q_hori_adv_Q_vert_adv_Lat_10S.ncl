@@ -34,12 +34,14 @@ end do
 Q_diff_TOPO_CTR = new((/96,30,96,144/),double)
 Q_diff_TOPO_CTR_sig = new((/96,30,96,144/),double)
 
+PTEQ_diff_TOPO_CTR = new((/96,30,96,144/),double)
+PTEQ_diff_TOPO_CTR_sig = new((/96,30,96,144/),double)
+
 Q_hori_adv_diff_TOPO_CTR = new((/96,30,96,144/),double)
 Q_hori_adv_diff_TOPO_CTR_sig = new((/96,30,96,144/),double)
 
 Q_vert_adv_diff_TOPO_CTR = new((/96,30,96,144/),double)
 Q_vert_adv_diff_TOPO_CTR_sig = new((/96,30,96,144/),double)
-
 
 do index = 0,31
 ;do index = 0,5
@@ -54,7 +56,8 @@ TOPO_mean_std_Qadv_dir = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HC
 TOPO_mean_std_Qadv = "ENS.std.mean.TOPOTEST.Qadv."+str_time(index)+".nc"
 TOPO_mean_std_Q_vert_adv = "ENS.std.mean.TOPOTEST.Q_vert_adv."+str_time(index)+".nc"
 
-CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
+;CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
+CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/CTR/"
 ;CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 ;CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 CTR_mean_str = "ENS.mean.CTR."+str_time(index)+".nc"
@@ -64,12 +67,12 @@ CTR_mean_std_Qadv_dir = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCf
 CTR_mean_std_Qadv = "ENS.std.mean.CTR.Qadv."+str_time(index)+".nc"
 CTR_mean_std_Q_vert_adv = "ENS.std.mean.CTR.Q_vert_adv."+str_time(index)+".nc"
 
-var_str = (/"Q","var_hori_adv","var_vert_adv"/)  ; here var_adv means Qadv
+var_str = (/"Q","PTEQ","var_hori_adv","var_vert_adv"/)  ; here var_adv means Qadv
 
 do i_var = 0, dimsizes(var_str)-1
 ;do i_var = 5, dimsizes(var_str)-1
 
-if (i_var .eq. 0) then
+if (i_var .le. 1) then
 var = var_str(i_var)
 
 f_TOPO_mean = addfile(TOPO_dir+TOPO_mean_str,"r")
@@ -90,7 +93,7 @@ var_std_CTR_temp = f_CTR_std->$var$
 var_std_CTR = var_std_CTR_temp(0,:,:,:,:)   ; get rid of the first realization dimension
 ;printVarSummary(var_std_CTR)
 
-else if (i_var .eq. 1)  then  ; for advection since they are in different files
+else if (i_var .eq. 2)  then  ; for advection since they are in different files
 
 f_TOPO_Qadv = addfile(TOPO_mean_std_Qadv_dir+TOPO_mean_std_Qadv,"r")
 f_CTR_Qadv = addfile(CTR_mean_std_Qadv_dir+CTR_mean_std_Qadv,"r")
@@ -158,7 +161,7 @@ P0mb = 1000.0
 hyam = f_TOPO_mean->hyam
 hybm = f_TOPO_mean->hybm
 
-if (i_var .le. 1) then
+if (i_var .le. 2) then
 var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS,1,P0mb,1,False)
 var_mean_TOPO_pnew&lev@units = "hPa" 
 ;printVarSummary(var_mean_TOPO_pnew&lev_p)
@@ -232,6 +235,15 @@ if (i_var .eq. 0) then
    Q_diff_TOPO_CTR_sig(num1(index):num2(index),:,:,:) = diff_TOPO_CTR_sig * 1000
    Q_diff_TOPO_CTR_sig@units = "g/kg"
 else if (i_var .eq. 1) then
+   PTEQ_CTR = var_mean_CTR_pnew
+   PTEQ_CTR = PTEQ_CTR * 1000.0 * 3600 ; from kg/kg / sec to g/kg/hr
+   PTEQ_diff_TOPO_CTR(num1(index):num2(index),:,:,:) = diff_TOPO_CTR
+   PTEQ_diff_TOPO_CTR(num1(index):num2(index),:,:,:) = diff_TOPO_CTR * 1000.0 * 3600 ;; from kg/kg /sec to g/kg/hr
+   PTEQ_diff_TOPO_CTR@units = "g/kg/hr"
+   PTEQ_diff_TOPO_CTR_sig(num1(index):num2(index),:,:,:) = diff_TOPO_CTR_sig 
+   PTEQ_diff_TOPO_CTR_sig(num1(index):num2(index),:,:,:) = diff_TOPO_CTR_sig * 1000.0 * 3600 ; from kg/kg /sec to g/kg/hr
+   PTEQ_diff_TOPO_CTR_sig@units = "g/kg/hr"
+else if (i_var .eq. 2) then
    Q_hori_adv_mean_CTR = var_mean_CTR_pnew
    Q_hori_adv_diff_TOPO_CTR(num1(index):num2(index),:,:,:) = diff_TOPO_CTR
    Q_hori_adv_diff_TOPO_CTR_sig(num1(index):num2(index),:,:,:) = diff_TOPO_CTR_sig
@@ -240,7 +252,7 @@ else
    Q_vert_adv_diff_TOPO_CTR(num1(index):num2(index),:,:,:) = diff_TOPO_CTR
    Q_vert_adv_diff_TOPO_CTR_sig(num1(index):num2(index),:,:,:) = diff_TOPO_CTR_sig
 end if
-
+end if
 end if
 
 delete(var_mean_CTR)
@@ -286,14 +298,14 @@ printVarSummary(gp)
 
 total_hrs =96
 
-plot = new(4,graphic)
+plot = new(5,graphic)
 ;plot_sig = new(4,graphic)
 
 do i_hr = 1,total_hrs-1   ; from hour 2 to hour 96
 print(i_hr)
 ;do i_day = 0,3
 
-wks = gsn_open_wks("png","../Figures/4_Refine_10S_to100hPa_Q_Qt_Q_hori_adv_Q_vert_adv_TOPO_vs_CTR_ihr_"+tostring(i_hr+1))
+wks = gsn_open_wks("png","../Figures/4_Refine_10S_to100hPa_Q_PTEQ_Qt_Q_hori_adv_Q_vert_adv_TOPO_vs_CTR_ihr_"+tostring(i_hr+1))
 ;wks_sig = gsn_open_wks("png","../Figures/4_Refine_Sig_10S_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
@@ -311,24 +323,30 @@ res@cnLevelSpacingF = 1.0
 ;res@tiMainFontHeightF = 0.015
 ;----------
 
-res@cnMinLevelValF = -0.5
-res@cnMaxLevelValF = 0.5
+res@cnMinLevelValF = -0.6
+res@cnMaxLevelValF = 0.6
 res@cnLevelSpacingF = 0.02
 res@gsnLeftString = "Q"
 plot(0) = gsn_csm_pres_hgt(wks,Q_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 ;plot_sig(4) = gsn_csm_pres_hgt(wks_sig,Q_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
-res@cnMinLevelValF = -0.5
-res@cnMaxLevelValF = 0.5
-res@cnLevelSpacingF = 0.02
+res@cnMinLevelValF = -0.2
+res@cnMaxLevelValF = 0.2
+res@cnLevelSpacingF = 0.01
+res@gsnLeftString = "PTEQ"
+plot(1) = gsn_csm_pres_hgt(wks,PTEQ_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+
+res@cnMinLevelValF = -0.2
+res@cnMaxLevelValF = 0.2
+res@cnLevelSpacingF = 0.01
 res@gsnLeftString = "partial_Q/partial_t"
-plot(1) = gsn_csm_pres_hgt(wks,Qt_diff(i_hr-1,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res) ; Note Qt only has hr=1 to hr=96
+plot(2) = gsn_csm_pres_hgt(wks,Qt_diff(i_hr-1,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res) ; Note Qt only has hr=1 to hr=96
 
 res@cnMinLevelValF = -0.2
 res@cnMaxLevelValF = 0.2
 res@cnLevelSpacingF = 0.01
 res@gsnLeftString = "Horizontal advection of Q"
-plot(2) = gsn_csm_pres_hgt(wks,Q_hori_adv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+plot(3) = gsn_csm_pres_hgt(wks,Q_hori_adv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 ;plot_sig(5) = gsn_csm_pres_hgt(wks_sig,Qadv_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
 res@cnMinLevelValF = -0.2
@@ -336,7 +354,7 @@ res@cnMaxLevelValF = 0.2
 res@cnLevelSpacingF = 0.01
 res@tiMainString = "  "
 res@gsnLeftString = "Vertical advection of Q"
-plot(3) = gsn_csm_pres_hgt(wks,Q_vert_adv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+plot(4) = gsn_csm_pres_hgt(wks,Q_vert_adv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
  
 ;============ panel plot ====
 
@@ -345,7 +363,7 @@ str_LST = (/"20:00","21:00","22:00","23:00","24:00","01:00","02:00","03:00","04:
 pres = True
 pres@txString = "CTR - TOPO, ENS(9), ihr="+tostring(i_hr+1) +", LST_75W ("+str_LST(mod(i_hr,24))+")"+", lat="+sprintf("%5.1f",lat_t)
 
-gsn_panel(wks,plot,(/2,2/),pres)
+gsn_panel(wks,plot,(/2,3/),pres)
 
 ;gsn_panel(wks_sig,plot_sig,(/3,2/),pres)
 
