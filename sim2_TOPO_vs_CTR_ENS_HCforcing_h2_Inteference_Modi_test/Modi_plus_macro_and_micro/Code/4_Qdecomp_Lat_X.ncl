@@ -54,6 +54,9 @@ Qadv_diff_CTR_TOPO = new((/95, 30, 96, 144/),double)
 PS_mean_CTR = new((/96, 96, 144/),double)  ; 
 PS_mean_TOPO = new((/96, 96, 144/),double)
 
+dph_CTR = new((/96,30,96,144/),double)
+dph_TOPO = new((/96,30,96,144/),double)
+
 ;============== ======
 f_SGH30 = addfile("/DFS-L/DATA/pritchard/hongcheq/Topography/USGS-gtopo30_1.9x2.5_remap_c050602.nc","r")
 SGH30 = f_SGH30->SGH30
@@ -112,11 +115,16 @@ TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-
 TOPO_mean_str = "ENS.mean.TOPOTEST."+str_time(index)+".nc"
 TOPO_std_str = "ENS.std.TOPOTEST."+str_time(index)+".nc"
 
+PS_mean_TOPO_str = "ENS.std.mean.TOPOTEST.MSE.3term."+str_time(index)+".nc"
+
 CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/CTR/"
 ;CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
 ;CTR_std_str = "ENS.std.CTR.time"+str_time(index)+".nc"
 CTR_mean_str = "ENS.mean.CTR."+str_time(index)+".nc"
 CTR_std_str = "ENS.std.CTR."+str_time(index)+".nc"
+
+PS_CTR_str = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
+PS_mean_CTR_str = "ENS.std.mean.CTR.MSE.3term."+str_time(index)+".nc"
 
 var_str = (/"QAP","PTEQ","PS"/)
 
@@ -128,8 +136,17 @@ var = var_str(i_var)
 f_TOPO_mean = addfile(TOPO_dir+TOPO_mean_str,"r")
 f_TOPO_std = addfile(TOPO_dir+TOPO_std_str,"r")
 
+f_PS_mean_TOPO = addfile(TOPO_dir+PS_mean_TOPO_str,"r")
+
 f_CTR_mean = addfile(CTR_dir+CTR_mean_str,"r")
 f_CTR_std = addfile(CTR_dir+CTR_std_str,"r")
+
+f_PS_mean_CTR = addfile(PS_CTR_str+PS_mean_CTR_str,"r")
+
+hybrid_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
+hybrid_str = "ENS.mean.TOPOTEST."+str_time(index)+".nc"
+
+f_hybrid = addfile(hybrid_dir + hybrid_str,"r")
 
 var_mean_TOPO = f_TOPO_mean->$var$
 ;printVarSummary(var_mean_TOPO)
@@ -137,51 +154,64 @@ var_mean_TOPO = f_TOPO_mean->$var$
 var_mean_CTR = f_CTR_mean->$var$
 ;printVarSummary(var_mean_CTR)
 
-;========== hybrid coordinate to pressure coordinate ====
-;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
-pnew = (/3.64346569404006, 7.59481964632869, 14.3566322512925,\
-    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262,\
-    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662,\
-    168.225079774857, 197.908086702228, 232.828618958592, 273.910816758871,\
-    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651,\
-    609.778694808483, 691.389430314302, 763.404481112957, 820.858368650079,\
-    859.53476652503, 887.020248919725, 912.644546944648, 936.198398470879,\
-    957.485479535535, 976.325407391414, 992.556095123291 /)
+hyai = f_hybrid->hyai
+hybi = f_hybrid->hybi
 
-;pnew = fspan(100.0,1000.0,200)
+PS_TOPO = f_PS_mean_TOPO->PS_mean
+P0 = 100000.0 ; Pa
+dph_TOPO(index*3:index*3+2,:,:,:) = dpres_hybrid_ccm(PS_TOPO,P0,hyai,hybi)
 
-P0mb = 1000.0
-;printVarSummary(f_TOPO_mean->hyam)
-;printVarSummary(f_TOPO_mean->PS)
+printVarSummary(PS_TOPO)
+printVarSummary(dph_TOPO)
 
-hyam = f_TOPO_mean->hyam
-hybm = f_TOPO_mean->hybm
+PS_CTR = f_PS_mean_CTR->PS_mean
+dph_CTR(index*3:index*3+2,:,:,:) = dpres_hybrid_ccm(PS_CTR,P0,hyai,hybi)
 
-if (i_var .ne. 2) then
+;;========== hybrid coordinate to pressure coordinate ====
+;;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
+;pnew = (/3.64346569404006, 7.59481964632869, 14.3566322512925,\
+;    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262,\
+;    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662,\
+;    168.225079774857, 197.908086702228, 232.828618958592, 273.910816758871,\
+;    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651,\
+;    609.778694808483, 691.389430314302, 763.404481112957, 820.858368650079,\
+;    859.53476652503, 887.020248919725, 912.644546944648, 936.198398470879,\
+;    957.485479535535, 976.325407391414, 992.556095123291 /)
+;
+;;pnew = fspan(100.0,1000.0,200)
+;
+;P0mb = 1000.0
+;;printVarSummary(f_TOPO_mean->hyam)
+;;printVarSummary(f_TOPO_mean->PS)
+;
+;hyam = f_TOPO_mean->hyam
+;hybm = f_TOPO_mean->hybm
+;
+;if (i_var .ne. 2) then
+;
+;var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS,1,P0mb,1,False)
+;var_mean_TOPO_pnew&lev_p@units = "hPa" 
+;;printVarSummary(var_mean_TOPO_pnew&lev_p)
+;
+;var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_CTR_mean->PS,1,P0mb,1,False)
+;var_mean_CTR_pnew&lev_p@units = "hPa"
+;;printVarSummary(var_mean_CTR_pnew)
+;end if
+;
 
-var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS,1,P0mb,1,False)
-var_mean_TOPO_pnew&lev_p@units = "hPa" 
-;printVarSummary(var_mean_TOPO_pnew&lev_p)
-
-var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_CTR_mean->PS,1,P0mb,1,False)
-var_mean_CTR_pnew&lev_p@units = "hPa"
-;printVarSummary(var_mean_CTR_pnew)
-end if
-
-diff_CTR_TOPO = var_mean_TOPO_pnew ; metadata
-;diff_TOPO_CTR = var_mean_TOPO_pnew - var_mean_CTR_pnew
-diff_CTR_TOPO = var_mean_CTR_pnew - var_mean_TOPO_pnew
+diff_CTR_TOPO = var_mean_TOPO ; metadata
+diff_CTR_TOPO = var_mean_CTR - var_mean_TOPO
 diff_CTR_TOPO@units = var_mean_TOPO@units
 diff_CTR_TOPO@long_name = var_mean_TOPO@long_name
 
 if (i_var .eq. 0) then
-   QAP_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR_pnew
-   QAP_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO_pnew
+   QAP_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR
+   QAP_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO
    QAP_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = diff_CTR_TOPO
 end if
 if (i_var .eq. 1) then
-   PTEQ_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR_pnew
-   PTEQ_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO_pnew
+   PTEQ_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR
+   PTEQ_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO
    PTEQ_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = diff_CTR_TOPO
 end if
 if (i_var .eq. 2) then
@@ -191,6 +221,7 @@ end if
 
 delete(var_mean_TOPO)
 delete(var_mean_CTR)
+delete(diff_CTR_TOPO)
 
 end do ; do ivar
 
@@ -238,222 +269,303 @@ printVarSummary(PTEQ_diff_CTR_TOPO)
 printVarSummary(PTEQ_diff_CTR_TOPO2)
 ;printVarSummary(V_diff_TOPO_CTR_sig)
 
-;-------------------- Vertically integrated --------------
-;================= 1000-50hPa weighted average ========
-pbot = 1000.0  ; hPa, threshold of integration
-ptop = 50.0  ; hPa, threshold of integration
+;------ all layers ------
 
-;------------------------- Qt -------------
-PS_CTR = PS_mean_CTR(1:95,:,:)  ; in Pa
-PS_CTR = PS_CTR/100.0  ; in hPa
-PS_CTR@units = "hPa"
+lowest_lev = 30
 
-PS_TOPO = PS_mean_TOPO(1:95,:,:)  ; in Pa
-PS_TOPO = PS_TOPO/100.0  ; in hPa
-PS_TOPO@units = "hPa"
-
-; must from bottom to top
-printVarSummary(PS_CTR)
-printVarSummary(Qt_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
-
-Qt_mean_CTR_inte = vibeta(pnew(::-1), Qt_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
-Qt_mean_CTR_inte = Qt_mean_CTR_inte / (pbot - ptop)
-Qt_mean_CTR_inte@units = "kg/kg / hr"
-Qt_mean_CTR_inte!0 = "time"
-printVarSummary(Qt_mean_CTR_inte)
-printVarSummary(f_CTR_mean->time)
-Qt_mean_CTR_inte&time = ispan(2,96,1)
-Qt_mean_CTR_inte!1 = "lat"
-Qt_mean_CTR_inte&lat = f_CTR_mean->lat
-Qt_mean_CTR_inte!2 = "lon"
-Qt_mean_CTR_inte&lon = f_CTR_mean->lon
-
-; must from bottom to top
-Qt_mean_TOPO_inte = vibeta(pnew(::-1), Qt_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
-Qt_mean_TOPO_inte = Qt_mean_TOPO_inte / (pbot - ptop)
-Qt_mean_TOPO_inte@units = "kg/kg /hr"
+;----------- Qt -------
+Qt_mean_TOPO_inte = dim_sum_n_Wrap(Qt_mean_TOPO(:,30-lowest_lev:29,:,:) * dph_TOPO(1:95,30-lowest_lev:29,:,:), 1)/dim_sum_n(dph_TOPO(1:95,30-lowest_lev:29,:,:),1)
 Qt_mean_TOPO_inte!0 = "time"
 Qt_mean_TOPO_inte&time = ispan(2,96,1)
 Qt_mean_TOPO_inte!1 = "lat"
-Qt_mean_TOPO_inte&lat = f_TOPO_mean->lat
+Qt_mean_TOPO_inte&lat = PS_TOPO&lat
 Qt_mean_TOPO_inte!2 = "lon"
-Qt_mean_TOPO_inte&lon = f_TOPO_mean->lon
-
+Qt_mean_TOPO_inte&lon = PS_TOPO&lon
+Qt_mean_TOPO_inte@units = "kg/kg / hr"
 printVarSummary(Qt_mean_TOPO_inte)
+
+Qt_mean_CTR_inte = dim_sum_n_Wrap(Qt_mean_CTR(:,30-lowest_lev:29,:,:) * dph_CTR(1:95,30-lowest_lev:29,:,:), 1)/dim_sum_n(dph_CTR(1:95,30-lowest_lev:29,:,:),1)
+Qt_mean_CTR_inte!0 = "time"
+Qt_mean_CTR_inte&time = ispan(2,96,1)
+Qt_mean_CTR_inte!1 = "lat"
+Qt_mean_CTR_inte&lat = PS_CTR&lat
+Qt_mean_CTR_inte!2 = "lon"
+Qt_mean_CTR_inte&lon = PS_CTR&lon
+Qt_mean_CTR_inte@units = "kg/kg / hr"
 printVarSummary(Qt_mean_CTR_inte)
 
-Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte
+Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte ; metadata
 Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte - Qt_mean_TOPO_inte
-
 printVarSummary(Qt_diff_CTR_TOPO_inte)
 
-;------------------------ PTEQ ---------------------
- PTEQ_mean_CTR_inte = vibeta(pnew(::-1), PTEQ_mean_CTR2(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
- PTEQ_mean_CTR_inte = PTEQ_mean_CTR_inte / (pbot - ptop)
- PTEQ_mean_CTR_inte@units = "kg/kg / hr"
- PTEQ_mean_CTR_inte!0 = "time"
- PTEQ_mean_CTR_inte&time = ispan(2,96,1)
- PTEQ_mean_CTR_inte!1 = "lat"
- PTEQ_mean_CTR_inte&lat = f_CTR_mean->lat
- PTEQ_mean_CTR_inte!2 = "lon"
- PTEQ_mean_CTR_inte&lon = f_CTR_mean->lon
+;------------ PTEQ ----------
+printVarSummary(PTEQ_mean_TOPO(:,30-lowest_lev:29,:,:))
+printVarSummary(dph_TOPO(1:95,30-lowest_lev:29,:,:))
+PTEQ_mean_TOPO_inte = dim_sum_n_Wrap(PTEQ_mean_TOPO2(:,30-lowest_lev:29,:,:) * dph_TOPO(1:95,30-lowest_lev:29,:,:), 1)/dim_sum_n(dph_TOPO(1:95,30-lowest_lev:29,:,:),1)
+PTEQ_mean_TOPO_inte!0 = "time"
+PTEQ_mean_TOPO_inte&time = ispan(2,96,1)
+PTEQ_mean_TOPO_inte!1 = "lat"
+PTEQ_mean_TOPO_inte&lat = PS_TOPO&lat
+PTEQ_mean_TOPO_inte!2 = "lon"
+PTEQ_mean_TOPO_inte&lon = PS_TOPO&lon
+PTEQ_mean_TOPO_inte@units = "kg/kg / hr"
+printVarSummary(PTEQ_mean_TOPO_inte)
 
- ; must from bottom to top
- PTEQ_mean_TOPO_inte = vibeta(pnew(::-1), PTEQ_mean_TOPO2(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
- PTEQ_mean_TOPO_inte = PTEQ_mean_TOPO_inte / (pbot - ptop)
- PTEQ_mean_TOPO_inte@units = "kg/kg /hr"
- PTEQ_mean_TOPO_inte!0 = "time"
- PTEQ_mean_TOPO_inte&time = ispan(2,96,1)
- PTEQ_mean_TOPO_inte!1 = "lat"
- PTEQ_mean_TOPO_inte&lat = f_TOPO_mean->lat
- PTEQ_mean_TOPO_inte!2 = "lon"
- PTEQ_mean_TOPO_inte&lon = f_TOPO_mean->lon
+PTEQ_mean_CTR_inte = dim_sum_n_Wrap(PTEQ_mean_CTR2(:,30-lowest_lev:29,:,:) * dph_CTR(1:95,30-lowest_lev:29,:,:), 1)/dim_sum_n(dph_CTR(1:95,30-lowest_lev:29,:,:),1)
+PTEQ_mean_CTR_inte!0 = "time"
+PTEQ_mean_CTR_inte&time = ispan(2,96,1)
+PTEQ_mean_CTR_inte!1 = "lat"
+PTEQ_mean_CTR_inte&lat = PS_CTR&lat
+PTEQ_mean_CTR_inte!2 = "lon"
+PTEQ_mean_CTR_inte&lon = PS_CTR&lon
+PTEQ_mean_CTR_inte@units = "kg/kg / hr"
+printVarSummary(PTEQ_mean_CTR_inte)
 
- PTEQ_diff_CTR_TOPO_inte = PTEQ_mean_CTR_inte
- PTEQ_diff_CTR_TOPO_inte = PTEQ_mean_CTR_inte - PTEQ_mean_TOPO_inte
+PTEQ_diff_CTR_TOPO_inte = PTEQ_mean_CTR_inte ; metadata
+PTEQ_diff_CTR_TOPO_inte = PTEQ_mean_CTR_inte - PTEQ_mean_TOPO_inte
+printVarSummary(PTEQ_diff_CTR_TOPO_inte)
 
-;----------------------- Qadv ----------------
-Qadv_mean_CTR_inte = vibeta(pnew(::-1), Qadv_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
-Qadv_mean_CTR_inte = Qadv_mean_CTR_inte / (pbot - ptop)
-Qadv_mean_CTR_inte@units = "kg/kg / hr"
-Qadv_mean_CTR_inte!0 = "time"
-Qadv_mean_CTR_inte&time = ispan(2,96,1)
-Qadv_mean_CTR_inte!1 = "lat"
-Qadv_mean_CTR_inte&lat = f_CTR_mean->lat
-Qadv_mean_CTR_inte!2 = "lon"
-Qadv_mean_CTR_inte&lon = f_CTR_mean->lon
-
-; must from bottom to top
-Qadv_mean_TOPO_inte = vibeta(pnew(::-1), Qadv_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
-Qadv_mean_TOPO_inte = Qadv_mean_TOPO_inte / (pbot - ptop)
-Qadv_mean_TOPO_inte@units = "kg/kg /hr"
+;-------------- Qadv --------
+Qadv_mean_TOPO_inte = dim_sum_n_Wrap(Qadv_mean_TOPO(:,30-lowest_lev:29,:,:) * dph_TOPO(1:95,30-lowest_lev:29,:,:), 1)/dim_sum_n(dph_TOPO(1:95,30-lowest_lev:29,:,:),1)
 Qadv_mean_TOPO_inte!0 = "time"
 Qadv_mean_TOPO_inte&time = ispan(2,96,1)
 Qadv_mean_TOPO_inte!1 = "lat"
-Qadv_mean_TOPO_inte&lat = f_TOPO_mean->lat
+Qadv_mean_TOPO_inte&lat = PS_TOPO&lat
 Qadv_mean_TOPO_inte!2 = "lon"
-Qadv_mean_TOPO_inte&lon = f_TOPO_mean->lon
+Qadv_mean_TOPO_inte&lon = PS_TOPO&lon
+Qadv_mean_TOPO_inte@units = "kg/kg / hr"
+printVarSummary(Qadv_mean_TOPO_inte)
 
-Qadv_diff_CTR_TOPO_inte = Qadv_mean_CTR_inte
+Qadv_mean_CTR_inte = dim_sum_n_Wrap(Qadv_mean_CTR(:,30-lowest_lev:29,:,:) * dph_CTR(1:95,30-lowest_lev:29,:,:), 1)/dim_sum_n(dph_CTR(1:95,30-lowest_lev:29,:,:),1)
+Qadv_mean_CTR_inte!0 = "time"
+Qadv_mean_CTR_inte&time = ispan(2,96,1)
+Qadv_mean_CTR_inte!1 = "lat"
+Qadv_mean_CTR_inte&lat = PS_CTR&lat
+Qadv_mean_CTR_inte!2 = "lon"
+Qadv_mean_CTR_inte&lon = PS_CTR&lon
+Qadv_mean_CTR_inte@units = "kg/kg / hr"
+printVarSummary(Qadv_mean_CTR_inte)
+
+Qadv_diff_CTR_TOPO_inte = Qadv_mean_CTR_inte ; metadata
 Qadv_diff_CTR_TOPO_inte = Qadv_mean_CTR_inte - Qadv_mean_TOPO_inte
+printVarSummary(Qadv_diff_CTR_TOPO_inte)
 
-;---------------------------------------------------
-;------------------- selection of critical lat and lon
-;lat_t = 0.0
-;lat_t = -10.0
-lat_t = -20.0
-
-lon_1 = 260.0
-lon_2 = 320.0
-
-;lev_1 = 300.0
-lev_1 = 100.0
-lev_2 = 1000.0
-;----------- Add topography ------
-f_TOPO = addfile(prefix+"/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
-PHIS = f_TOPO->PHIS
-hgt = PHIS(0,{lat_t},{lon_1:lon_2})  ; metadata and dimension
-hgt = hgt/9.8
-hgt@units = "m"   ; gpm
-gp = 1013*(1-6.5/288000*hgt)^5.255  ; convert m to hPa using Standard Atmosphere
-gp@units = "hPa"
-copy_VarCoords(hgt,gp)
-printVarSummary(gp)
-;================ plot ===========
-
-plot = new(9,graphic)
-
+;;-------------------- Vertically integrated --------------
+;;================= 1000-50hPa weighted average ========
+;pbot = 1000.0  ; hPa, threshold of integration
+;ptop = 50.0  ; hPa, threshold of integration
+;
+;;------------------------- Qt -------------
+;PS_CTR = PS_mean_CTR(1:95,:,:)  ; in Pa
+;PS_CTR = PS_CTR/100.0  ; in hPa
+;PS_CTR@units = "hPa"
+;
+;PS_TOPO = PS_mean_TOPO(1:95,:,:)  ; in Pa
+;PS_TOPO = PS_TOPO/100.0  ; in hPa
+;PS_TOPO@units = "hPa"
+;
+;; must from bottom to top
+;printVarSummary(PS_CTR)
+;printVarSummary(Qt_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
+;
+;Qt_mean_CTR_inte = vibeta(pnew(::-1), Qt_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+;Qt_mean_CTR_inte = Qt_mean_CTR_inte / (pbot - ptop)
+;Qt_mean_CTR_inte@units = "kg/kg / hr"
+;Qt_mean_CTR_inte!0 = "time"
+;printVarSummary(Qt_mean_CTR_inte)
+;printVarSummary(f_CTR_mean->time)
+;Qt_mean_CTR_inte&time = ispan(2,96,1)
+;Qt_mean_CTR_inte!1 = "lat"
+;Qt_mean_CTR_inte&lat = f_CTR_mean->lat
+;Qt_mean_CTR_inte!2 = "lon"
+;Qt_mean_CTR_inte&lon = f_CTR_mean->lon
+;
+;; must from bottom to top
+;Qt_mean_TOPO_inte = vibeta(pnew(::-1), Qt_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+;Qt_mean_TOPO_inte = Qt_mean_TOPO_inte / (pbot - ptop)
+;Qt_mean_TOPO_inte@units = "kg/kg /hr"
+;Qt_mean_TOPO_inte!0 = "time"
+;Qt_mean_TOPO_inte&time = ispan(2,96,1)
+;Qt_mean_TOPO_inte!1 = "lat"
+;Qt_mean_TOPO_inte&lat = f_TOPO_mean->lat
+;Qt_mean_TOPO_inte!2 = "lon"
+;Qt_mean_TOPO_inte&lon = f_TOPO_mean->lon
+;
+;printVarSummary(Qt_mean_TOPO_inte)
+;printVarSummary(Qt_mean_CTR_inte)
+;
+;Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte
+;Qt_diff_CTR_TOPO_inte = Qt_mean_CTR_inte - Qt_mean_TOPO_inte
+;
+;printVarSummary(Qt_diff_CTR_TOPO_inte)
+;
+;;------------------------ PTEQ ---------------------
+; PTEQ_mean_CTR_inte = vibeta(pnew(::-1), PTEQ_mean_CTR2(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+; PTEQ_mean_CTR_inte = PTEQ_mean_CTR_inte / (pbot - ptop)
+; PTEQ_mean_CTR_inte@units = "kg/kg / hr"
+; PTEQ_mean_CTR_inte!0 = "time"
+; PTEQ_mean_CTR_inte&time = ispan(2,96,1)
+; PTEQ_mean_CTR_inte!1 = "lat"
+; PTEQ_mean_CTR_inte&lat = f_CTR_mean->lat
+; PTEQ_mean_CTR_inte!2 = "lon"
+; PTEQ_mean_CTR_inte&lon = f_CTR_mean->lon
+;
+; ; must from bottom to top
+; PTEQ_mean_TOPO_inte = vibeta(pnew(::-1), PTEQ_mean_TOPO2(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+; PTEQ_mean_TOPO_inte = PTEQ_mean_TOPO_inte / (pbot - ptop)
+; PTEQ_mean_TOPO_inte@units = "kg/kg /hr"
+; PTEQ_mean_TOPO_inte!0 = "time"
+; PTEQ_mean_TOPO_inte&time = ispan(2,96,1)
+; PTEQ_mean_TOPO_inte!1 = "lat"
+; PTEQ_mean_TOPO_inte&lat = f_TOPO_mean->lat
+; PTEQ_mean_TOPO_inte!2 = "lon"
+; PTEQ_mean_TOPO_inte&lon = f_TOPO_mean->lon
+;
+; PTEQ_diff_CTR_TOPO_inte = PTEQ_mean_CTR_inte
+; PTEQ_diff_CTR_TOPO_inte = PTEQ_mean_CTR_inte - PTEQ_mean_TOPO_inte
+;
+;;----------------------- Qadv ----------------
+;Qadv_mean_CTR_inte = vibeta(pnew(::-1), Qadv_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
+;Qadv_mean_CTR_inte = Qadv_mean_CTR_inte / (pbot - ptop)
+;Qadv_mean_CTR_inte@units = "kg/kg / hr"
+;Qadv_mean_CTR_inte!0 = "time"
+;Qadv_mean_CTR_inte&time = ispan(2,96,1)
+;Qadv_mean_CTR_inte!1 = "lat"
+;Qadv_mean_CTR_inte&lat = f_CTR_mean->lat
+;Qadv_mean_CTR_inte!2 = "lon"
+;Qadv_mean_CTR_inte&lon = f_CTR_mean->lon
+;
+;; must from bottom to top
+;Qadv_mean_TOPO_inte = vibeta(pnew(::-1), Qadv_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
+;Qadv_mean_TOPO_inte = Qadv_mean_TOPO_inte / (pbot - ptop)
+;Qadv_mean_TOPO_inte@units = "kg/kg /hr"
+;Qadv_mean_TOPO_inte!0 = "time"
+;Qadv_mean_TOPO_inte&time = ispan(2,96,1)
+;Qadv_mean_TOPO_inte!1 = "lat"
+;Qadv_mean_TOPO_inte&lat = f_TOPO_mean->lat
+;Qadv_mean_TOPO_inte!2 = "lon"
+;Qadv_mean_TOPO_inte&lon = f_TOPO_mean->lon
+;
+;Qadv_diff_CTR_TOPO_inte = Qadv_mean_CTR_inte
+;Qadv_diff_CTR_TOPO_inte = Qadv_mean_CTR_inte - Qadv_mean_TOPO_inte
+;
+;;---------------------------------------------------
+;;------------------- selection of critical lat and lon
+;;lat_t = 0.0
+;;lat_t = -10.0
+;lat_t = -20.0
+;
+;lon_1 = 260.0
+;lon_2 = 320.0
+;
+;;lev_1 = 300.0
+;lev_1 = 100.0
+;lev_2 = 1000.0
+;;----------- Add topography ------
+;f_TOPO = addfile(prefix+"/scratch/hongcheq/NERSC_Cori_WADA_simulation/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing/atm/hist/F_AMIP_CAM5_WADA_TOPO_1998_sim2_1998-12-01_HCforcing.cam.h1.1998-12-05-00000.nc","r")
+;PHIS = f_TOPO->PHIS
+;hgt = PHIS(0,{lat_t},{lon_1:lon_2})  ; metadata and dimension
+;hgt = hgt/9.8
+;hgt@units = "m"   ; gpm
+;gp = 1013*(1-6.5/288000*hgt)^5.255  ; convert m to hPa using Standard Atmosphere
+;gp@units = "hPa"
+;copy_VarCoords(hgt,gp)
+;printVarSummary(gp)
+;;================ plot ===========
+;
+;plot = new(9,graphic)
+;
 total_hrs = 95
 
 do i_hr = 0,total_hrs-1   ; the first hour is not there due to QAP(i) - QAP(i-1)
 
-; if lat_t = 0.0, then use sprintf("%3.1f",lat_t)
-;wks = gsn_open_wks("png","../Figures/4_Qdecomp_Lat_"+sprintf("%3.1f",lat_t)+"_ihr_"+tostring(i_hr+2))
-; if lat_t = -10.0, or -20.0, then use sprintf("%3.1f", lat_t)
-wks = gsn_open_wks("png","../Figures/4_Qdecomp_Lat_"+sprintf("%4.1f",lat_t)+"_ihr_"+tostring(i_hr+2))
-
-res = True
-res@gsnDraw = False
-res@gsnFrame = False
-res@cnLinesOn = False
-res@cnLineLabelsOn = False
-res@cnFillOn = True
-
-res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -8.0e-4
-res@cnMaxLevelValF = 8.0e-4
-res@cnLevelSpacingF = 1.0e-4
-
-;res@tiMainFontHeightF = 0.015
-res@tiMainString = "CTR, partial_Q/partial_t"
-res@gsnLeftString = "  " ; avoid having too long names
-plot(0) = gsn_csm_pres_hgt(wks,Qt_mean_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "CTR, PTEQ: Q total physics tendency"
-plot(1) = gsn_csm_pres_hgt(wks,PTEQ_mean_CTR2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "CTR, Q total advection"
-plot(2) = gsn_csm_pres_hgt(wks,Qadv_mean_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "TOPO, partial_Q/partial_t"
-plot(3) = gsn_csm_pres_hgt(wks,Qt_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "TOPO, PTEQ: Q total physics tendency"
-plot(4) = gsn_csm_pres_hgt(wks,PTEQ_mean_TOPO2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "TOPO, Q total advection"
-plot(5) = gsn_csm_pres_hgt(wks,Qadv_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-;--------------------------- 
-
-res@tiMainString = "CTR-TOPO, partial_Q/partial_t"
-plot(6) = gsn_csm_pres_hgt(wks,Qt_diff_CTR_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "CTR-TOPO, PTEQ: Q total physics tendency"
-plot(7) = gsn_csm_pres_hgt(wks,PTEQ_diff_CTR_TOPO2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-res@tiMainString = "CTR-TOPO, Q total advection"
-plot(8) = gsn_csm_pres_hgt(wks,Qadv_diff_CTR_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-
-;------add topography ----
-mres   = True
-mres@gsnLeftString       = " "
-mres@gsnRightString      = " "
-mres@gsnDraw             = False                ; do not draw the plot
-mres@gsnFrame            = False                ; do not advance the frame
-mres@xyLineThicknesses   = (/3.0/)              ; make line thicker
-mres@xyLineColors        = (/"black"/)          ; change line color
-
-mres@gsnBelowYRefLineColor = (/ "black", "black"/)  
-mres@gsnYRefLine           = (/ lev_1 ,lev_2 /)   
-
-plot_topo0  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(0),plot_topo0)
-plot_topo1  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(1),plot_topo1)
-plot_topo2  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(2),plot_topo2)
-plot_topo3  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(3),plot_topo3)
-plot_topo4  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(4),plot_topo4)
-plot_topo5  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(5),plot_topo5)
-plot_topo6  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(6),plot_topo6)
-plot_topo7  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(7),plot_topo7)
-plot_topo8  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
-overlay(plot(8),plot_topo8)
-
-;============ panel plot ====
-
-str_LST = (/"20:00","21:00","22:00","23:00","24:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"/)
-
-pres = True
-pres@txString = "CTR vs TOPO, ENS(9), ihr="+tostring(i_hr+2) +", LST_75W ("+str_LST(mod(i_hr+2,24))+")"+", lat="+sprintf("%5.1f",lat_t)
-
-gsn_panel(wks,plot,(/3,3/),pres)
+;; if lat_t = 0.0, then use sprintf("%3.1f",lat_t)
+;;wks = gsn_open_wks("png","../Figures/4_Qdecomp_Lat_"+sprintf("%3.1f",lat_t)+"_ihr_"+tostring(i_hr+2))
+;; if lat_t = -10.0, or -20.0, then use sprintf("%3.1f", lat_t)
+;wks = gsn_open_wks("png","../Figures/4_Qdecomp_Lat_"+sprintf("%4.1f",lat_t)+"_ihr_"+tostring(i_hr+2))
+;
+;res = True
+;res@gsnDraw = False
+;res@gsnFrame = False
+;res@cnLinesOn = False
+;res@cnLineLabelsOn = False
+;res@cnFillOn = True
+;
+;res@cnLevelSelectionMode = "ManualLevels"
+;res@cnMinLevelValF = -8.0e-4
+;res@cnMaxLevelValF = 8.0e-4
+;res@cnLevelSpacingF = 1.0e-4
+;
+;;res@tiMainFontHeightF = 0.015
+;res@tiMainString = "CTR, partial_Q/partial_t"
+;res@gsnLeftString = "  " ; avoid having too long names
+;plot(0) = gsn_csm_pres_hgt(wks,Qt_mean_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "CTR, PTEQ: Q total physics tendency"
+;plot(1) = gsn_csm_pres_hgt(wks,PTEQ_mean_CTR2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "CTR, Q total advection"
+;plot(2) = gsn_csm_pres_hgt(wks,Qadv_mean_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "TOPO, partial_Q/partial_t"
+;plot(3) = gsn_csm_pres_hgt(wks,Qt_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "TOPO, PTEQ: Q total physics tendency"
+;plot(4) = gsn_csm_pres_hgt(wks,PTEQ_mean_TOPO2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "TOPO, Q total advection"
+;plot(5) = gsn_csm_pres_hgt(wks,Qadv_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;;--------------------------- 
+;
+;res@tiMainString = "CTR-TOPO, partial_Q/partial_t"
+;plot(6) = gsn_csm_pres_hgt(wks,Qt_diff_CTR_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "CTR-TOPO, PTEQ: Q total physics tendency"
+;plot(7) = gsn_csm_pres_hgt(wks,PTEQ_diff_CTR_TOPO2(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;res@tiMainString = "CTR-TOPO, Q total advection"
+;plot(8) = gsn_csm_pres_hgt(wks,Qadv_diff_CTR_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;
+;;------add topography ----
+;mres   = True
+;mres@gsnLeftString       = " "
+;mres@gsnRightString      = " "
+;mres@gsnDraw             = False                ; do not draw the plot
+;mres@gsnFrame            = False                ; do not advance the frame
+;mres@xyLineThicknesses   = (/3.0/)              ; make line thicker
+;mres@xyLineColors        = (/"black"/)          ; change line color
+;
+;mres@gsnBelowYRefLineColor = (/ "black", "black"/)  
+;mres@gsnYRefLine           = (/ lev_1 ,lev_2 /)   
+;
+;plot_topo0  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(0),plot_topo0)
+;plot_topo1  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(1),plot_topo1)
+;plot_topo2  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(2),plot_topo2)
+;plot_topo3  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(3),plot_topo3)
+;plot_topo4  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(4),plot_topo4)
+;plot_topo5  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(5),plot_topo5)
+;plot_topo6  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(6),plot_topo6)
+;plot_topo7  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(7),plot_topo7)
+;plot_topo8  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+;overlay(plot(8),plot_topo8)
+;
+;;============ panel plot ====
+;
+;str_LST = (/"20:00","21:00","22:00","23:00","24:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"/)
+;
+;pres = True
+;pres@txString = "CTR vs TOPO, ENS(9), ihr="+tostring(i_hr+2) +", LST_75W ("+str_LST(mod(i_hr+2,24))+")"+", lat="+sprintf("%5.1f",lat_t)
+;
+;gsn_panel(wks,plot,(/3,3/),pres)
 
 ;--------------------- Qt ------------------
 Qt_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_CTR_inte(i_hr,:,:), Qt_mean_CTR_inte@_FillValue))
@@ -549,8 +661,8 @@ Qadv_Amazon_mean_CTR_TOPO@units = "kg/kg /hr"
 
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/"
-system("rm -f "+output_path+"Qt_PTEQ_Qadv"+".nc")
-ncdf = addfile(output_path+"Qt_PTEQ_Qadv"+".nc","c")
+system("rm -f "+output_path+"Qt_PTEQ_Qadv"+".new.nc")
+ncdf = addfile(output_path+"Qt_PTEQ_Qadv"+".new.nc","c")
 filedimdef(ncdf, "time", -1, True)
 
 ;--------- Qt -------------
