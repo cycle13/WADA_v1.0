@@ -63,10 +63,12 @@ var = var_str(i_var)
 do index = 0,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
-TOPO_str = "ENS.mean.TOPOTEST."+str_time(index)+".NGMS.nc"
+;TOPO_str = "ENS.mean.TOPOTEST."+str_time(index)+".NGMS.nc"
+TOPO_str = "ENS.mean.TOPOTEST."+str_time(index)+".NGMS.new.nc"
 
 CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/CTR/"
-CTR_str = "ENS.mean.CTR."+str_time(index)+".NGMS.nc"
+;CTR_str = "ENS.mean.CTR."+str_time(index)+".NGMS.nc"
+CTR_str = "ENS.mean.CTR."+str_time(index)+".NGMS.new.nc"
 
 f_TOPO = addfile(TOPO_dir+TOPO_str,"r")
 f_CTR = addfile(CTR_dir+CTR_str,"r")
@@ -115,8 +117,8 @@ Amazon_mean_CTR_TOPO@units = var_CTR@units
 
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/NGMS/"
-system("rm -f "+output_path+var_str(i_var)+".nc")
-ncdf = addfile(output_path+var_str(i_var)+".nc","c")
+system("rm -f "+output_path+var_str(i_var)+".new.nc")
+ncdf = addfile(output_path+var_str(i_var)+".new.nc","c")
 filedimdef(ncdf, "time", -1, True)
 ncdf->Andes_mean_CTR = Andes_mean_CTR
 ncdf->Andes_mean_TOPO = Andes_mean_TOPO

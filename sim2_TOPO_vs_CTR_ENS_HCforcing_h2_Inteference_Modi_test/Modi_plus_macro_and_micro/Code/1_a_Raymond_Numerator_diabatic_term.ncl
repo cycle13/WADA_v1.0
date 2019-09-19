@@ -39,6 +39,12 @@ QRL_mean_CTR = new((/96, 30, 96, 144/),double)
 QRL_mean_TOPO = new((/96, 30, 96, 144/),double)
 QRL_diff_CTR_TOPO = new((/96, 30, 96, 144/),double)
 
+QRS_mean_CTR_inte = new((/96,  96, 144/),double)
+QRS_mean_TOPO_inte = new((/96,  96, 144/),double)
+
+QRL_mean_CTR_inte = new((/96,  96, 144/),double)
+QRL_mean_TOPO_inte = new((/96,  96, 144/),double)
+
 SHFLX_mean_CTR = new((/96, 96, 144/),double)  
 SHFLX_mean_TOPO = new((/96, 96, 144/),double)
 SHFLX_diff_CTR_TOPO = new((/96, 96, 144/),double)
@@ -143,14 +149,14 @@ var_mean_CTR = f_CTR_mean->$var$
 
 ;========== hybrid coordinate to pressure coordinate ====
 ;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
-pnew = (/3.64346569404006, 7.59481964632869, 14.3566322512925,\
-    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262,\
-    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662,\
-    168.225079774857, 197.908086702228, 232.828618958592, 273.910816758871,\
-    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651,\
-    609.778694808483, 691.389430314302, 763.404481112957, 820.858368650079,\
-    859.53476652503, 887.020248919725, 912.644546944648, 936.198398470879,\
-    957.485479535535, 976.325407391414, 992.556095123291 /)
+;pnew = (/3.64346569404006, 7.59481964632869, 14.3566322512925,\
+;    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262,\
+;    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662,\
+;    168.225079774857, 197.908086702228, 232.828618958592, 273.910816758871,\
+;    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651,\
+;    609.778694808483, 691.389430314302, 763.404481112957, 820.858368650079,\
+;    859.53476652503, 887.020248919725, 912.644546944648, 936.198398470879,\
+;    957.485479535535, 976.325407391414, 992.556095123291 /)
 
 ;pnew = fspan(100.0,1000.0,200)
 
@@ -161,32 +167,28 @@ P0mb = 1000.0
 hyam = f_TOPO_mean->hyam
 hybm = f_TOPO_mean->hybm
 
-if (i_var .eq. 0 .or. i_var .eq. 1) then
-
-var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS,1,P0mb,1,False)
-var_mean_TOPO_pnew&lev_p@units = "hPa"
-;printVarSummary(var_mean_TOPO_pnew&lev_p)
-
-var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_CTR_mean->PS,1,P0mb,1,False)
-var_mean_CTR_pnew&lev_p@units = "hPa"
-;printVarSummary(var_mean_CTR_pnew)
-end if
-
-diff_CTR_TOPO = var_mean_TOPO_pnew ; metadata
-;diff_TOPO_CTR = var_mean_TOPO_pnew - var_mean_CTR_pnew
-diff_CTR_TOPO = var_mean_CTR_pnew - var_mean_TOPO_pnew
-diff_CTR_TOPO@units = var_mean_TOPO@units
-diff_CTR_TOPO@long_name = var_mean_TOPO@long_name
+;if (i_var .eq. 0 .or. i_var .eq. 1) then
+;
+;var_mean_TOPO_pnew = vinth2p(var_mean_TOPO,hyam,hybm,pnew,f_TOPO_mean->PS,1,P0mb,1,False)
+;var_mean_TOPO_pnew&lev_p@units = "hPa"
+;;printVarSummary(var_mean_TOPO_pnew&lev_p)
+;
+;var_mean_CTR_pnew = vinth2p(var_mean_CTR,hyam,hybm,pnew,f_CTR_mean->PS,1,P0mb,1,False)
+;var_mean_CTR_pnew&lev_p@units = "hPa"
+;;printVarSummary(var_mean_CTR_pnew)
+;end if
 
 if (i_var .eq. 0) then
-   QRS_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR_pnew
-   QRS_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO_pnew
-   QRS_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = diff_CTR_TOPO
+   QRS_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR
+   QRS_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO
+   QRS_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = var_mean_CTR
+   QRS_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = var_mean_CTR - var_mean_TOPO
 end if
 if (i_var .eq. 1) then
-   QRL_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR_pnew
-   QRL_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO_pnew
-   QRL_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = diff_CTR_TOPO
+   QRL_mean_CTR(index*3:index*3+2,:,:,:) = var_mean_CTR
+   QRL_mean_TOPO(index*3:index*3+2,:,:,:) = var_mean_TOPO
+   QRL_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = var_mean_CTR
+   QRL_diff_CTR_TOPO(index*3:index*3+2,:,:,:) = var_mean_CTR - var_mean_TOPO
 end if
 if (i_var .eq. 2) then
    SHFLX_mean_CTR(index*3:index*3+2,:,:) = var_mean_CTR
@@ -223,26 +225,51 @@ printVarSummary(QRL_diff_CTR_TOPO)
 ;====== Step 2. calculate Fs term (SHFLX, LHFLX),  R term (QRL, QRS) =========
 ;-------------------- Vertically integrated --------------
 ;================= 1000-50hPa weighted average ========
-pbot = 1000.0  ; hPa, threshold of integration
-ptop = 50.0  ; hPa, threshold of integration
+
+hyai = f_TOPO_mean->hyai
+hybi = f_TOPO_mean->hybi
+
+dp_CTR = dpres_hybrid_ccm(PS_mean_CTR,100000.0,hyai,hybi)
+printVarSummary(dp_CTR)
+
+dp_TOPO = dpres_hybrid_ccm(PS_mean_TOPO,100000.0,hyai,hybi)
+printVarSummary(dp_TOPO)
+
+;--------------------
+;pbot = 1000.0  ; hPa, threshold of integration
+;ptop = 50.0  ; hPa, threshold of integration
 
 Cp_air = 1005.7 ; J/(kg*K)
 
-;------------------------- QRS -------------
-PS_CTR = PS_mean_CTR(:,:,:)  ; in Pa
-PS_CTR = PS_CTR/100.0  ; in hPa
-PS_CTR@units = "hPa"
+;;------------------------- QRS -------------
+;PS_CTR = PS_mean_CTR(:,:,:)  ; in Pa
+;PS_CTR = PS_CTR/100.0  ; in hPa
+;PS_CTR@units = "hPa"
+;
+;PS_TOPO = PS_mean_TOPO(:,:,:)  ; in Pa
+;PS_TOPO = PS_TOPO/100.0  ; in hPa
+;PS_TOPO@units = "hPa"
 
-PS_TOPO = PS_mean_TOPO(:,:,:)  ; in Pa
-PS_TOPO = PS_TOPO/100.0  ; in hPa
-PS_TOPO@units = "hPa"
+;; must from bottom to top
+;printVarSummary(PS_CTR)
+;printVarSummary(QRS_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
+;
+;QRS_mean_CTR_inte = vibeta(pnew(::-1), QRS_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
 
-; must from bottom to top
-printVarSummary(PS_CTR)
-printVarSummary(QRS_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
+do itime = 0, dimsizes(QRS_mean_CTR&time) - 1
+   do ilev = 0, dimsizes(QRS_mean_CTR&lev) -1
+      do ilat = 0, dimsizes(QRS_mean_CTR&lat) -1
+         do ilon = 0, dimsizes(QRS_mean_CTR&lon) -1
+            QRS_mean_CTR_inte(itime,ilat,ilon) = sum(QRS_mean_CTR(itime,:,ilat,ilon)*dp_CTR(itime,:,ilat,ilon))
+            QRS_mean_TOPO_inte(itime,ilat,ilon) = sum(QRS_mean_TOPO(itime,:,ilat,ilon)*dp_TOPO(itime,:,ilat,ilon))
+            QRL_mean_CTR_inte(itime,ilat,ilon) = sum(QRL_mean_CTR(itime,:,ilat,ilon)*dp_CTR(itime,:,ilat,ilon))
+            QRL_mean_TOPO_inte(itime,ilat,ilon) = sum(QRL_mean_TOPO(itime,:,ilat,ilon)*dp_TOPO(itime,:,ilat,ilon))
+         end do
+      end do 
+   end do
+end do
 
-QRS_mean_CTR_inte = vibeta(pnew(::-1), QRS_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
-QRS_mean_CTR_inte = QRS_mean_CTR_inte * 100.0  ; from Kelvin/sec * hPa to Kelvin/sec * Pa
+;QRS_mean_CTR_inte ; Kelvin/sec * Pa
 QRS_mean_CTR_inte = QRS_mean_CTR_inte / 9.8 * Cp_air 
 QRS_mean_CTR_inte@units = "Watt/m2" ; 1/g * K/sec * Pa * Cp_air = Watt/m2
 QRS_mean_CTR_inte!0 = "time"
@@ -255,8 +282,6 @@ QRS_mean_CTR_inte!2 = "lon"
 QRS_mean_CTR_inte&lon = f_CTR_mean->lon
 
 ; must from bottom to top
-QRS_mean_TOPO_inte = vibeta(pnew(::-1), QRS_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
-QRS_mean_TOPO_inte = QRS_mean_TOPO_inte * 100.0
 QRS_mean_TOPO_inte = QRS_mean_TOPO_inte / 9.8 * Cp_air 
 QRS_mean_TOPO_inte@units = "Watt/m2" 
 QRS_mean_TOPO_inte!0 = "time"
@@ -275,10 +300,7 @@ QRS_diff_CTR_TOPO_inte = QRS_mean_CTR_inte - QRS_mean_TOPO_inte
 printVarSummary(QRS_diff_CTR_TOPO_inte)
 
 ;---------- QRL ----------
-printVarSummary(QRL_mean_CTR(time|:, lat|:, lon|:, lev_p|::-1))
 
-QRL_mean_CTR_inte = vibeta(pnew(::-1), QRL_mean_CTR(time|:,lat|:,lon|:,lev_p|::-1),1,PS_CTR,pbot,ptop)
-QRL_mean_CTR_inte = QRL_mean_CTR_inte * 100.0
 QRL_mean_CTR_inte = QRL_mean_CTR_inte / 9.8 * Cp_air
 QRL_mean_CTR_inte@units = "Watt/m2"
 QRL_mean_CTR_inte!0 = "time"
@@ -291,8 +313,6 @@ QRL_mean_CTR_inte!2 = "lon"
 QRL_mean_CTR_inte&lon = f_CTR_mean->lon
 
 ; must from bottom to top
-QRL_mean_TOPO_inte = vibeta(pnew(::-1), QRL_mean_TOPO(time|:,lat|:,lon|:,lev_p|::-1),1,PS_TOPO,pbot,ptop)
-QRL_mean_TOPO_inte = QRL_mean_TOPO_inte * 100.0
 QRL_mean_TOPO_inte = QRL_mean_TOPO_inte / 9.8 * Cp_air 
 QRL_mean_TOPO_inte@units = "Watt/m2"
 QRL_mean_TOPO_inte!0 = "time"
@@ -430,8 +450,8 @@ printVarSummary(DH_Amazon_mean_CTR_TOPO)
 
 ;======= Step 4. output to nc files =========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Raymond/"
-system("rm -f "+output_path+"Raymond_numerator"+".nc")
-ncdf = addfile(output_path+"Raymond_numerator"+".nc","c")
+system("rm -f "+output_path+"Raymond_numerator"+".new.nc")
+ncdf = addfile(output_path+"Raymond_numerator"+".new.nc","c")
 filedimdef(ncdf, "time", -1, True)
 
 ;-------- SHFLX ------

@@ -48,7 +48,8 @@ cases = ['CTR', 'TOPO', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
     for i in range(len(var_names)):
-        ds = xr.open_dataset(data_path+file_names[0]+'.nc', decode_times=False)
+        #ds = xr.open_dataset(data_path+file_names[0]+'.nc', decode_times=False)
+        ds = xr.open_dataset(data_path+file_names[0]+'.new.nc', decode_times=False)
         data_vars[i,:] = ds[var_names[i]+'_Andes_mean_'+cases[i_case]]
         print(data_vars[i,:])
         print('==')
@@ -68,7 +69,8 @@ for i_case in range(len(cases)):
 
 for i_case in range(len(cases)):
     for i in range(len(var_names)):
-        ds = xr.open_dataset(data_path+file_names[0]+'.nc', decode_times=False)
+        #ds = xr.open_dataset(data_path+file_names[0]+'.nc', decode_times=False)
+        ds = xr.open_dataset(data_path+file_names[0]+'.new.nc', decode_times=False)
         data_vars[i,:] = ds[var_names[i]+'_Amazon_mean_'+cases[i_case]]
         print(data_vars[i,:])
         print('==')
@@ -89,4 +91,4 @@ for i_case in range(len(cases)):
 plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
 #plt.show()
-plt.savefig('../Figures/1_Raymond_Diabatic_heating_numerator_vertical_integral_decomp.png',dpi=400)
+plt.savefig('../Figures/1_Raymond_Diabatic_heating_numerator_vertical_integral_decomp.new.png',dpi=400)

@@ -32,8 +32,8 @@ data_vars = np.zeros((1,96)) # 1 vars x 95 hours
 cases = ['CTR', 'TOPO', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
-    ds1 = xr.open_dataset(data_path1+file_names1[0]+'.nc', decode_times=False)
-    ds2 = xr.open_dataset(data_path2+file_names2[0]+'.nc', decode_times=False)
+    ds1 = xr.open_dataset(data_path1+file_names1[0]+'.new.nc', decode_times=False)
+    ds2 = xr.open_dataset(data_path2+file_names2[0]+'.new.nc', decode_times=False)
     DH_temp = ds1[var_names1[0]+'_Amazon_mean_'+cases[i_case]]
     NGMS_temp = ds2['Amazon_mean_'+cases[i_case]]
     print(DH_temp)
@@ -61,4 +61,4 @@ for i_case in range(len(cases)):
 plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
 #plt.show()
-plt.savefig('../Figures/1_Raymond_Diabatic_heating_over_NGMS_decomp.png',dpi=400)
+plt.savefig('../Figures/1_Raymond_Diabatic_heating_over_NGMS_decomp.new.png',dpi=400)

@@ -19,7 +19,8 @@ cases = ['CTR', 'TOPO', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
     for i in range(len(file_names)):
-        ds = xr.open_dataset(data_path+file_names[i]+'.nc', decode_times=False)
+        #ds = xr.open_dataset(data_path+file_names[i]+'.nc', decode_times=False)
+        ds = xr.open_dataset(data_path+file_names[i]+'.new.nc', decode_times=False)
         data_vars[i,:] = ds['Andes_mean_'+cases[i_case]]
         print(data_vars[i,:])
         print('==')
@@ -43,7 +44,8 @@ file_names2 = ['NGMS']
 data_vars2 = np.zeros((len(file_names2),96)) # X vars x 96 hours
 
 for i_case in range(len(cases)):
-        ds = xr.open_dataset(data_path+file_names2[0]+'.nc', decode_times=False)
+        #ds = xr.open_dataset(data_path+file_names2[0]+'.nc', decode_times=False)
+        ds = xr.open_dataset(data_path+file_names2[0]+'.new.nc', decode_times=False)
         data_vars2[0,:] = ds['Andes_mean_'+cases[i_case]]
         print(data_vars2[0,:])
         print('==')
@@ -67,5 +69,5 @@ for i_case in range(len(cases)):
 
 plt.tight_layout()
 #plt.show()
-plt.savefig('../Figures/CTR_TOPO_Andes_mean_NGMS_decomp.png',dpi=300)
+plt.savefig('../Figures/CTR_TOPO_Andes_mean_NGMS_decomp.new.png',dpi=300)
 

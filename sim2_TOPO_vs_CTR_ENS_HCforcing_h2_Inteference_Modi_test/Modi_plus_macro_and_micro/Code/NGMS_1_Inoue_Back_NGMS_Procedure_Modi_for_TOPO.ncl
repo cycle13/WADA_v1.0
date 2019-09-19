@@ -36,7 +36,7 @@ TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
 
 file_input = TOPO_dir+TOPO_mean_str
 
-file_output = TOPO_dir + "ENS.mean.TOPOTEST.time"+str_time(index)+".NGMS.nc"
+file_output = TOPO_dir + "ENS.mean.TOPOTEST.time"+str_time(index)+".NGMS.new.nc"
 
 ;=============Step 1: Read in hus, ta, zg, ps, ua, va, wap files
 
@@ -47,41 +47,41 @@ Q = f_input->Q
 
 ;========== hybrid coordinate to pressure coordinate ====
 ;pnew = (/50.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,850.0,900.0,950.0,1000.0/)
-pnew = (/3.64346569404006, 7.59481964632869, 14.3566322512925,\
-    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262,\
-    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662,\
-    168.225079774857, 197.908086702228, 232.828618958592, 273.910816758871,\
-    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651,\
-    609.778694808483, 691.389430314302, 763.404481112957, 820.858368650079,\
-    859.53476652503, 887.020248919725, 912.644546944648, 936.198398470879,\
-    957.485479535535, 976.325407391414, 992.556095123291 /)
-
+;pnew = (/3.64346569404006, 7.59481964632869, 14.3566322512925,\
+;    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262,\
+;    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662,\
+;    168.225079774857, 197.908086702228, 232.828618958592, 273.910816758871,\
+;    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651,\
+;    609.778694808483, 691.389430314302, 763.404481112957, 820.858368650079,\
+;    859.53476652503, 887.020248919725, 912.644546944648, 936.198398470879,\
+;    957.485479535535, 976.325407391414, 992.556095123291 /)
+;
 ;pnew = fspan(100.0,1000.0,200)
 
-P0mb = 1000.0
+;P0mb = 1000.0
 
 hyam = f_input->hyam
 hybm = f_input->hybm
 
-Q_pnew = vinth2p(Q,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
-Q_pnew&lev_p@units = "hPa"
-printVarSummary(Q_pnew)
+;Q_pnew = vinth2p(Q,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
+;Q_pnew&lev_p@units = "hPa"
+;printVarSummary(Q_pnew)
 
 ;-----------------------
 T = new(dimsizes(f_input->T),double)
 T = f_input->T
 
-T_pnew = vinth2p(T,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
-T_pnew&lev_p@units = "hPa"
-printVarSummary(T_pnew)
+;T_pnew = vinth2p(T,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
+;T_pnew&lev_p@units = "hPa"
+;printVarSummary(T_pnew)
 
 ;-----------------
 Z3 = new(dimsizes(f_input->Z3),double)
 Z3 = f_input->Z3
 
-Z3_pnew = vinth2p(Z3,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
-Z3_pnew&lev_p@units = "hPa"
-printVarSummary(Z3_pnew)
+;Z3_pnew = vinth2p(Z3,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
+;Z3_pnew&lev_p@units = "hPa"
+;printVarSummary(Z3_pnew)
 
 ;----------------
 PS = new(dimsizes(f_input->PS),double)
@@ -93,41 +93,46 @@ printVarSummary(PS)
 U = new(dimsizes(f_input->U),double)
 U = f_input->U
 
-U_pnew = vinth2p(U,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
-U_pnew&lev_p@units = "hPa"
-printVarSummary(U_pnew)
+;U_pnew = vinth2p(U,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
+;U_pnew&lev_p@units = "hPa"
+;printVarSummary(U_pnew)
 
 ;---------------------
 V = new(dimsizes(f_input->V),double)
 V = f_input->V
 
-V_pnew = vinth2p(V,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
-V_pnew&lev_p@units = "hPa"
-printVarSummary(V_pnew)
+;V_pnew = vinth2p(V,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
+;V_pnew&lev_p@units = "hPa"
+;printVarSummary(V_pnew)
 
 ;------------------------
 OMEGA = new(dimsizes(f_input->OMEGA),double)
 OMEGA = f_input->OMEGA
 
-OMEGA_pnew = vinth2p(OMEGA,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
-OMEGA_pnew&lev_p@units = "hPa"
-printVarSummary(OMEGA_pnew)
+;OMEGA_pnew = vinth2p(OMEGA,hyam,hybm,pnew,f_input->PS,1,P0mb,1,False)
+;OMEGA_pnew&lev_p@units = "hPa"
+;printVarSummary(OMEGA_pnew)
 
 ;==================== Step 2:  Calculate the numerator of NGMS. as used in eq. (2) in Inoue and Back 2015======
 
-r_pnew = Q_pnew / (1.0-Q_pnew)   ; from specific humidity to water mixing ratio
-copy_VarCoords(Q_pnew,r_pnew)
-r_pnew@long_name = "water vapor mixing ratio"
-printVarSummary(r_pnew)
+;r_pnew = Q_pnew / (1.0-Q_pnew)   ; from specific humidity to water mixing ratio
+;copy_VarCoords(Q_pnew,r_pnew)
+;r_pnew@long_name = "water vapor mixing ratio"
+;printVarSummary(r_pnew)
+
+r = Q / (1.0-Q)   ; from specific humidity to water mixing ratio
+copy_VarCoords(Q,r)
+r@long_name = "water vapor mixing ratio"
+printVarSummary(r)
 
 ;====== MSE = Cp x T + g x geopotential height + Lv x r ========
-MSE = 1005.7 * T_pnew + 9.8 * Z3_pnew + 2.501*10^6 * r_pnew
-copy_VarCoords(Q_pnew,MSE)
+MSE = 1005.7 * T + 9.8 * Z3 + 2.501*10^6 * r
+copy_VarCoords(Q,MSE)
 MSE@long_name = "Moist Static Energy (Cp*T+g*z+Lv*r)"
 MSE@units = "J/kg"
 printVarSummary(MSE)
 
-DSE =  1005.7 * T_pnew + 9.8 * Z3_pnew
+DSE =  1005.7 * T + 9.8 * Z3
 copy_VarCoords(MSE,DSE)
 DSE@long_name = "Dry Static Energy (Cp*T+g*z)"
 DSE@units = "J/kg"
@@ -154,22 +159,25 @@ y_meri = 6378388.*(0.0174533*MSE&lat)    ;
 dMSEdy = center_finite_diff_n(MSE,y_meri,False,0,2)    ; not cyclic on different lat lines
 printVarSummary(dMSEdy)
 
+p_hybrid = pres_hybrid_ccm(PS,100000.0,hyam,hybm)
+p_hybrid@units = "Pa"
+
 dMSEdp = MSE ; metadata
 dMSEdp@long_name = "partile MSE / partial p"
 dMSEdp@units = "J/kg/Pa"
 
-dMSEdp = center_finite_diff_n(MSE,MSE&lev_p * 100.0,False,0,1)   ; pnew from hPa to Pa
+dMSEdp = center_finite_diff_n(MSE,p_hybrid,False,0,1)   ; p_hybrid in  Pa
 
 printVarSummary(dMSEdp)
 
 MSE_nume = MSE ; meta data
 MSE_nume@long_name = "horizontal + vertical advection (in p-coordinate) of MSE"
 MSE_nume@units = "J/kg/sec"
-MSE_nume = U_pnew*dMSEdx + V_pnew*dMSEdy + OMEGA_pnew*dMSEdp
+MSE_nume = U*dMSEdx + V*dMSEdy + OMEGA*dMSEdp
 printVarSummary(MSE_nume)
 
-MSE_nume_hori = U_pnew*dMSEdx + V_pnew*dMSEdy
-MSE_nume_vert = OMEGA_pnew*dMSEdp
+MSE_nume_hori = U*dMSEdx + V*dMSEdy
+MSE_nume_vert = OMEGA*dMSEdp
 
 ;================Step 3: Calculate the denominator of NGMS;
 
@@ -195,24 +203,27 @@ dDSEdp = MSE ; metadata
 dDSEdp@long_name = "partile DSE / partial p"
 dDSEdp@units = "J/kg/Pa"
 
-dDSEdp = center_finite_diff_n(DSE,DSE&lev_p * 100.0,False,0,1)  ; plev from hPa to Pa
+dDSEdp = center_finite_diff_n(DSE,p_hybrid,False,0,1)  ; plev from hPa to Pa
 printVarSummary(dDSEdp)
 
 DSE_deno = DSE ; meta data
 DSE_deno@long_name = "horizontal + vertical advection (in p-coordinate) of DSE"
 DSE_deno@units = "J/kg/sec"
-DSE_deno = U_pnew*dDSEdx + V_pnew*dDSEdy + OMEGA_pnew*dDSEdp
+DSE_deno = U*dDSEdx + V*dDSEdy + OMEGA*dDSEdp
 printVarSummary(DSE_deno)
 
 ;============= Step 4: Vertical integral ================= 
 ;============== (wgt_vertical_n requires NO Missing data in the first parameter, so use sum(A * B) instead ====
-plev = MSE&lev_p * 100.0 ; from hPa to Pa              
-ptop = min(plev * 100.0)   ; from hPa to Pa                
-dp = dpres_plevel_Wrap(plev,PS,ptop,0)
+
+hyai = f_input->hyai
+hybi = f_input->hybi
+
+dp = dpres_hybrid_ccm(PS,100000.0,hyai,hybi)
 printVarSummary(dp)
-print(plev)
+;print(dp)
 print(PS(0,10,10))
 ;print(dp(0,:,10,10))
+
 ;-------------
 
 inte_numerator = MSE_nume(:,0,:,:)  ; metadata
@@ -224,7 +235,7 @@ inte_denominator = DSE_deno(:,0,:,:)  ; metadata
 MSE_column_test = MSE(:,0,:,:) ; metadata and test if the you are calculating the column MSE correctly. 
 
 do itime = 0, dimsizes(MSE_nume&time) - 1
-   do ilev = 0, dimsizes(MSE_nume&lev_p) -1
+   do ilev = 0, dimsizes(MSE_nume&lev) -1
       do ilat = 0, dimsizes(MSE_nume&lat) -1
          do ilon = 0, dimsizes(MSE_nume&lon) -1
             inte_numerator(itime,ilat,ilon) = sum(MSE_nume(itime,:,ilat,ilon)*dp(itime,:,ilat,ilon))
