@@ -132,7 +132,7 @@ printVarSummary(PM_mean_CTR_AM)
 ; create plot
 ;*************************
 
-  wks  = gsn_open_wks ("png", "./Figures/3_skewt_Amazon_avg_CTR_ihr_"+tostring(index*3+i_hr+1) ) 
+  wks  = gsn_open_wks ("x11", "./Figures/3_skewt_Amazon_avg_CTR_ihr_"+tostring(index*3+i_hr+1) ) 
 
 ; --- Create background skew-T; plot sounding ---------------------
 

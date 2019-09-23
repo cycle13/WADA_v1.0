@@ -25,8 +25,8 @@ str_time(i_str_time) = tostring(num1(i_str_time))+"-"+tostring(num2(i_str_time))
 end do
 
 ; one point at Amazon to plot the skew-T, logP at a first glance.
-lat_target = -7.0
-lon_target = 299.0
+lat_target = -5.0
+lon_target = 300.0
 
 do index = 0,31
 ;do index = 0,7
@@ -116,7 +116,7 @@ do i_hr = 0,total_hr-1
 ; create plot
 ;*************************
 
-  wks  = gsn_open_wks ("png", "./Figures/skewt_CTR_ihr_"+tostring(index*3+i_hr+1) ) 
+  wks  = gsn_open_wks ("x11", "./Figures/skewt_CTR_ihr_"+tostring(index*3+i_hr+1) ) 
 
 ; --- Create background skew-T; plot sounding ---------------------
 
