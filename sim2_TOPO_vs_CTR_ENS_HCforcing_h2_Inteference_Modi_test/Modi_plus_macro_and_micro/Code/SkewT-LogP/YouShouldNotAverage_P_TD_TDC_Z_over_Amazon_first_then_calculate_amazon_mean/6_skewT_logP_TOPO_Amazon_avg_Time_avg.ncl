@@ -138,25 +138,41 @@ TDC_mean_TOPO_AM = wgt_areaave_Wrap( TDC_mean_TOPOtime(:,:,{Amazon_lat_test1(0):
 
 printVarSummary(PM_mean_CTR_AM)
 
-do i_day = 0,3
+hour_s = 20 -1 ; 18 hr means LST 14:00pm at lon=300
+hour_e = 60 -1
+
+;  p_CTR    = PM_mean_CTR_AM(hour_s,:)
+;  z_CTR    = Z_mean_CTR_AM(hour_s,:)
+;  tc_CTR   = TC_mean_CTR_AM(hour_s,:)
+;  tdc_CTR  = TDC_mean_CTR_AM(hour_s,:)
+;                                ; create BOGUS winds
+;  wspd = new ( 30, "float", -999.)  ; wspd@_FillValue = -999.
+;  wdir = new ( 30, "float", -999.)  ; wdir@_FillValue = -999.
+;
+;  p_TOPO    = PM_mean_TOPO_AM(hour_s,:)
+;  z_TOPO    = Z_mean_TOPO_AM(hour_s,:)
+;  tc_TOPO   = TC_mean_TOPO_AM(hour_s,:)
+;  tdc_TOPO  = TDC_mean_TOPO_AM(hour_s,:)
+
+;
 ; --- Read Data; no winds; set to _FillValue------------;
-  p_CTR    = dim_avg_n_Wrap(PM_mean_CTR_AM(i_day*24:i_day*24+23,:),0)
-  z_CTR    = dim_avg_n_Wrap(Z_mean_CTR_AM(i_day*24:i_day*24+23,:),0)
-  tc_CTR   = dim_avg_n_Wrap(TC_mean_CTR_AM(i_day*24:i_day*24+23,:),0)
-  tdc_CTR  = dim_avg_n_Wrap(TDC_mean_CTR_AM(i_day*24:i_day*24+23,:),0)
+  p_CTR    = dim_avg_n_Wrap(PM_mean_CTR_AM(hour_s:hour_e,:),0)
+  z_CTR    = dim_avg_n_Wrap(Z_mean_CTR_AM(hour_s:hour_e,:),0)
+  tc_CTR   = dim_avg_n_Wrap(TC_mean_CTR_AM(hour_s:hour_e,:),0)
+  tdc_CTR  = dim_avg_n_Wrap(TDC_mean_CTR_AM(hour_s:hour_e,:),0)
                                 ; create BOGUS winds
   wspd = new ( 30, "float", -999.)  ; wspd@_FillValue = -999.
   wdir = new ( 30, "float", -999.)  ; wdir@_FillValue = -999.
 
-  p_TOPO    = dim_avg_n_Wrap(PM_mean_TOPO_AM(i_day*24:i_day*24+23,:),0)
-  z_TOPO    = dim_avg_n_Wrap(Z_mean_TOPO_AM(i_day*24:i_day*24+23,:),0)
-  tc_TOPO   = dim_avg_n_Wrap(TC_mean_TOPO_AM(i_day*24:i_day*24+23,:),0)
-  tdc_TOPO  = dim_avg_n_Wrap(TDC_mean_TOPO_AM(i_day*24:i_day*24+23,:),0)
+  p_TOPO    = dim_avg_n_Wrap(PM_mean_TOPO_AM(hour_s:hour_e,:),0)
+  z_TOPO    = dim_avg_n_Wrap(Z_mean_TOPO_AM(hour_s:hour_e,:),0)
+  tc_TOPO   = dim_avg_n_Wrap(TC_mean_TOPO_AM(hour_s:hour_e,:),0)
+  tdc_TOPO  = dim_avg_n_Wrap(TDC_mean_TOPO_AM(hour_s:hour_e,:),0)
 ;*************************
 ; create plot
 ;*************************
 
-  wks  = gsn_open_wks ("png", "./Figures/6_skewt_Amazon_avg_Time_avg_TOPO_iday_"+tostring(i_day+1)) 
+  wks  = gsn_open_wks ("x11", "./Figures/6_skewt_Amazon_avg_Time_avg_TOPO") 
 
 ; --- Create background skew-T; plot sounding ---------------------
 
@@ -165,7 +181,7 @@ do i_day = 0,3
   skewtOpts@DrawFahrenheit  = False
   skewtOpts@DrawWind        = False   ; not possible with panel
 
-  skewtOpts@tiMainString    = "TOPO, Amazon avg, 24-hr mean over Day "+tostring(i_day+1)
+  skewtOpts@tiMainString    = "TOPO, Amazon avg, hour = 20-60"
 
   dataOpts   = False        ; no options
 
@@ -175,7 +191,6 @@ do i_day = 0,3
   skewt_data = skewT_PlotData(wks, skewt_bkgd1, p_TOPO,tc_TOPO,tdc_TOPO,z_TOPO ,wspd,wdir, dataOpts)
   frame(wks)
 
-end do ; do i_day
 
 
 end
