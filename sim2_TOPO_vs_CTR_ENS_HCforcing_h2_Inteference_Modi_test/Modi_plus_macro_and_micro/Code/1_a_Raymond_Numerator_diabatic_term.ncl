@@ -341,7 +341,8 @@ SHFLX_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), SHFLX_diff_C
 
 SHFLX_Amazon_mean_CTR(i_hr) = avg( SHFLX_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
 SHFLX_Amazon_mean_TOPO(i_hr) = avg( SHFLX_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-SHFLX_Amazon_mean_CTR_TOPO(i_hr) = avg( SHFLX_diff_CTR_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+;SHFLX_Amazon_mean_CTR_TOPO(i_hr) = avg( SHFLX_diff_CTR_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+SHFLX_Amazon_mean_CTR_TOPO(i_hr) = SHFLX_Amazon_mean_CTR(i_hr) - SHFLX_Amazon_mean_TOPO(i_hr)
 
 SHFLX_Andes_mean_CTR@units = "Watt/m2"
 SHFLX_Andes_mean_TOPO@units = "Watt/m2"
@@ -358,7 +359,8 @@ LHFLX_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), LHFLX_diff_C
 
 LHFLX_Amazon_mean_CTR(i_hr) = avg( LHFLX_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
 LHFLX_Amazon_mean_TOPO(i_hr) = avg( LHFLX_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-LHFLX_Amazon_mean_CTR_TOPO(i_hr) = avg( LHFLX_diff_CTR_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+;LHFLX_Amazon_mean_CTR_TOPO(i_hr) = avg( LHFLX_diff_CTR_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+LHFLX_Amazon_mean_CTR_TOPO(i_hr) = LHFLX_Amazon_mean_CTR(i_hr) - LHFLX_Amazon_mean_TOPO(i_hr) 
 
 LHFLX_Andes_mean_CTR@units = "Watt/m2"
 LHFLX_Andes_mean_TOPO@units = "Watt/m2"
@@ -375,7 +377,8 @@ QRS_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), QRS_diff_CTR_T
 
 QRS_Amazon_mean_CTR(i_hr) = avg( QRS_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
 QRS_Amazon_mean_TOPO(i_hr) = avg( QRS_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-QRS_Amazon_mean_CTR_TOPO(i_hr) = avg( QRS_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+;QRS_Amazon_mean_CTR_TOPO(i_hr) = avg( QRS_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+QRS_Amazon_mean_CTR_TOPO(i_hr) = QRS_Amazon_mean_CTR(i_hr) - QRS_Amazon_mean_TOPO(i_hr) 
 
 QRS_Andes_mean_CTR@units = "Watt/m2"
 QRS_Andes_mean_TOPO@units = "Watt/m2"
@@ -392,7 +395,8 @@ QRL_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), QRL_diff_CTR_T
 
 QRL_Amazon_mean_CTR(i_hr) = avg( QRL_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)})) 
 QRL_Amazon_mean_TOPO(i_hr) = avg( QRL_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-QRL_Amazon_mean_CTR_TOPO(i_hr) = avg( QRL_diff_CTR_TOPO_inte(:,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+;QRL_Amazon_mean_CTR_TOPO(i_hr) = avg( QRL_diff_CTR_TOPO_inte(:,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+QRL_Amazon_mean_CTR_TOPO(i_hr) = QRL_Amazon_mean_CTR(i_hr) - QRL_Amazon_mean_TOPO(i_hr) 
 
 QRL_Andes_mean_CTR@units = "Watt/m2"
 QRL_Andes_mean_TOPO@units = "Watt/m2"
