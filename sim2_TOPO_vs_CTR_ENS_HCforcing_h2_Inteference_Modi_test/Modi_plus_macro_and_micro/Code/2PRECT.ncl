@@ -156,13 +156,16 @@ WADA_index_sig(index*3+i_hr) = avg(where(.not.ismissing(SGH30m),diff_TOPO_CTR_si
         - avg(diff_TOPO_CTR_sig(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
 
 ;calculate Amazon mean precip, and Andean mean precip in CTR, TOPO and CTR-TOPO, then output to nc files
+rad = 4.0*atan(1.0)/180.0
+clat = cos(f_TOPO_mean->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
 Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), var_mean_CTR(i_hr,:,:), var_mean_CTR@_FillValue))
 Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), var_mean_TOPO(i_hr,:,:), var_mean_TOPO@_FillValue))
 Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), diff_TOPO_CTR(i_hr,:,:), diff_TOPO_CTR@_FillValue))
 
-Amazon_mean_CTR(index*3+i_hr) = avg( var_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_TOPO(index*3+i_hr) = avg( var_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Amazon_mean_CTR(index*3+i_hr) = wgt_areaave_Wrap( var_mean_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1 )
+Amazon_mean_TOPO(index*3+i_hr) = wgt_areaave_Wrap( var_mean_TOPO(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Amazon_mean_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(diff_TOPO_CTR(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 
 ;print(WADA_index)
 ;print(WADA_index_sig)

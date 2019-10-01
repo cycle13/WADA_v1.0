@@ -339,7 +339,7 @@ plot(1) = gsn_csm_pres_hgt(wks,PTEQ_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lo
 res@cnMinLevelValF = -0.2
 res@cnMaxLevelValF = 0.2
 res@cnLevelSpacingF = 0.01
-res@gsnLeftString = "partial_Q/partial_t"
+res@gsnLeftString = "d_Q/d_t"
 plot(2) = gsn_csm_pres_hgt(wks,Qt_diff(i_hr-1,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res) ; Note Qt only has hr=1 to hr=96
 
 res@cnMinLevelValF = -0.2

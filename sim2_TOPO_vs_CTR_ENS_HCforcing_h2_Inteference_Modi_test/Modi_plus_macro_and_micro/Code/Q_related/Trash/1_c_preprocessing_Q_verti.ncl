@@ -73,12 +73,25 @@ d_var_CTR = var_CTR(:,:,1:29,:,:) - var_CTR(:,:,0:28,:,:)
 var_adv_CTR = OMEGA_CTR(:,:,1:29,:,:) * d_var_CTR / dph_CTR(:,:,1:29,:,:)  ; kg/kg / sec 
 printVarSummary(var_adv_CTR)
 
+d_omega_TOPO = OMEGA_TOPO(:,:,1:29,:,:) - OMEGA_TOPO(:,:,0:28,:,:)
+q_dOmega_dp_TOPO = var_TOPO(:,:,1:29,:,:) * d_omega_TOPO / dph_TOPO(:,:,1:29,:,:)
+printVarSummary(q_dOmega_dp_TOPO)
+
+d_omega_CTR = OMEGA_CTR(:,:,1:29,:,:) - OMEGA_CTR(:,:,0:28,:,:)
+q_dOmega_dp_CTR = var_CTR(:,:,1:29,:,:) * d_omega_CTR / dph_CTR(:,:,1:29,:,:)
+printVarSummary(q_dOmega_dp_CTR)
+
 ;--------
 
 var_vert_adv_TOPO_mean = dim_avg_n_Wrap(var_adv_TOPO,0)
 var_vert_adv_TOPO_std = dim_stddev_n_Wrap(var_adv_TOPO,0)
 var_vert_adv_CTR_mean = dim_avg_n_Wrap(var_adv_CTR,0)
 var_vert_adv_CTR_std = dim_stddev_n_Wrap(var_adv_CTR,0) 
+
+var_vert_gra_TOPO_mean = dim_avg_n_Wrap(q_dOmega_dp_TOPO,0)
+var_vert_gra_TOPO_std = dim_stddev_n_Wrap(q_dOmega_dp_TOPO,0)
+var_vert_gra_CTR_mean = dim_avg_n_Wrap(q_dOmega_dp_CTR,0)
+var_vert_gra_CTR_std = dim_stddev_n_Wrap(q_dOmega_dp_CTR,0) 
 
 var_vert_adv_TOPO_mean!0 = "time"
 var_vert_adv_TOPO_mean&time = f_TOPO->time(num1(i_num):num2(i_num))
@@ -98,10 +111,33 @@ var_vert_adv_CTR_mean&lat = f_CTR->lat
 var_vert_adv_CTR_mean!3 = "lon"
 var_vert_adv_CTR_mean&lon = f_CTR->lon
 
+var_vert_gra_TOPO_mean!0 = "time"
+var_vert_gra_TOPO_mean&time = f_TOPO->time(num1(i_num):num2(i_num))
+var_vert_gra_TOPO_mean!1 = "lev"
+var_vert_gra_TOPO_mean&lev = f_TOPO->lev(1:29)
+var_vert_gra_TOPO_mean!2 = "lat"
+var_vert_gra_TOPO_mean&lat = f_TOPO->lat
+var_vert_gra_TOPO_mean!3 = "lon"
+var_vert_gra_TOPO_mean&lon = f_TOPO->lon
+
+var_vert_gra_CTR_mean!0 = "time"
+var_vert_gra_CTR_mean&time = f_CTR->time(num1(i_num):num2(i_num))
+var_vert_gra_CTR_mean!1 = "lev"
+var_vert_gra_CTR_mean&lev = f_CTR->lev(1:29)
+var_vert_gra_CTR_mean!2 = "lat"
+var_vert_gra_CTR_mean&lat = f_CTR->lat
+var_vert_gra_CTR_mean!3 = "lon"
+var_vert_gra_CTR_mean&lon = f_CTR->lon
+
 printVarSummary(var_vert_adv_TOPO_mean)
 printVarSummary(var_vert_adv_TOPO_std)
 printVarSummary(var_vert_adv_CTR_mean)
 printVarSummary(var_vert_adv_CTR_std)
+
+printVarSummary(var_vert_gra_TOPO_mean)
+printVarSummary(var_vert_gra_TOPO_std)
+printVarSummary(var_vert_gra_CTR_mean)
+printVarSummary(var_vert_gra_CTR_std)
 
 ;====================== output to nc files ======
 ;dir_TOPO_out = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
@@ -114,11 +150,17 @@ filedimdef(ncdf_TOPO,"time",-1,True)
 ncdf_TOPO->var_vert_adv_TOPO_mean = var_vert_adv_TOPO_mean
 ncdf_TOPO->var_vert_adv_TOPO_std = var_vert_adv_TOPO_std
 
+ncdf_TOPO->var_vert_gra_TOPO_mean = var_vert_gra_TOPO_mean
+ncdf_TOPO->var_vert_gra_TOPO_std = var_vert_gra_TOPO_std
+
 system("rm "+dir_CTR_out+"ENS.std.mean.CTR.Q_vert_adv.time"+num1(i_num)+"-"+num2(i_num)+".nc")
 ncdf_CTR = addfile(dir_CTR_out+"ENS.std.mean.CTR.Q_vert_adv.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
 filedimdef(ncdf_CTR,"time",-1,True)
 ncdf_CTR->var_vert_adv_CTR_mean = var_vert_adv_CTR_mean
 ncdf_CTR->var_vert_adv_CTR_std = var_vert_adv_CTR_std
+
+ncdf_CTR->var_vert_gra_CTR_mean = var_vert_gra_CTR_mean
+ncdf_CTR->var_vert_gra_CTR_std = var_vert_gra_CTR_std
 
 end do ; do i_num
 

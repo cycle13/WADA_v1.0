@@ -85,9 +85,12 @@ Andes_mean_CTR(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LSE_CTR_inte(i_
 Andes_mean_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LSE_TOPO_inte(i_hr,:,:), LSE_TOPO_inte@_FillValue))
 Andes_mean_CTR_TOPO(index*3+i_hr) = avg(where(.not.ismissing(SGH30m), LSE_diff_CTR_TOPO_inte(i_hr,:,:), LSE_diff_CTR_TOPO_inte@_FillValue))
 
-Amazon_mean_CTR(index*3+i_hr) = avg( LSE_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_TOPO(index*3+i_hr) = avg( LSE_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Amazon_mean_CTR_TOPO(index*3+i_hr) = avg(LSE_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+rad = 4.0*atan(1.0)/180.0
+clat = cos(ncdf_CTR->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
+Amazon_mean_CTR(index*3+i_hr) = wgt_areaave_Wrap( LSE_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Amazon_mean_TOPO(index*3+i_hr) = wgt_areaave_Wrap( LSE_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Amazon_mean_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(LSE_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),1.0,1)
 
 
 end do ; do i_hr

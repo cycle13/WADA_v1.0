@@ -62,10 +62,20 @@ end do  ; do i_fiel
 ;printVarSummary(V_TOPO)
 
 ;------------
+;----- U * partial_Q/partial_x + V * partial_Q/partial_y , you need to time (-1) in the downstream file to make it advection form
 var_adv_TOPO = advect_variable(U_TOPO,V_TOPO,var_TOPO,0,"Q advection","1/s",0)
 printVarSummary(var_adv_TOPO)  
 var_adv_CTR = advect_variable(U_CTR,V_CTR,var_CTR,0,"Q advection","1/s",0)
 printVarSummary(var_adv_CTR)
+
+;------ calculate Q * (partial U/partial x + partial V/partial y)
+var_div_TOPO = var_TOPO * uv2dv_cfd(U_TOPO,V_TOPO,U_TOPO&lat,U_TOPO&lon,3)
+copy_VarCoords(var_adv_TOPO,var_div_TOPO)
+printVarSummary(var_div_TOPO)
+var_div_CTR = var_CTR * uv2dv_cfd(U_CTR,V_CTR,U_CTR&lat,U_CTR&lon,3)
+copy_VarCoords(var_adv_CTR,var_div_CTR)
+printVarSummary(var_div_CTR)
+
 ;--------
 
 var_adv_TOPO_mean = dim_avg_n_Wrap(var_adv_TOPO,0)
@@ -73,10 +83,20 @@ var_adv_TOPO_std = dim_stddev_n_Wrap(var_adv_TOPO,0)
 var_adv_CTR_mean = dim_avg_n_Wrap(var_adv_CTR,0)
 var_adv_CTR_std = dim_stddev_n_Wrap(var_adv_CTR,0)
 
+var_div_TOPO_mean = dim_avg_n_Wrap(var_div_TOPO,0)
+var_div_TOPO_std = dim_stddev_n_Wrap(var_div_TOPO,0)
+var_div_CTR_mean = dim_avg_n_Wrap(var_div_CTR,0)
+var_div_CTR_std = dim_stddev_n_Wrap(var_div_CTR,0)
+
 printVarSummary(var_adv_TOPO_mean)
 printVarSummary(var_adv_TOPO_std)
 printVarSummary(var_adv_CTR_mean)
 printVarSummary(var_adv_CTR_std)
+
+printVarSummary(var_div_TOPO_mean)
+printVarSummary(var_div_TOPO_std)
+printVarSummary(var_div_CTR_mean)
+printVarSummary(var_div_CTR_std)
 
 ;====================== output to nc files ======
 ;dir_TOPO_out = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
@@ -88,12 +108,16 @@ ncdf_TOPO = addfile(dir_TOPO_out+"ENS.std.mean.TOPOTEST.Qadv.time"+num1(i_num)+"
 filedimdef(ncdf_TOPO,"time",-1,True)
 ncdf_TOPO->var_adv_TOPO_mean = var_adv_TOPO_mean
 ncdf_TOPO->var_adv_TOPO_std = var_adv_TOPO_std
+ncdf_TOPO->var_div_TOPO_mean = var_div_TOPO_mean
+ncdf_TOPO->var_div_TOPO_std = var_div_TOPO_std
 
 system("rm "+dir_CTR_out+"ENS.std.mean.CTR.Qadv.time"+num1(i_num)+"-"+num2(i_num)+".nc")
 ncdf_CTR = addfile(dir_CTR_out+"ENS.std.mean.CTR.Qadv.time"+num1(i_num)+"-"+num2(i_num)+".nc","c")
 filedimdef(ncdf_CTR,"time",-1,True)
 ncdf_CTR->var_adv_CTR_mean = var_adv_CTR_mean
 ncdf_CTR->var_adv_CTR_std = var_adv_CTR_std
+ncdf_CTR->var_div_CTR_mean = var_div_CTR_mean
+ncdf_CTR->var_div_CTR_std = var_div_CTR_std
 
 end do ; do i_num
 
