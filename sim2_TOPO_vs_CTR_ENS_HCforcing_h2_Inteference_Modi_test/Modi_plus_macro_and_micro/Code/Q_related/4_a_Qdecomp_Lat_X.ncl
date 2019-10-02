@@ -567,29 +567,32 @@ do i_hr = 0,total_hrs-1   ; the first hour is not there due to QAP(i) - QAP(i-1)
 ;
 ;gsn_panel(wks,plot,(/3,3/),pres)
 
+rad = 4.0*atan(1.0)/180.0
+clat = cos(f_TOPO_mean->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
+
 ;--------------------- Qt ------------------
 Qt_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_CTR_inte(i_hr,:,:), Qt_mean_CTR_inte@_FillValue))
 Qt_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_mean_TOPO_inte(i_hr,:,:), Qt_mean_TOPO_inte@_FillValue))
 Qt_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qt_diff_CTR_TOPO_inte(i_hr,:,:), Qt_diff_CTR_TOPO_inte@_FillValue))
-Qt_Amazon_mean_CTR(i_hr) = avg( Qt_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Qt_Amazon_mean_TOPO(i_hr) = avg( Qt_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Qt_Amazon_mean_CTR_TOPO(i_hr) = avg(Qt_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Qt_Amazon_mean_CTR(i_hr) = wgt_areaave_Wrap( Qt_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Qt_Amazon_mean_TOPO(i_hr) = wgt_areaave_Wrap( Qt_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Qt_Amazon_mean_CTR_TOPO(i_hr) = wgt_areaave_Wrap(Qt_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 
 ;--------------------- PTEQ -----------
 PTEQ_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), PTEQ_mean_CTR_inte(i_hr,:,:), PTEQ_mean_CTR_inte@_FillValue))
 PTEQ_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), PTEQ_mean_TOPO_inte(i_hr,:,:), PTEQ_mean_TOPO_inte@_FillValue))
 PTEQ_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), PTEQ_diff_CTR_TOPO_inte(i_hr,:,:), PTEQ_diff_CTR_TOPO_inte@_FillValue))
-PTEQ_Amazon_mean_CTR(i_hr) = avg( PTEQ_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-PTEQ_Amazon_mean_TOPO(i_hr) = avg( PTEQ_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-PTEQ_Amazon_mean_CTR_TOPO(i_hr) = avg(PTEQ_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+PTEQ_Amazon_mean_CTR(i_hr) = wgt_areaave_Wrap( PTEQ_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+PTEQ_Amazon_mean_TOPO(i_hr) = wgt_areaave_Wrap( PTEQ_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+PTEQ_Amazon_mean_CTR_TOPO(i_hr) = wgt_areaave_Wrap(PTEQ_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 
 ;-------------------- Qadv --------------------
 Qadv_Andes_mean_CTR(i_hr) = avg(where(.not.ismissing(SGH30m), Qadv_mean_CTR_inte(i_hr,:,:), Qadv_mean_CTR_inte@_FillValue))
 Qadv_Andes_mean_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qadv_mean_TOPO_inte(i_hr,:,:), Qadv_mean_TOPO_inte@_FillValue))
 Qadv_Andes_mean_CTR_TOPO(i_hr) = avg(where(.not.ismissing(SGH30m), Qadv_diff_CTR_TOPO_inte(i_hr,:,:), Qadv_diff_CTR_TOPO_inte@_FillValue))
-Qadv_Amazon_mean_CTR(i_hr) = avg( Qadv_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Qadv_Amazon_mean_TOPO(i_hr) = avg( Qadv_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
-Qadv_Amazon_mean_CTR_TOPO(i_hr) = avg(Qadv_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}))
+Qadv_Amazon_mean_CTR(i_hr) = wgt_areaave_Wrap( Qadv_mean_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Qadv_Amazon_mean_TOPO(i_hr) = wgt_areaave_Wrap( Qadv_mean_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Qadv_Amazon_mean_CTR_TOPO(i_hr) = wgt_areaave_Wrap(Qadv_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 ;--------------------
 
 end do ; do i_hr 

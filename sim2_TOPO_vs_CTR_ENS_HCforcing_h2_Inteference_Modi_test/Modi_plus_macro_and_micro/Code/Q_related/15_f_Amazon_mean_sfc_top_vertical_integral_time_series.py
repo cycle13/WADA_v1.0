@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 
 data_path = '/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/\
 HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/'
-file_names = ['PTEQ_inte','var_adv','var_div','var_vert_adv','var_vert_gra']
+file_names = ['var_adv','var_div','var_vert_adv','var_vert_gra']
 
-data_vars = np.zeros((5,96)) # 6 vars x 96 hours
+data_vars = np.zeros((4,96)) # 4+1 vars x 96 hours
 
 cases = ['CTR', 'TOPO', 'CTR_TOPO']
 

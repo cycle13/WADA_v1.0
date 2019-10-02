@@ -40,10 +40,12 @@ do i_num  = 0, 31
 U_TOPO = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
 V_TOPO = new((/members,3,30,96,144/),double) 
 var_TOPO = new((/members,3,30,96,144/),double) 
+PS_TOPO = new((/members,3,96,144/),double) 
 
 U_CTR = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
 V_CTR = new((/members,3,30,96,144/),double) 
 var_CTR = new((/members,3,30,96,144/),double) 
+PS_CTR = new((/members,3,96,144/),double) 
 
 do i_file = 0, members - 1
 f_TOPO = addfile(f_TOPO_str(i_file),"r")
@@ -52,27 +54,55 @@ f_CTR = addfile(f_CTR_str(i_file),"r")
 U_TOPO(i_file,:,:,:,:) = f_TOPO->U(num1(i_num):num2(i_num),:,:,:)
 V_TOPO(i_file,:,:,:,:) = f_TOPO->V(num1(i_num):num2(i_num),:,:,:)
 var_TOPO(i_file,:,:,:,:) = f_TOPO->Q(num1(i_num):num2(i_num),:,:,:)
+PS_TOPO(i_file,:,:,:) = f_TOPO->PS(num1(i_num):num2(i_num),:,:)
 
 U_CTR(i_file,:,:,:,:) = f_CTR->U(num1(i_num):num2(i_num),:,:,:)
 V_CTR(i_file,:,:,:,:) = f_CTR->V(num1(i_num):num2(i_num),:,:,:)
 var_CTR(i_file,:,:,:,:) = f_CTR->Q(num1(i_num):num2(i_num),:,:,:)
+PS_CTR(i_file,:,:,:) = f_CTR->PS(num1(i_num):num2(i_num),:,:)
 
 end do  ; do i_fiel
 ;printVarSummary(U_TOPO)
 ;printVarSummary(V_TOPO)
 
+;-------------------- Mike: for horizontal gradient terms, you want to interpolate to high-reso pressure levels first
+pnew = f_CTR->lev
+P0mb = 1000.0
+hyam = f_CTR->hyam
+hybm = f_CTR->hybm
+
+var_CTR_pnew = vinth2p(var_CTR,hyam,hybm,pnew,PS_CTR,1,P0mb,1,False)
+var_CTR_pnew&lev@units = "hPa" 
+U_CTR_pnew = vinth2p(U_CTR,hyam,hybm,pnew,PS_CTR,1,P0mb,1,False)
+U_CTR_pnew&lev@units = "hPa" 
+V_CTR_pnew = vinth2p(V_CTR,hyam,hybm,pnew,PS_CTR,1,P0mb,1,False)
+V_CTR_pnew&lev@units = "hPa" 
+printVarSummary(var_CTR_pnew)
+printVarSummary(U_CTR_pnew)
+printVarSummary(V_CTR_pnew)
+
+var_TOPO_pnew = vinth2p(var_TOPO,hyam,hybm,pnew,PS_TOPO,1,P0mb,1,False)
+var_TOPO_pnew&lev@units = "hPa" 
+U_TOPO_pnew = vinth2p(U_TOPO,hyam,hybm,pnew,PS_TOPO,1,P0mb,1,False)
+U_TOPO_pnew&lev@units = "hPa" 
+V_TOPO_pnew = vinth2p(V_TOPO,hyam,hybm,pnew,PS_TOPO,1,P0mb,1,False)
+V_TOPO_pnew&lev@units = "hPa" 
+printVarSummary(var_TOPO_pnew)
+printVarSummary(U_TOPO_pnew)
+printVarSummary(V_TOPO_pnew)
+
 ;------------
 ;----- U * partial_Q/partial_x + V * partial_Q/partial_y , you need to time (-1) in the downstream file to make it advection form
-var_adv_TOPO = advect_variable(U_TOPO,V_TOPO,var_TOPO,0,"Q advection","1/s",0)
+var_adv_TOPO = advect_variable(U_TOPO_pnew,V_TOPO_pnew,var_TOPO_pnew,0,"Q advection","1/s",0)
 printVarSummary(var_adv_TOPO)  
-var_adv_CTR = advect_variable(U_CTR,V_CTR,var_CTR,0,"Q advection","1/s",0)
+var_adv_CTR = advect_variable(U_CTR_pnew,V_CTR_pnew,var_CTR_pnew,0,"Q advection","1/s",0)
 printVarSummary(var_adv_CTR)
 
 ;------ calculate Q * (partial U/partial x + partial V/partial y)
-var_div_TOPO = var_TOPO * uv2dv_cfd(U_TOPO,V_TOPO,U_TOPO&lat,U_TOPO&lon,3)
+var_div_TOPO = var_TOPO * uv2dvG(U_TOPO,V_TOPO)
 copy_VarCoords(var_adv_TOPO,var_div_TOPO)
 printVarSummary(var_div_TOPO)
-var_div_CTR = var_CTR * uv2dv_cfd(U_CTR,V_CTR,U_CTR&lat,U_CTR&lon,3)
+var_div_CTR = var_CTR * uv2dvG(U_CTR,V_CTR)
 copy_VarCoords(var_adv_CTR,var_div_CTR)
 printVarSummary(var_div_CTR)
 
