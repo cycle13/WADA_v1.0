@@ -34,11 +34,13 @@ do i_num  = 0, 31
 
 OMEGA_TOPO = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
 var_TOPO = new((/members,3,30,96,144/),double) 
-dph_TOPO = new((/members,3,30,96,144/),double) 
+dph_TOPO = new((/members,3,28,96,144/),double) 
+pres_TOPO = new((/members,3,30,96,144/),double) 
 
 OMEGA_CTR = new((/members,3,30,96,144/),double)    ;members x 3 hrs x 30lev x 96lat x 144 lon
 var_CTR = new((/members,3,30,96,144/),double) 
-dph_CTR = new((/members,3,30,96,144/),double) 
+dph_CTR = new((/members,3,28,96,144/),double) 
+pres_CTR = new((/members,3,30,96,144/),double) 
 
 do i_file = 0, members - 1
 f_TOPO = addfile(f_TOPO_str(i_file),"r")
@@ -56,29 +58,50 @@ var_CTR(i_file,:,:,:,:) = f_CTR->Q(num1(i_num):num2(i_num),:,:,:)
 ;------------
 hyai = f_TOPO->hyai ; read from a file the interface hybrid coefficients
 hybi = f_TOPO->hybi ; read from a file
+
+hyam = f_TOPO->hyam ; read from a file the interface hybrid coefficients
+hybm = f_TOPO->hybm ; read from a file
+
 P0  = 100000.0 ; since ps is in Pa 
 
-dph_TOPO(i_file,:,:,:,:) = dpres_hybrid_ccm(f_TOPO->PS(num1(i_num):num2(i_num),:,:),P0,hyai,hybi) 
-dph_CTR(i_file,:,:,:,:) = dpres_hybrid_ccm(f_CTR->PS(num1(i_num):num2(i_num),:,:),P0,hyai,hybi) 
-printVarSummary(dph_CTR)
+;dph_TOPO(i_file,:,:,:,:) = dpres_hybrid_ccm(f_TOPO->PS(num1(i_num):num2(i_num),:,:),P0,hyai,hybi) 
+;dph_CTR(i_file,:,:,:,:) = dpres_hybrid_ccm(f_CTR->PS(num1(i_num):num2(i_num),:,:),P0,hyai,hybi) 
+;printVarSummary(dph_CTR)
+
+pres_TOPO(i_file,:,:,:,:) = pres_hybrid_ccm(f_TOPO->PS(num1(i_num):num2(i_num),:,:),P0,hyam,hybm) 
+pres_CTR(i_file,:,:,:,:) = pres_hybrid_ccm(f_CTR->PS(num1(i_num):num2(i_num),:,:),P0,hyam,hybm) 
+printVarSummary(pres_CTR)
+
+dph_TOPO(i_file,:,:,:,:) = pres_TOPO(i_file,:,2:29,:,:) - pres_TOPO(i_file,:,0:27,:,:)
+dph_CTR(i_file,:,:,:,:) = pres_CTR(i_file,:,2:29,:,:) - pres_CTR(i_file,:,0:27,:,:)
+
 
 end do  ; do i_fiel
 
 ;-----------
-d_var_TOPO = var_TOPO(:,:,1:29,:,:) - var_TOPO(:,:,0:28,:,:)
-var_adv_TOPO = OMEGA_TOPO(:,:,1:29,:,:) * d_var_TOPO / dph_TOPO(:,:,1:29,:,:)  ; kg/kg / sec 
+
+;d_var_TOPO = var_TOPO(:,:,1:29,:,:) - var_TOPO(:,:,0:28,:,:)
+d_var_TOPO = var_TOPO(:,:,2:29,:,:) - var_TOPO(:,:,0:27,:,:)
+;var_adv_TOPO = OMEGA_TOPO(:,:,1:29,:,:) * d_var_TOPO / dph_TOPO(:,:,1:29,:,:)  ; kg/kg / sec 
+var_adv_TOPO = OMEGA_TOPO(:,:,1:28,:,:) * d_var_TOPO / dph_TOPO(:,:,:,:,:)  ; kg/kg / sec 
 printVarSummary(var_adv_TOPO)  
 
-d_var_CTR = var_CTR(:,:,1:29,:,:) - var_CTR(:,:,0:28,:,:)
-var_adv_CTR = OMEGA_CTR(:,:,1:29,:,:) * d_var_CTR / dph_CTR(:,:,1:29,:,:)  ; kg/kg / sec 
+;d_var_CTR = var_CTR(:,:,1:29,:,:) - var_CTR(:,:,0:28,:,:)
+d_var_CTR = var_CTR(:,:,2:29,:,:) - var_CTR(:,:,0:27,:,:)
+;var_adv_CTR = OMEGA_CTR(:,:,1:29,:,:) * d_var_CTR / dph_CTR(:,:,1:29,:,:)  ; kg/kg / sec 
+var_adv_CTR = OMEGA_CTR(:,:,1:28,:,:) * d_var_CTR / dph_CTR(:,:,:,:,:)  ; kg/kg / sec 
 printVarSummary(var_adv_CTR)
 
-d_omega_TOPO = OMEGA_TOPO(:,:,1:29,:,:) - OMEGA_TOPO(:,:,0:28,:,:)
-q_dOmega_dp_TOPO = var_TOPO(:,:,1:29,:,:) * d_omega_TOPO / dph_TOPO(:,:,1:29,:,:)
+;d_omega_TOPO = OMEGA_TOPO(:,:,1:29,:,:) - OMEGA_TOPO(:,:,0:28,:,:)
+d_omega_TOPO = OMEGA_TOPO(:,:,2:29,:,:) - OMEGA_TOPO(:,:,0:27,:,:)
+;q_dOmega_dp_TOPO = var_TOPO(:,:,1:29,:,:) * d_omega_TOPO / dph_TOPO(:,:,1:29,:,:)
+q_dOmega_dp_TOPO = var_TOPO(:,:,1:28,:,:) * d_omega_TOPO / dph_TOPO(:,:,:,:,:)
 printVarSummary(q_dOmega_dp_TOPO)
 
-d_omega_CTR = OMEGA_CTR(:,:,1:29,:,:) - OMEGA_CTR(:,:,0:28,:,:)
-q_dOmega_dp_CTR = var_CTR(:,:,1:29,:,:) * d_omega_CTR / dph_CTR(:,:,1:29,:,:)
+;d_omega_CTR = OMEGA_CTR(:,:,1:29,:,:) - OMEGA_CTR(:,:,0:28,:,:)
+d_omega_CTR = OMEGA_CTR(:,:,2:29,:,:) - OMEGA_CTR(:,:,0:27,:,:)
+;q_dOmega_dp_CTR = var_CTR(:,:,1:29,:,:) * d_omega_CTR / dph_CTR(:,:,1:29,:,:)
+q_dOmega_dp_CTR = var_CTR(:,:,1:28,:,:) * d_omega_CTR / dph_CTR(:,:,:,:,:)
 printVarSummary(q_dOmega_dp_CTR)
 
 ;--------
@@ -96,7 +119,8 @@ var_vert_gra_CTR_std = dim_stddev_n_Wrap(q_dOmega_dp_CTR,0)
 var_vert_adv_TOPO_mean!0 = "time"
 var_vert_adv_TOPO_mean&time = f_TOPO->time(num1(i_num):num2(i_num))
 var_vert_adv_TOPO_mean!1 = "lev"
-var_vert_adv_TOPO_mean&lev = f_TOPO->lev(1:29)
+;var_vert_adv_TOPO_mean&lev = f_TOPO->lev(1:29)
+var_vert_adv_TOPO_mean&lev = f_TOPO->lev(1:28)
 var_vert_adv_TOPO_mean!2 = "lat"
 var_vert_adv_TOPO_mean&lat = f_TOPO->lat
 var_vert_adv_TOPO_mean!3 = "lon"
@@ -105,7 +129,8 @@ var_vert_adv_TOPO_mean&lon = f_TOPO->lon
 var_vert_adv_CTR_mean!0 = "time"
 var_vert_adv_CTR_mean&time = f_CTR->time(num1(i_num):num2(i_num))
 var_vert_adv_CTR_mean!1 = "lev"
-var_vert_adv_CTR_mean&lev = f_CTR->lev(1:29)
+;var_vert_adv_CTR_mean&lev = f_CTR->lev(1:29)
+var_vert_adv_CTR_mean&lev = f_CTR->lev(1:28)
 var_vert_adv_CTR_mean!2 = "lat"
 var_vert_adv_CTR_mean&lat = f_CTR->lat
 var_vert_adv_CTR_mean!3 = "lon"
@@ -114,7 +139,8 @@ var_vert_adv_CTR_mean&lon = f_CTR->lon
 var_vert_gra_TOPO_mean!0 = "time"
 var_vert_gra_TOPO_mean&time = f_TOPO->time(num1(i_num):num2(i_num))
 var_vert_gra_TOPO_mean!1 = "lev"
-var_vert_gra_TOPO_mean&lev = f_TOPO->lev(1:29)
+;var_vert_gra_TOPO_mean&lev = f_TOPO->lev(1:29)
+var_vert_gra_TOPO_mean&lev = f_TOPO->lev(1:28)
 var_vert_gra_TOPO_mean!2 = "lat"
 var_vert_gra_TOPO_mean&lat = f_TOPO->lat
 var_vert_gra_TOPO_mean!3 = "lon"
@@ -123,7 +149,8 @@ var_vert_gra_TOPO_mean&lon = f_TOPO->lon
 var_vert_gra_CTR_mean!0 = "time"
 var_vert_gra_CTR_mean&time = f_CTR->time(num1(i_num):num2(i_num))
 var_vert_gra_CTR_mean!1 = "lev"
-var_vert_gra_CTR_mean&lev = f_CTR->lev(1:29)
+;var_vert_gra_CTR_mean&lev = f_CTR->lev(1:29)
+var_vert_gra_CTR_mean&lev = f_CTR->lev(1:28)
 var_vert_gra_CTR_mean!2 = "lat"
 var_vert_gra_CTR_mean&lat = f_CTR->lat
 var_vert_gra_CTR_mean!3 = "lon"

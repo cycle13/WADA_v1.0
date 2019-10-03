@@ -13,6 +13,8 @@ data_path = '/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/\
 HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/'
 file_names = ['var_adv','var_div','var_vert_adv','var_vert_gra']
 
+Qadv_acc_file = 'Qt_PTEQ_Qadv'
+
 data_vars = np.zeros((4,96)) # 4+1 vars x 96 hours
 
 cases = ['CTR', 'TOPO', 'CTR_TOPO']
@@ -26,6 +28,10 @@ for i_case in range(len(cases)):
         print(data_vars[i,:])
         print('==')
 
+    ds2 = xr.open_dataset(data_path+'Qt_PTEQ_Qadv.new.nc', decode_times=False)
+    Qadv = ds2['Qadv_Amazon_mean_'+cases[i_case]]
+    Qadv = Qadv * 1000.0 # from kg/kg/hr to g/kg/hr
+
     # Plot the time series
     #fig = plt.figure()
     plt.subplot(3,1,i_case+1)
@@ -33,6 +39,8 @@ for i_case in range(len(cases)):
     for i in range(len(data_vars[:,0])):
         plt.plot(x, data_vars[i,:], label = file_names[i])
     plt.plot(x, sum_temp, label = 'SUM')
+    plt.plot(x[1:96],Qadv, label = 'Qadv_accurate')
+    # plot Qadv inferred from (QAP(n)-QAP(n-1)) /time interval - PTEQ
 
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
@@ -44,5 +52,5 @@ for i_case in range(len(cases)):
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.tight_layout()
 #plt.show()
-plt.savefig('./CTR_TOPO_Amazon_mean_Q_bugdet_MF_sfc_top_decomp.png',dpi=400)
+plt.savefig('./Modi_midlevel_CTR_TOPO_Amazon_mean_Q_bugdet_MF_sfc_top_decomp.png',dpi=500)
 

@@ -78,6 +78,6 @@ for i_case in range(len(cases)):
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
-#plt.show()
-plt.savefig('./Q_vertical_integral_decomp.new.png')
+plt.show()
+#plt.savefig('./Q_vertical_integral_decomp.new.png')
 

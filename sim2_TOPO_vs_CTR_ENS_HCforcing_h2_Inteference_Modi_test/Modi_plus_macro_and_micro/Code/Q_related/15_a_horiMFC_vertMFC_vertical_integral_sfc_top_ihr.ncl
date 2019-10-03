@@ -91,6 +91,8 @@ f_CTR_Qadv = addfile(CTR_mean_std_Qadv_dir+CTR_mean_std_Qadv,"r")
 
 hyai = f_hybrid->hyai
 hybi = f_hybrid->hybi
+hyam = f_hybrid->hyam
+hybm = f_hybrid->hybm
 
 PS_TOPO = f_PS_mean_TOPO->PS_mean
 P0 = 100000.0 ; Pa
@@ -99,8 +101,11 @@ plev_TOPO = f_TOPO_Qadv->lev
 plev_TOPO = plev_TOPO * 100.0
 plev_TOPO@untis = "Pa"
 
-dph_TOPO_hori = dpres_plevel(plev_TOPO,PS_TOPO,0,0)
-dph_TOPO_vert = dpres_hybrid_ccm(PS_TOPO,P0,hyai,hybi)
+;dph_TOPO_hori = dpres_plevel(plev_TOPO,PS_TOPO,0,0)
+dph_TOPO_hori = dpres_plevel(plev_TOPO,PS_TOPO,min(plev_TOPO),0)
+pres_TOPO_vert = pres_hybrid_ccm(PS_TOPO,P0,hyam,hybm)
+dph_TOPO_vert = pres_TOPO_vert(:,2:29,:,:) - pres_TOPO_vert(:,0:27,:,:) 
+printVarSummary(pres_TOPO_vert)
 printVarSummary(PS_TOPO)
 printVarSummary(dph_TOPO_hori)
 
@@ -110,8 +115,10 @@ plev_CTR = f_CTR_Qadv->lev
 plev_CTR = plev_CTR * 100.0
 plev_CTR@untis = "Pa"
 
-dph_CTR_hori = dpres_plevel(plev_CTR,PS_CTR,0,0)
-dph_CTR_vert = dpres_hybrid_ccm(PS_CTR,P0,hyai,hybi)
+;dph_CTR_hori = dpres_plevel(plev_CTR,PS_CTR,0,0)
+dph_CTR_hori = dpres_plevel(plev_CTR,PS_CTR,min(plev_CTR),0)
+pres_CTR_vert = pres_hybrid_ccm(PS_CTR,P0,hyam,hybm)
+dph_CTR_vert = pres_CTR_vert(:,2:29,:,:) - pres_CTR_vert(:,0:27,:,:)
 
 ;;------ all layers ------
 lowest_lev = 30
@@ -188,20 +195,25 @@ var_vert_gra_mean_CTR@units = "(g/kg)/hr"
 printVarSummary(var_vert_gra_mean_CTR)
 
 ;------- vertical integral ----------
-var_vert_adv_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_adv_mean_TOPO(:,30-lowest_lev:28,:,:) * dph_TOPO_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,30-lowest_lev:28,:,:),1)
+
+;var_vert_adv_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_adv_mean_TOPO(:,30-lowest_lev:28,:,:) * dph_TOPO_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,30-lowest_lev:28,:,:),1)
+var_vert_adv_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_adv_mean_TOPO(:,30-lowest_lev:27,:,:) * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
 copy_VarCoords(PS_TOPO,var_vert_adv_mean_TOPO_inte)
 printVarSummary(var_vert_adv_mean_TOPO_inte)
-var_vert_adv_mean_CTR_inte = dim_sum_n_Wrap(var_vert_adv_mean_CTR(:,30-lowest_lev:28,:,:) * dph_CTR_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_CTR_vert(:,30-lowest_lev:28,:,:),1)
+;var_vert_adv_mean_CTR_inte = dim_sum_n_Wrap(var_vert_adv_mean_CTR(:,30-lowest_lev:28,:,:) * dph_CTR_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_CTR_vert(:,30-lowest_lev:28,:,:),1)
+var_vert_adv_mean_CTR_inte = dim_sum_n_Wrap(var_vert_adv_mean_CTR(:,30-lowest_lev:27,:,:) * dph_CTR_vert(:,:,:,:), 1)/dim_sum_n(dph_CTR_vert(:,:,:,:),1)
 copy_VarCoords(PS_CTR,var_vert_adv_mean_CTR_inte)
 printVarSummary(var_vert_adv_mean_CTR_inte)
 var_vert_adv_diff_CTR_TOPO_inte = var_vert_adv_mean_CTR_inte ; metadata
 var_vert_adv_diff_CTR_TOPO_inte = var_vert_adv_mean_CTR_inte - var_vert_adv_mean_TOPO_inte
 printVarSummary(var_vert_adv_diff_CTR_TOPO_inte)
 
-var_vert_gra_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_gra_mean_TOPO(:,30-lowest_lev:28,:,:) * dph_TOPO_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,30-lowest_lev:28,:,:),1)
+;var_vert_gra_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_gra_mean_TOPO(:,30-lowest_lev:28,:,:) * dph_TOPO_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,30-lowest_lev:28,:,:),1)
+var_vert_gra_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_gra_mean_TOPO(:,30-lowest_lev:27,:,:) * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
 copy_VarCoords(PS_TOPO,var_vert_gra_mean_TOPO_inte)
 printVarSummary(var_vert_gra_mean_TOPO_inte)
-var_vert_gra_mean_CTR_inte = dim_sum_n_Wrap(var_vert_gra_mean_CTR(:,30-lowest_lev:28,:,:) * dph_CTR_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_CTR_vert(:,30-lowest_lev:28,:,:),1)
+;var_vert_gra_mean_CTR_inte = dim_sum_n_Wrap(var_vert_gra_mean_CTR(:,30-lowest_lev:28,:,:) * dph_CTR_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_CTR_vert(:,30-lowest_lev:28,:,:),1)
+var_vert_gra_mean_CTR_inte = dim_sum_n_Wrap(var_vert_gra_mean_CTR(:,30-lowest_lev:27,:,:) * dph_CTR_vert(:,:,:,:), 1)/dim_sum_n(dph_CTR_vert(:,:,:,:),1)
 copy_VarCoords(PS_CTR,var_vert_gra_mean_CTR_inte)
 printVarSummary(var_vert_gra_mean_CTR_inte)
 var_vert_gra_diff_CTR_TOPO_inte = var_vert_gra_mean_CTR_inte ; metadata
