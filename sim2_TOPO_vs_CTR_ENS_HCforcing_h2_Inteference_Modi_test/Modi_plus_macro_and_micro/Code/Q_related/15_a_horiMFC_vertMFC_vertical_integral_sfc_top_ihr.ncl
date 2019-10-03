@@ -48,7 +48,6 @@ TOPO_mean_std_Qadv_dir = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HC
 TOPO_mean_std_Qadv = "ENS.std.mean.TOPOTEST.Qadv."+str_time(index)+".nc"
 TOPO_mean_std_Q_vert_adv = "ENS.std.mean.TOPOTEST.Q_vert_adv."+str_time(index)+".nc"
 
-
 ;CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro/CTR/"
 CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/CTR/"
 ;CTR_mean_str = "ENS.mean.CTR.time"+str_time(index)+".nc"
@@ -63,7 +62,8 @@ CTR_mean_std_Qadv_dir = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCf
 CTR_mean_std_Qadv = "ENS.std.mean.CTR.Qadv."+str_time(index)+".nc"
 CTR_mean_std_Q_vert_adv = "ENS.std.mean.CTR.Q_vert_adv."+str_time(index)+".nc"
 
-var_str = (/"var_hori_adv","var_div","var_vert_adv","var_vert_gra"/)
+;var_str = (/"var_hori_adv","var_div","var_vert_adv","var_vert_gra"/)
+var_str = (/"var_hori_adv","var_div","helper_holder"/)
 
 do i_var = 0, dimsizes(var_str) -1
 
@@ -194,6 +194,28 @@ copy_VarMeta(f_CTR_Q_vert_adv->var_vert_adv_CTR_mean,var_vert_gra_mean_CTR)
 var_vert_gra_mean_CTR@units = "(g/kg)/hr"
 printVarSummary(var_vert_gra_mean_CTR)
 
+;--------------------
+OMEGA_TOPO_mean = - tofloat(f_CTR_Q_vert_adv->OMEGA_TOPO_mean) * 3600.0 * 1000.0 ; from kg/kg/sec to g/kg/hr, you don't have to convert downstream
+OMEGA_CTR_mean = -tofloat(f_CTR_Q_vert_adv->OMEGA_CTR_mean) * 3600.0 * 1000.0
+
+dq_dp_TOPO_mean = f_CTR_Q_vert_adv->dq_dp_TOPO_mean
+dq_dp_CTR_mean = f_CTR_Q_vert_adv->dq_dp_CTR_mean
+
+;
+;copy_VarMeta(f_CTR_Q_vert_adv->var_vert_adv_CTR_mean,term1_mean)
+;term1_mean@units = "(g/kg)/hr"
+;printVarSummary(term1_mean)
+;
+;term2_mean = - tofloat(f_CTR_Q_vert_adv->term2_mean) * 3600.0  * 1000.0 ; from (kg/kg)/sec to (g/kg)/hr
+;copy_VarMeta(f_CTR_Q_vert_adv->var_vert_adv_CTR_mean,term2_mean)
+;term2_mean@units = "(g/kg)/hr"
+;printVarSummary(term2_mean)
+;
+;term3_mean = - tofloat(f_CTR_Q_vert_adv->term3_mean) * 3600.0  * 1000.0 ; from (kg/kg)/sec to (g/kg)/hr
+;copy_VarMeta(f_CTR_Q_vert_adv->var_vert_adv_CTR_mean,term3_mean)
+;term3_mean@units = "(g/kg)/hr"
+;printVarSummary(term3_mean)
+
 ;------- vertical integral ----------
 
 ;var_vert_adv_mean_TOPO_inte = dim_sum_n_Wrap(var_vert_adv_mean_TOPO(:,30-lowest_lev:28,:,:) * dph_TOPO_vert(:,30-lowest_lev:28,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,30-lowest_lev:28,:,:),1)
@@ -220,6 +242,29 @@ var_vert_gra_diff_CTR_TOPO_inte = var_vert_gra_mean_CTR_inte ; metadata
 var_vert_gra_diff_CTR_TOPO_inte = var_vert_gra_mean_CTR_inte - var_vert_gra_mean_TOPO_inte
 printVarSummary(var_vert_gra_diff_CTR_TOPO_inte)
 
+;------- term1, term2, term3 -------
+term1_mean_inte_a = dim_sum_n_Wrap(OMEGA_TOPO_mean * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
+term1_mean_inte_b = dim_sum_n_Wrap(dq_dp_CTR_mean * dph_CTR_vert(:,:,:,:), 1)/dim_sum_n(dph_CTR_vert(:,:,:,:),1)
+term1_mean_inte_c = dim_sum_n_Wrap(dq_dp_TOPO_mean * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
+term1_mean_inte = term1_mean_inte_a * (term1_mean_inte_b - term1_mean_inte_c)
+copy_VarCoords(PS_CTR,term1_mean_inte)
+printVarSummary(term1_mean_inte)
+
+term2_mean_inte_a = dim_sum_n_Wrap(OMEGA_CTR_mean * dph_CTR_vert(:,:,:,:), 1)/dim_sum_n(dph_CTR_vert(:,:,:,:),1)
+term2_mean_inte_b = dim_sum_n_Wrap(OMEGA_TOPO_mean * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
+term2_mean_inte_c = dim_sum_n_Wrap(dq_dp_TOPO_mean * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
+term2_mean_inte = (term2_mean_inte_a - term2_mean_inte_b) * term2_mean_inte_c
+copy_VarCoords(PS_CTR,term2_mean_inte)
+printVarSummary(term2_mean_inte)
+
+term3_mean_inte_a = dim_sum_n_Wrap(OMEGA_CTR_mean * dph_CTR_vert(:,:,:,:), 1)/dim_sum_n(dph_CTR_vert(:,:,:,:),1)
+term3_mean_inte_b = dim_sum_n_Wrap(OMEGA_TOPO_mean * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
+term3_mean_inte_c = dim_sum_n_Wrap(dq_dp_CTR_mean * dph_CTR_vert(:,:,:,:), 1)/dim_sum_n(dph_CTR_vert(:,:,:,:),1)
+term3_mean_inte_d = dim_sum_n_Wrap(dq_dp_TOPO_mean * dph_TOPO_vert(:,:,:,:), 1)/dim_sum_n(dph_TOPO_vert(:,:,:,:),1)
+term3_mean_inte = ( term3_mean_inte_a - term3_mean_inte_b ) * (term3_mean_inte_c - term3_mean_inte_d)
+copy_VarCoords(PS_CTR,term3_mean_inte)
+printVarSummary(term3_mean_inte)
+
 end if
 
 
@@ -243,6 +288,10 @@ ncdf_CTR->var_adv_mean_CTR_inte = var_adv_mean_CTR_inte
 ncdf_CTR->var_div_mean_CTR_inte = var_div_mean_CTR_inte 
 ncdf_CTR->var_vert_adv_mean_CTR_inte = var_vert_adv_mean_CTR_inte
 ncdf_CTR->var_vert_gra_mean_CTR_inte = var_vert_gra_mean_CTR_inte
+
+ncdf_CTR->term1_mean_inte = term1_mean_inte
+ncdf_CTR->term2_mean_inte = term2_mean_inte
+ncdf_CTR->term3_mean_inte = term3_mean_inte
 
 end do ; do index
 

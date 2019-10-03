@@ -104,6 +104,18 @@ d_omega_CTR = OMEGA_CTR(:,:,2:29,:,:) - OMEGA_CTR(:,:,0:27,:,:)
 q_dOmega_dp_CTR = var_CTR(:,:,1:28,:,:) * d_omega_CTR / dph_CTR(:,:,:,:,:)
 printVarSummary(q_dOmega_dp_CTR)
 
+;-------- further understand -Omega partial Q/partial p term ----
+;term1: Omega_topo (partial Q/ partial p)_CTR-TOPO;
+;term2: Omega_ctr-topo (partial Q/ partial p)_TOPO;
+;term3: Omega_ctr-topo (partial Q/partial p)_CTR-TOPO;
+;-- vertical integral needs to be CTR or TOPO consistently
+;-- save these variables first, then calculate term1, term2, term3 in the next vertical integral 15_a... script
+OMEGA_TOPO_new = OMEGA_TOPO(:,:,2:29,:,:) 
+OMEGA_CTR_new = OMEGA_CTR(:,:,2:29,:,:)
+dq_dp_TOPO = d_var_TOPO / dph_TOPO
+dq_dp_CTR = d_var_CTR / dph_CTR
+
+
 ;--------
 
 var_vert_adv_TOPO_mean = dim_avg_n_Wrap(var_adv_TOPO,0)
@@ -115,6 +127,15 @@ var_vert_gra_TOPO_mean = dim_avg_n_Wrap(q_dOmega_dp_TOPO,0)
 var_vert_gra_TOPO_std = dim_stddev_n_Wrap(q_dOmega_dp_TOPO,0)
 var_vert_gra_CTR_mean = dim_avg_n_Wrap(q_dOmega_dp_CTR,0)
 var_vert_gra_CTR_std = dim_stddev_n_Wrap(q_dOmega_dp_CTR,0) 
+
+OMEGA_TOPO_mean = dim_avg_n_Wrap(OMEGA_TOPO_new,0)
+OMEGA_TOPO_std = dim_stddev_n_Wrap(OMEGA_TOPO_new,0)
+OMEGA_CTR_mean = dim_avg_n_Wrap(OMEGA_CTR_new,0)
+OMEGA_CTR_std = dim_stddev_n_Wrap(OMEGA_CTR_new,0)
+dq_dp_TOPO_mean = dim_avg_n_Wrap(dq_dp_TOPO,0)
+dq_dp_TOPO_std = dim_stddev_n_Wrap(dq_dp_TOPO,0)
+dq_dp_CTR_mean = dim_avg_n_Wrap(dq_dp_CTR,0)
+dq_dp_CTR_std = dim_stddev_n_Wrap(dq_dp_CTR,0)
 
 var_vert_adv_TOPO_mean!0 = "time"
 var_vert_adv_TOPO_mean&time = f_TOPO->time(num1(i_num):num2(i_num))
@@ -166,6 +187,7 @@ printVarSummary(var_vert_gra_TOPO_std)
 printVarSummary(var_vert_gra_CTR_mean)
 printVarSummary(var_vert_gra_CTR_std)
 
+
 ;====================== output to nc files ======
 ;dir_TOPO_out = "/scratch/hongcheq/sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing/TOPO_TEST/"
 dir_TOPO_out = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/TOPO_TEST/"
@@ -188,6 +210,13 @@ ncdf_CTR->var_vert_adv_CTR_std = var_vert_adv_CTR_std
 
 ncdf_CTR->var_vert_gra_CTR_mean = var_vert_gra_CTR_mean
 ncdf_CTR->var_vert_gra_CTR_std = var_vert_gra_CTR_std
+
+ncdf_CTR->OMEGA_TOPO_mean = OMEGA_TOPO_mean
+ncdf_CTR->OMEGA_CTR_mean = OMEGA_CTR_mean
+
+ncdf_CTR->dq_dp_TOPO_mean = dq_dp_TOPO_mean
+ncdf_CTR->dq_dp_CTR_mean = dq_dp_CTR_mean
+
 
 end do ; do i_num
 

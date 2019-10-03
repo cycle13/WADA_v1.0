@@ -62,6 +62,10 @@ Amazon_mean_CTR = new(total_times,double)
 Amazon_mean_TOPO = new(total_times,double)
 Amazon_mean_CTR_TOPO = new(total_times,double)
 
+Amazon_mean_term1 = new(total_times,double)
+Amazon_mean_term2 = new(total_times,double)
+Amazon_mean_term3 = new(total_times,double)
+
 var_str = "var_vert_adv"
 
 dir_TOPO_out = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/TOPO_TEST/"
@@ -77,6 +81,10 @@ var_TOPO_inte = ncdf_TOPO->var_vert_adv_mean_TOPO_inte
 var_diff_CTR_TOPO_inte = var_CTR_inte
 var_diff_CTR_TOPO_inte = var_CTR_inte - var_TOPO_inte
 
+term1_mean_inte = ncdf_CTR->term1_mean_inte
+term2_mean_inte = ncdf_CTR->term2_mean_inte
+term3_mean_inte = ncdf_CTR->term3_mean_inte
+
 ;----------
 total_hrs = 3
 
@@ -91,6 +99,11 @@ clat = cos(ncdf_CTR->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad)
 Amazon_mean_CTR(index*3+i_hr) = wgt_areaave_Wrap( var_CTR_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 Amazon_mean_TOPO(index*3+i_hr) = wgt_areaave_Wrap( var_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
 Amazon_mean_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(var_diff_CTR_TOPO_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+
+Amazon_mean_term1(index*3+i_hr) = wgt_areaave_Wrap( term1_mean_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Amazon_mean_term2(index*3+i_hr) = wgt_areaave_Wrap( term2_mean_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+Amazon_mean_term3(index*3+i_hr) = wgt_areaave_Wrap( term3_mean_inte(i_hr,{Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),clat,1.0,1)
+
 
 end do ; do i_hr
 
@@ -116,6 +129,18 @@ Amazon_mean_CTR_TOPO!0 = "time"
 Amazon_mean_CTR_TOPO&time = ispan(1,96,1)
 Amazon_mean_CTR_TOPO@units = "g/kg/hr"
 
+Amazon_mean_term1!0 = "time"
+Amazon_mean_term1&time = ispan(1,96,1)
+Amazon_mean_term1@units = "g/kg/hr"
+
+Amazon_mean_term2!0 = "time"
+Amazon_mean_term2&time = ispan(1,96,1)
+Amazon_mean_term2@units = "g/kg/hr"
+
+Amazon_mean_term3!0 = "time"
+Amazon_mean_term3&time = ispan(1,96,1)
+Amazon_mean_term3@units = "g/kg/hr"
+
 ;=========== output nc files ========
 output_path = "/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/"
 system("rm -f "+output_path+var_str+".MF.nc")
@@ -128,5 +153,10 @@ ncdf->Andes_mean_CTR_TOPO = Andes_mean_CTR_TOPO
 ncdf->Amazon_mean_CTR = Amazon_mean_CTR
 ncdf->Amazon_mean_TOPO = Amazon_mean_TOPO
 ncdf->Amazon_mean_CTR_TOPO = Amazon_mean_CTR_TOPO
+
+ncdf->Amazon_mean_term1 = Amazon_mean_term1
+ncdf->Amazon_mean_term2 = Amazon_mean_term2
+ncdf->Amazon_mean_term3 = Amazon_mean_term3
+
 
 end
