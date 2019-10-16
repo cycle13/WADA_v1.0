@@ -308,9 +308,9 @@ res_CMIP                   = True
 res_CMIP@gsnFrame = False
 res_CMIP@gsnDraw = False
 ;res_CMIP@gsnMaximize       = True                     
-res_CMIP@tiMainString      = "Precip(Amazon) vs Omega500(Amazon), 1982-2008 DJF"          
+res_CMIP@tiMainString      = "Precip(Amazon) vs Omega500(EastFlank), 1982-2008 DJF"          
 res_CMIP@tiYAxisString = "pr_DJF(Amazon), mm/day"
-res_CMIP@tiXAxisString = "Omega500_DJF(Amazon), hP/hr"
+res_CMIP@tiXAxisString = "Omega500_DJF(EastFlank), hP/hr"
 res_CMIP@xyMarkLineMode    = "Markers"                
 res_CMIP@xyMarkers         =  markers(0:dimsizes(WADA_labels)-1)                   
 res_CMIP@xyMonoMarkerColor  = False
@@ -323,7 +323,7 @@ res_CMIP@gsnRightString = "p="+sprintf("%7.3e",p)
 res_CMIP@trXMinF = -5.0
 res_CMIP@trXMaxF = 5.0
 res_CMIP@trYMinF = 2.0
-res_CMIP@trYMaxF = 20.0
+res_CMIP@trYMaxF = 15.0
 
 plot_CMIP  = gsn_csm_xy(wks_CMIP,transpose((/wap_x,wap_x/)),transpose((/precip_diff_y,precip_diff_y/)),res_CMIP)              
 ;------- linear regression ----
