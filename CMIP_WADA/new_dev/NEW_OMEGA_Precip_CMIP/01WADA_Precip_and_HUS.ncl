@@ -107,6 +107,9 @@ Amazon_lat_test1 = (/-8.0,0.0/)
 Amazon_lon_test2 = (/293.0,304.0/)
 Amazon_lat_test2 = (/-10.0,1.0/)
 
+;Amazon_lon_test2 = (/293.0,304.0/)
+;Amazon_lat_test2 = (/-11.0,3.0/)
+
  xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
  ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/) 
 
@@ -241,8 +244,8 @@ delete(pr_DJF_clim_regrid)
 delete(coslat_Amazon_pr2)
 
 ;--------------  hus averaged over Amazon -----------
-;level_target = 50000.0 ; plev is in Pa
-level_target = 85000.0 ; plev is in Pa
+level_target = 50000.0 ; plev is in Pa
+;level_target = 85000.0 ; plev is in Pa
 if (imodel .eq. 0)then
 hus_file = addfile("/lustre/DATA/pritchard/hongcheq/CMIP5/hus_processing/"+"hus_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc","r")
 hus_mon_clim_regrid = hus_file->hus_mon_clim
@@ -309,9 +312,9 @@ res_CMIP                   = True
 res_CMIP@gsnFrame = False
 res_CMIP@gsnDraw = False
 ;res_CMIP@gsnMaximize       = True                     
-res_CMIP@tiMainString      = "Precip(Amazon) vs HUS_850(Amazon), 1982-2008 DJF"          
+res_CMIP@tiMainString      = "Precip(Amazon) vs HUS_500(EastFlank), 1982-2008 DJF"          
 res_CMIP@tiYAxisString = "pr_DJF(Amazon), mm/day"
-res_CMIP@tiXAxisString = "HUS_850_DJF(Amazon), g/kg"
+res_CMIP@tiXAxisString = "HUS_500_DJF(EastFlank), g/kg"
 res_CMIP@xyMarkLineMode    = "Markers"                
 res_CMIP@xyMarkers         =  markers(0:dimsizes(WADA_labels)-1)                   
 res_CMIP@xyMonoMarkerColor  = False
@@ -321,10 +324,10 @@ res_CMIP@xyMarkerSizeF     = 0.02
 res_CMIP@gsnLeftString = "correlation="+sprintf("%7.3e",r)
 res_CMIP@gsnRightString = "p="+sprintf("%7.3e",p)
 
-res_CMIP@trXMinF = 10.0
-res_CMIP@trXMaxF = 15.0
+res_CMIP@trXMinF = 1.0
+res_CMIP@trXMaxF = 5.0
 res_CMIP@trYMinF = 2.0
-res_CMIP@trYMaxF = 20.0
+res_CMIP@trYMaxF = 15.0
 
 plot_CMIP  = gsn_csm_xy(wks_CMIP,transpose((/hus_x,hus_x/)),transpose((/precip_diff_y,precip_diff_y/)),res_CMIP)              
 ;------- linear regression ----
