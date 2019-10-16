@@ -1,7 +1,7 @@
 ;Function: compute precipitation climatology for CMIP5 models (AMIP simulation)
 ;          compute Bowen ratio climatology for CMIP5 models (AMIP simulation)
 ;Date: 20180402
-;Note: Add wap to it.
+;Note: Add wap, hus to it.
 
 begin
 
@@ -92,9 +92,11 @@ end do ; do imodel
 hongcheq_dir1 = "/lustre/DATA/pritchard/hongcheq/CMIP5/hfss/"
 hongcheq_dir2 = "/lustre/DATA/pritchard/hongcheq/CMIP5/hfls/"
 hongcheq_dir_temp = "/lustre/DATA/pritchard/hongcheq/CMIP5/wap/"
+hongcheq_dir_hus = "/lustre/DATA/pritchard/hongcheq/CMIP5/hus/"
 
 hongcheq_dir3 = "/lustre/DATA/pritchard/hongcheq/CMIP5/BR_processing/"
 hongcheq_dir4 = "/lustre/DATA/pritchard/hongcheq/CMIP5/wap_processing/"
+hongcheq_dir5 = "/lustre/DATA/pritchard/hongcheq/CMIP5/hus_processing/"
 
 file_names1 = (/"hfss_Amon_CCSM4_amip_r1i1p1_198201-200812.ncrcat.nc",\
                "hfss_Amon_CanAM4_amip_r1i1p1_198201-200812.ncrcat.nc",\
@@ -168,6 +170,29 @@ file_names3 = (/"wap_Amon_CCSM4_amip_r1i1p1_198201-200812.ncrcat.nc",\
                "wap_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.ncrcat.nc"/)
 ;               "wap_Amon_MRI-AGCM3-2S_amip_r1i1p1_198201-200812.ncrcat.nc"/)
 
+file_names4 = (/"hus_Amon_CCSM4_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_CanAM4_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_ACCESS1-3_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_CNRM-CM5_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_NorESM1-M_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_IPSL-CM5A-LR_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_CMCC-CM_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_MPI-ESM-MR_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_ACCESS1-0_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_CSIRO-Mk3-6-0_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_IPSL-CM5A-MR_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_IPSL-CM5B-LR_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_MPI-ESM-LR_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_MRI-AGCM3-2H_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_inmcm4_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_MIROC-ESM_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_MRI-CGCM3_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_MIROC5_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_HadGEM2-A_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_GFDL-CM3_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_GFDL-HIRAM-C360_amip_r1i1p1_198201-200812.ncrcat.nc",\
+               "hus_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.ncrcat.nc"/)
+
 file_outputs = (/"BR_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
                  "BR_Amon_CanAM4_amip_r1i1p1_198201-200812.clim.nc",\
                  "BR_Amon_ACCESS1-3_amip_r1i1p1_198201-200812.clim.nc",\
@@ -215,33 +240,62 @@ file_outputs2 = (/"wap_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
                  "wap_Amon_GFDL-HIRAM-C360_amip_r1i1p1_198201-200812.clim.nc",\
                  "wap_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.clim.nc"/)
 ;                 "wap_Amon_MRI-AGCM3-2S_amip_r1i1p1_198201-200812.clim.nc"/)
+
+file_outputs3 = (/"hus_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_CanAM4_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_ACCESS1-3_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_CNRM-CM5_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_NorESM1-M_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_IPSL-CM5A-LR_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_CMCC-CM_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_MPI-ESM-MR_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_ACCESS1-0_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_CSIRO-Mk3-6-0_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_IPSL-CM5A-MR_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_IPSL-CM5B-LR_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_MPI-ESM-LR_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_MRI-AGCM3-2H_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_inmcm4_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_MIROC-ESM_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_MRI-CGCM3_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_MIROC5_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_HadGEM2-A_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_GFDL-CM3_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_GFDL-HIRAM-C360_amip_r1i1p1_198201-200812.clim.nc",\
+                 "hus_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.clim.nc"/)
+
 ; MRI-AGCM3-2S has the following issue. This model has lat 960 and lon 1920. too memory consuming?
 ; Note: fatal:NclMalloc Failed:[errno=12]
 
 ;do imodel = dimsizes(file_names)-1,dimsizes(file_names)-1 ; only for the later added files
 ;do imodel = 0,dimsizes(file_names)-1
-do imodel = 9,dimsizes(file_names)-1
+do imodel = 17,dimsizes(file_names)-1
 
 print(imodel)
 
 file_name1 = file_names1(imodel)
 file_name2 = file_names2(imodel)
 file_name3 = file_names3(imodel)
+file_name4 = file_names4(imodel)
 
 file_output = file_outputs(imodel)
 file_output2 = file_outputs2(imodel)
+file_output3 = file_outputs3(imodel)
 
 hfss_file = addfile(hongcheq_dir1+file_name1,"r")
 hfls_file = addfile(hongcheq_dir2+file_name2,"r")
 wap_file = addfile(hongcheq_dir_temp+file_name3,"r")
+hus_file = addfile(hongcheq_dir_hus+file_name4,"r")
 
 hfss = hfss_file->hfss
 hfls = hfls_file->hfls
 wap = wap_file->wap
+hus = hus_file->hus
 
 printVarSummary(hfss)
 printVarSummary(hfls)
 printVarSummary(wap)
+printVarSummary(hus)
 
 ;========= Bowen ratio calculated only when abs(latent heat flux)>5 Watts/m2
 BR = hfss ; meta data
@@ -259,13 +313,18 @@ BR_mon_clim = clmMonTLL(BR)
 printVarSummary(BR_mon_clim) 
 
 printVarSummary(wap)
-
 wap_clim = dim_avg_n_Wrap(wap,0)
 wap_clim@long_name = "wap clim 198201-200812"
 printVarSummary(wap_clim)
-
 wap_mon_clim = clmMonTLLL(wap)
 printVarSummary(wap_mon_clim)
+
+printVarSummary(hus)
+hus_clim = dim_avg_n_Wrap(hus,0)
+hus_clim@long_name = "hus clim 198201-200812"
+printVarSummary(hus_clim)
+hus_mon_clim = clmMonTLLL(hus)
+printVarSummary(hus_mon_clim)
 
 ;======= Write nc files ======
 system("rm -f "+hongcheq_dir3+file_output)
@@ -289,6 +348,15 @@ ncdf2->wap_mon_clim = wap_mon_clim
 delete(wap)
 delete(wap_clim)
 delete(wap_mon_clim)
+
+system("rm -f "+hongcheq_dir5+file_output3)
+ncdf3 = addfile(hongcheq_dir5+file_output3,"c")
+ncdf3->hus_clim = hus_clim
+ncdf3->hus_mon_clim = hus_mon_clim
+
+delete(hus)
+delete(hus_clim)
+delete(hus_mon_clim)
 
 end do ; do imodel
 

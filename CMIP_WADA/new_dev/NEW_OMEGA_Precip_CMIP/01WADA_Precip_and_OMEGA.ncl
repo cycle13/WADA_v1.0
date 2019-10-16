@@ -101,12 +101,17 @@ MTE_file  = (/"/lustre/DATA/pritchard/hongcheq/ET_datasets/FLUXNET_MTE_post_proc
 plot_map_overlain = new(dimsizes(WADA_labels),graphic)    ; for raw precip clim multi-panel map
 
 ;============
+Amazon_lon_test1 = (/286.0,293.0/)
+Amazon_lat_test1 = (/-8.0,0.0/)
 
-Amazon_lon_test1 = (/285.0,300.0/)
-Amazon_lat_test1 = (/-10.0,3.0/)
+Amazon_lon_test2 = (/293.0,304.0/)
+Amazon_lat_test2 = (/-10.0,1.0/)
 
  xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
  ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/) 
+
+ xpts_Amazon_test2 = (/Amazon_lon_test2(0),Amazon_lon_test2(1),Amazon_lon_test2(1),Amazon_lon_test2(0),Amazon_lon_test2(0)/)
+ ypts_Amazon_test2 = (/Amazon_lat_test2(0),Amazon_lat_test2(0),Amazon_lat_test2(1),Amazon_lat_test2(1),Amazon_lat_test2(0)/) 
 
 res                             = True
 res@gsnDraw = False
@@ -144,6 +149,7 @@ res@tiMainString = "Precip clim, 198201-200812, Multi-Model-Mean"
 plot_precip_MMM = gsn_csm_contour_map(wks_MMM_precip,pr_MMM,res)
 
 dum_Amazon_pr_MMM1 = new(4,graphic)
+dum_Amazon_pr_MMM2 = new(4,graphic)
 
 ; add the box
 respoly                  = True                      ; polyline mods desired
@@ -152,7 +158,10 @@ respoly@gsLineThicknessF = 2.0                       ; thickness of lines
 
 do i = 0 , 3
   dum_Amazon_pr_MMM1(i)=gsn_add_polyline(wks_MMM_precip,plot_precip_MMM,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)      
+end do 
 
+do i = 0 , 3
+  dum_Amazon_pr_MMM2(i)=gsn_add_polyline(wks_MMM_precip,plot_precip_MMM,xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)      
 end do 
 
 draw(plot_precip_MMM)
@@ -186,10 +195,13 @@ res@cnLevelSpacingF = 0.5
 plot_precip_MMM_GPCP = gsn_csm_contour_map(wks_MMM_GPCP_precip,diff_pr_MMM_GPCP,res)
 
 dum_Amazon_pr_MMM_GPCP1 = new(4,graphic)
+dum_Amazon_pr_MMM_GPCP2 = new(4,graphic)
 
 do i = 0 , 3
   dum_Amazon_pr_MMM_GPCP1(i)=gsn_add_polyline(wks_MMM_GPCP_precip,plot_precip_MMM_GPCP,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)      
-
+end do
+do i = 0 , 3
+  dum_Amazon_pr_MMM_GPCP2(i)=gsn_add_polyline(wks_MMM_GPCP_precip,plot_precip_MMM_GPCP,xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)      
 end do
 
 draw(plot_precip_MMM_GPCP)
@@ -218,15 +230,15 @@ pr_DJF_clim_regrid = pr_mon_clim_regrid(0,:,:) ; metadata
 pr_DJF_clim_regrid = (pr_mon_clim_regrid(0,:,:) + pr_mon_clim_regrid(1,:,:) + pr_mon_clim_regrid(11,:,:) ) / 3.0
 ;========================
 
-coslat_Amazon_pr1 = cos(pr_file->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)})*rad) 
+coslat_Amazon_pr2 = cos(pr_file->lat({Amazon_lat_test2(0):Amazon_lat_test2(1)})*rad) 
 
-Amazon_ave1 = wgt_areaave_Wrap(pr_DJF_clim_regrid({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_pr1,1.0,0)
+Amazon_ave2 = wgt_areaave_Wrap(pr_DJF_clim_regrid({Amazon_lat_test2(0):Amazon_lat_test2(1)},{Amazon_lon_test2(0):Amazon_lon_test2(1)}),coslat_Amazon_pr2,1.0,0)
 
-precip_diff_y(imodel) = Amazon_ave1
+precip_diff_y(imodel) = Amazon_ave2
 
 delete(pr_mon_clim_regrid)
 delete(pr_DJF_clim_regrid)
-delete(coslat_Amazon_pr1)
+delete(coslat_Amazon_pr2)
 
 ;--------------  OMEGA averaged over Amazon -----------
 level_target = 50000.0 ; plev is in Pa

@@ -37,7 +37,7 @@ end do
 ;str_time = (/"0-5","6-11","12-17","18-23","24-29","30-35","36-41","42-47"/)
 
 do index = 0,31
-;do index = 10,31
+;do index = 20,31
 
 TOPO_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_Modi_plus_macro_and_micro/TOPO_TEST/"
 ;TOPO_mean_str = "ENS.mean.TOPOTEST.time"+str_time(index)+".nc"
@@ -139,7 +139,8 @@ var_std_CTR_pnew&lev_p@units = "hPa"
 
 
 siglvl = 0.1
-indep_sample = 180
+;indep_sample = 180
+indep_sample = 9
 ;========= 180 samples within each ensemble, branched every 10 days, independend number of samples ~ 180
 prob = ttest(var_mean_TOPO_pnew,var_std_TOPO_pnew^2,indep_sample,var_mean_CTR_pnew,var_std_CTR_pnew^2,indep_sample,True,False)
 ;printVarSummary(prob)
@@ -324,8 +325,8 @@ res@cnMinLevelValF = -0.3
 res@cnMaxLevelValF = 0.3
 res@cnLevelSpacingF = 0.02
 
-plot(5) = gsn_csm_pres_hgt(wks,Qadv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
-plot_sig(5) = gsn_csm_pres_hgt(wks_sig,Qadv_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;plot(5) = gsn_csm_pres_hgt(wks,Qadv_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+;plot_sig(5) = gsn_csm_pres_hgt(wks_sig,Qadv_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
  
 ;============ panel plot ====
 

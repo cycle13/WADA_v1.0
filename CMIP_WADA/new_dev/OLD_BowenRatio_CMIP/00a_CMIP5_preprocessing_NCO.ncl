@@ -8,7 +8,7 @@ begin
 
 hongcheq_dir = "/lustre/DATA/pritchard/hongcheq/CMIP5/"
 
-var_string = (/"pr","hfss","hfls","wap"/)
+var_string = (/"pr","hfss","hfls","wap","hus"/)
 
 ;=========== CCSM4
 ;do i_var = 0,dimsizes(var_string) -1
@@ -77,13 +77,13 @@ var_string = (/"pr","hfss","hfls","wap"/)
 ;=========== HadGEM2-A =======
 ;======= Note: issues with ESGF, no hfls files for this model for now. 20180329
 ;======= Note: 20180412, ESGF issue solved, you have hfls files for this model now.
-;;do i_var = 0,0
+;;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -v "+var_string(i_var)+" "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_HadGEM2-A_amip_r1i1p1_??????-??????.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_HadGEM2-A_amip_r1i1p1_197809-200812.ncrcat.nc")   
 ;end do
 ;
-;;;======== Only 198201--200812 =====
-;;;;do i_var = 0,0
+;;;;======== Only 198201--200812 =====
+;;;;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -d time,40,363 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_HadGEM2-A_amip_r1i1p1_197809-200812.ncrcat.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_HadGEM2-A_amip_r1i1p1_198201-200812.ncrcat.nc")
 ;end do
@@ -138,7 +138,7 @@ var_string = (/"pr","hfss","hfls","wap"/)
 
 ;======== CSIRO-Mk3-6-0
 
-;do i_var = 0,0
+;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -d time,36,359 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_CSIRO-Mk3-6-0_amip_r1i1p1_197901-200912.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_CSIRO-Mk3-6-0_amip_r1i1p1_198201-200812.ncrcat.nc")
 ;end do
@@ -151,17 +151,17 @@ var_string = (/"pr","hfss","hfls","wap"/)
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -v "+var_string(i_var)+" "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_IPSL-CM5A-MR_amip_r1i1p1_??????-??????.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_IPSL-CM5A-MR_amip_r1i1p1_195001-200912.ncrcat.nc")
 ;end do
+;;
+;;==================
 ;
-;==================
-
-;do i_var = 0,0
+;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -d time,384,707 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_IPSL-CM5A-MR_amip_r1i1p1_195001-200912.ncrcat.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_IPSL-CM5A-MR_amip_r1i1p1_198201-200812.ncrcat.nc")
 ;end do
 ;
 ;file_test = addfile(hongcheq_dir+"pr/pr_Amon_IPSL-CM5A-MR_amip_r1i1p1_198201-200812.ncrcat.nc","r")
 ;print(Calendar(file_test->time))
-
+;
 ;============ IPSL-CM5B-LR
 
 ;do i_var = 0,dimsizes(var_string) -1
@@ -202,7 +202,7 @@ var_string = (/"pr","hfss","hfls","wap"/)
 ;
 ;file_test = addfile(hongcheq_dir+"pr/pr_Amon_inmcm4_amip_r1i1p1_198201-200812.ncrcat.nc","r")
 ;print(Calendar(file_test->time))
-;
+
 ;============= MIROC-ESM
 
 ;do i_var = 0,dimsizes(var_string) - 1
@@ -214,7 +214,7 @@ var_string = (/"pr","hfss","hfls","wap"/)
 
 ;============= MRI-CGCM3
 
-;;do i_var = 0,0
+;;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -d time,36,359 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_MRI-CGCM3_amip_r1i1p1_197901-201002.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_MRI-CGCM3_amip_r1i1p1_198201-200812.ncrcat.nc")
 ;end do
@@ -255,37 +255,37 @@ var_string = (/"pr","hfss","hfls","wap"/)
 ;print(Calendar(file_test->time))
 
 ;
-;=========== GISS-E2-R
-;;;!!!Note: For this model, hus,pr,ps,ta,wap have lat=90, but for ua,va,zg, lat=89???=====
-;;;   Note: just put this model aside for now.
-;;;==========================
-;do i_var = 0,0
-;do i_var = 0,dimsizes(var_string) -1
-;system("ncrcat -D 2 -d time,336,695 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GISS-E2-R_amip_r1i1p1_195101-201012.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc")
-;end do
-
-;file_test = addfile(hongcheq_dir+"hus/hus_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc","r")
-;print(Calendar(file_test->time))
-
-;hus_file = hongcheq_dir+"hus/hus_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-;ta_file = hongcheq_dir+"ta/ta_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-;zg_file = hongcheq_dir+"zg/zg_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-;ps_file = hongcheq_dir+"ps/ps_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-;ua_file = hongcheq_dir+"ua/ua_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-;va_file = hongcheq_dir+"va/va_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-;wap_file = hongcheq_dir+"wap/wap_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
-
-;file_output = hongcheq_dir+"Post-processing/NGMS/NGMS_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.clim.nc"
-
-;Error from the following line 
-;""
-;Inoue_Back_NGMS_Procedure(hus_file,ta_file,zg_file,ps_file,ua_file,va_file,wap_file,file_output)
-
+;;=========== GISS-E2-R
+;;;;!!!Note: For this model, hus,pr,ps,ta,wap have lat=90, but for ua,va,zg, lat=89???=====
+;;;;   Note: just put this model aside for now.
+;;;;==========================
+;;do i_var = 0,0
+;;do i_var = 0,dimsizes(var_string) -1
+;;system("ncrcat -D 2 -d time,336,695 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GISS-E2-R_amip_r1i1p1_195101-201012.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc")
+;;end do
+;
+;;file_test = addfile(hongcheq_dir+"hus/hus_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc","r")
+;;print(Calendar(file_test->time))
+;
+;;hus_file = hongcheq_dir+"hus/hus_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;;ta_file = hongcheq_dir+"ta/ta_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;;zg_file = hongcheq_dir+"zg/zg_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;;ps_file = hongcheq_dir+"ps/ps_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;;ua_file = hongcheq_dir+"ua/ua_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;;va_file = hongcheq_dir+"va/va_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;;wap_file = hongcheq_dir+"wap/wap_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.ncrcat.nc"
+;
+;;file_output = hongcheq_dir+"Post-processing/NGMS/NGMS_Amon_GISS-E2-R_amip_r1i1p1_197901-200812.clim.nc"
+;
+;;Error from the following line 
+;;""
+;;Inoue_Back_NGMS_Procedure(hus_file,ta_file,zg_file,ps_file,ua_file,va_file,wap_file,file_output)
+;
 ;=========== GFDL-HIRAM-C360
 ;Due to issues in ESGF, not hfls for this model yet
 ;Note: 20180412 issues solved, you have the hfls files now.
 
-;do i_var = 0,0
+;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -v "+var_string(i_var)+" "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GFDL-HIRAM-C360_amip_r1i1p1_??????-??????.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GFDL-HIRAM-C360_amip_r1i1p1_197901-200812.ncrcat.nc")    
 ;end do
@@ -296,18 +296,18 @@ var_string = (/"pr","hfss","hfls","wap"/)
 ;
 ;file_test = addfile(hongcheq_dir+"hfls/hfls_Amon_GFDL-HIRAM-C360_amip_r1i1p1_198201-200812.ncrcat.nc","r")
 ;print(Calendar(file_test->time))
-
+;
 ;exit
 
 ;=========== GFDL-HIRAM-C180
 ;Due to issues in ESGF, no hfls file for this model yet
 ;Note: 20180412, issues have been solved, you have the hfls files now
-;do i_var = 0,0
+;;do i_var = 0,0
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -v "+var_string(i_var)+" "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GFDL-HIRAM-C180_amip_r1i1p1_??????-??????.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GFDL-HIRAM-C180_amip_r1i1p1_197901-200812.ncrcat.nc")    
 ;end do
 ;;
-;
+;;
 ;do i_var = 0,dimsizes(var_string) -1
 ;system("ncrcat -D 2 -d time,36,359 "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GFDL-HIRAM-C180_amip_r1i1p1_197901-200812.ncrcat.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.ncrcat.nc")
 ;end do
@@ -318,8 +318,9 @@ var_string = (/"pr","hfss","hfls","wap"/)
 ;exit
 ;
 
+;; put this model aside for now.
 ;;--- MRI-AGCM3-2S -----
-
+;
 ;;do i_var = 0,0
 ;;do i_var = 0,dimsizes(var_string) -1
 ;;system("ncrcat -D 2 -v "+var_string(i_var)+" "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_MRI-AGCM3-2S_amip_r1i1p1_??????-??????.nc -o "+hongcheq_dir+var_string(i_var)+"/"+var_string(i_var)+"_Amon_MRI-AGCM3-2S_amip_r1i1p1_197901-200812.ncrcat.nc")    

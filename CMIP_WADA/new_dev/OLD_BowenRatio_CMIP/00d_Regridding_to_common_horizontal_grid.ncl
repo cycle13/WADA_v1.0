@@ -7,6 +7,7 @@ begin
 pr_dir_name = "/lustre/DATA/pritchard/hongcheq/CMIP5/pr/"
 BR_dir_name = "/lustre/DATA/pritchard/hongcheq/CMIP5/BR_processing/"
 wap_dir_name = "/lustre/DATA/pritchard/hongcheq/CMIP5/wap_processing/"
+hus_dir_name = "/lustre/DATA/pritchard/hongcheq/CMIP5/hus_processing/"
 
 WADA_labels = (/"CCSM4",          "CanAM4",      "ACCESS1-3",    "CNRM-CM5",    "NorESM1-M",\
                 "IPSL-CM5A-LR",     "CMCC-CM",      "MPI-ESM-MR", "ACCESS1-0",\
@@ -81,6 +82,29 @@ wap_models = (/wap_dir_name+"wap_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
                 wap_dir_name+"wap_Amon_GFDL-CM3_amip_r1i1p1_198201-200812.clim.nc",\
                 wap_dir_name+"wap_Amon_GFDL-HIRAM-C360_amip_r1i1p1_198201-200812.clim.nc",\
                 wap_dir_name+"wap_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.clim.nc"/)
+
+hus_models = (/hus_dir_name+"hus_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_CanAM4_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_ACCESS1-3_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_CNRM-CM5_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_NorESM1-M_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_IPSL-CM5A-LR_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_CMCC-CM_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_MPI-ESM-MR_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_ACCESS1-0_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_CSIRO-Mk3-6-0_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_IPSL-CM5A-MR_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_IPSL-CM5B-LR_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_MPI-ESM-LR_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_MRI-AGCM3-2H_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_inmcm4_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_MIROC-ESM_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_MRI-CGCM3_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_MIROC5_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_HadGEM2-A_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_GFDL-CM3_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_GFDL-HIRAM-C360_amip_r1i1p1_198201-200812.clim.nc",\
+                hus_dir_name+"hus_Amon_GFDL-HIRAM-C180_amip_r1i1p1_198201-200812.clim.nc"/)
 
 ;============== use CCSM4 horizontal grid as the target grid ==
 regrid_file = addfile("/lustre/DATA/pritchard/hongcheq/CMIP5/pr/pr_Amon_CCSM4_amip_r1i1p1_197901-201012.nc","r")
@@ -177,6 +201,36 @@ delete(wap_mon_clim)
 delete(wap_mon_clim_new)
 
 end do ; do i_model
+
+;;============== Regrid hus climatology ===========
+;do i_model = dimsizes(WADA_labels)-1 , dimsizes(WADA_labels) -1 
+do i_model = 1, dimsizes(WADA_labels) - 1    ; CCSM4 is the first one, skip.
+
+hus_clim_file = addfile(hus_models(i_model),"r")
+hus_clim = hus_clim_file->hus_clim
+hus_mon_clim = hus_clim_file->hus_mon_clim
+
+hus_clim_new = linint2_Wrap(hus_clim&lon,hus_clim&lat,hus_clim,True,newlon,newlat,0)
+hus_mon_clim_new = linint2_Wrap(hus_mon_clim&lon,hus_mon_clim&lat,hus_mon_clim,True,newlon,newlat,0)
+
+printVarSummary(hus_clim)
+printVarSummary(hus_clim_new)
+printVarSummary(hus_mon_clim_new)
+
+;--------- write to nc files ------
+system("rm -f "+hus_dir_name+"regrid_hus_clim_198201-200812."+WADA_labels(i_model)+".nc")
+ncdf = addfile(hus_dir_name+"regrid_hus_clim_198201-200812."+WADA_labels(i_model)+".nc","c")
+
+filedimdef(ncdf,"time",-1,True)
+ncdf->hus_clim_regrid = hus_clim_new
+ncdf->hus_mon_clim_regrid = hus_mon_clim_new
+
+delete(hus_clim)
+delete(hus_clim_new)
+delete(hus_mon_clim)
+delete(hus_mon_clim_new)
+
+end do
 
 
 end
