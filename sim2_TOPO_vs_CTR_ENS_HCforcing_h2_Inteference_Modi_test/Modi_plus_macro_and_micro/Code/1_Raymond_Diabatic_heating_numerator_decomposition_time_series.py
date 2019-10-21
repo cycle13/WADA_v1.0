@@ -90,5 +90,5 @@ for i_case in range(len(cases)):
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
-#plt.show()
-plt.savefig('../Figures/1_Raymond_Diabatic_heating_numerator_vertical_integral_decomp.new.png',dpi=400)
+plt.show()
+#plt.savefig('../Figures/1_Raymond_Diabatic_heating_numerator_vertical_integral_decomp.new.png',dpi=400)
