@@ -30,19 +30,24 @@ print(Vars)
 title_str = ['CTR, Amazon','TOPO, Amazon','CTR-TOPO, Amazon']
 fmt_str = ['--r','--b']
 
-fig, axes = plt.subplots(3, 1, figsize=(9, 9))
+#fig, axes = plt.subplots(3, 1, figsize=(9, 9))
+fig, axes = plt.subplots(2, 1, figsize=(9, 9)) # only plot CTR and CTR-TOPO
 
+i_count = 0
 for i_fig in range(3):
-    for i_var in range(2):
-        axes[i_fig].plot(np.arange(96)+1, Vars[i_var,i_fig,:],
-                            fmt_str[i_var],label=var_str[i_var])
-    axes[i_fig].set_title(title_str[i_fig])
-    axes[i_fig].set_ylabel('$ J/kg $')
-    axes[i_fig].grid(True)
+    if i_fig == 0 or i_fig == 2:
+        for i_var in range(1): # only plot CAPE, leave CIN aside for now.
+            axes[i_count].plot(np.arange(96)+1, Vars[i_var,i_fig,:],
+                                fmt_str[i_var],label=var_str[i_var])
+        axes[i_count].set_title(title_str[i_fig])
+        axes[i_count].set_ylabel('$ J/kg $')
+        axes[i_count].grid(True)
+        axes[i_count].set_xticks(np.arange(0,101,10))
+        i_count += 1
 
-axes[2].legend(loc='upper left')
-axes[2].set_xlabel('# hours')
-
+axes[1].axhline(y=0,linewidth=1.5, color='k')
+axes[1].legend(loc='upper left')
+axes[1].set_xlabel('# hours')
 
 plt.subplots_adjust(hspace=.3)
 #plt.show()

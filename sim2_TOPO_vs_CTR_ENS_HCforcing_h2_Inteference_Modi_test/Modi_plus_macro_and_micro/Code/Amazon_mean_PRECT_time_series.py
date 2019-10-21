@@ -19,6 +19,7 @@ data_vars = np.zeros((len(file_names),96)) # 6 vars x 96 hours
 
 cases = ['CTR', 'TOPO', 'CTR_TOPO']
 
+i_count = 0
 for i_case in range(len(cases)):
     for i in range(len(file_names)):
         ds = xr.open_dataset(data_path+file_names[i]+'.nc', decode_times=False)
@@ -28,19 +29,23 @@ for i_case in range(len(cases)):
 
     # Plot the time series
     #fig = plt.figure()
-    ax1 = plt.subplot(3,1,i_case+1)
-    x = np.arange(1,97,1)
-    for i in range(len(data_vars[:,0])):
-        plt.plot(x, data_vars[i,:], label = file_names[i])
-    if i_case <= 1:
-        plt.ylim([2.0, 9.5])
-    else:
-        plt.ylim([-2.0, 2.0])
-    plt.xlabel('time, hr')
-    plt.ylabel('PRECT, mm/day')
-    plt.title(cases[i_case]+', Amazon avg')
-    plt.grid(True)
+    if i_case == 0 or i_case == 2:
+        ax1 = plt.subplot(2,1,i_count+1)
+        x = np.arange(1,97,1)
+        for i in range(len(data_vars[:,0])):
+            plt.plot(x, data_vars[i,:], label = file_names[i])
+        if i_case <= 1:
+            plt.ylim([2.0, 9.5])
+        else:
+            plt.ylim([-2.0, 2.0])
+        plt.xticks(np.arange(0,101,10))
+        plt.xlabel('time, hr')
+        plt.ylabel('PRECT, mm/day')
+        plt.title(cases[i_case]+', Amazon avg')
+        plt.grid(True)
+        i_count += 1
 
+plt.axhline(y=0, linewidth=1.5, color='k')
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.tight_layout()
