@@ -5,6 +5,10 @@
 ;Note modified 20180725, for ENS(180)
 
 load "/export/home/hongcheq/Programming/NCL/funs_and_procs/funs_and_procs.ncl"
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"      ; These four libraries are automatically
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"       ; loaded from NCL V6.4.0 onward.
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"   ; No need for user to explicitly load.
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/shea_util.ncl"
 
 begin
 prefix = "/DFS-L/DATA/pritchard/hongcheq/OLD"
@@ -13,8 +17,6 @@ OMEGA_diff_TOPO_CTR = new((/96,13,96,144/),double)
 OMEGA_diff_TOPO_CTR_sig = new((/96,13,96,144/),double)
 Q_diff_TOPO_CTR = new((/96,13,96,144/),double)
 Q_diff_TOPO_CTR_sig = new((/96,13,96,144/),double)
-T_diff_TOPO_CTR = new((/96,13,96,144/),double)
-T_diff_TOPO_CTR_sig = new((/96,13,96,144/),double)
 
 chunk = 32
 num_time = 96
@@ -54,9 +56,9 @@ CTR_dir = prefix+"/scratch/hongcheq/HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-p
 CTR_mean_str = "ENS.mean.CTR."+str_time(itime)+".nc"
 CTR_std_str = "ENS.std.CTR."+str_time(itime)+".nc"
 
-var_str = (/"OMEGA","Q","T"/)
+var_str = (/"OMEGA","Q"/)
 
-do i_var = 0, 2
+do i_var = 0, 1
 
 var = var_str(i_var)
 
@@ -122,10 +124,6 @@ if (i_var .eq. 0) then
 else if (i_var .eq. 1) then
    Q_diff_TOPO_CTR(itime*3:itime*3+2,:,:,:)  = diff_TOPO_CTR
    Q_diff_TOPO_CTR_sig(itime*3:itime*3+2,:,:,:)  = diff_TOPO_CTR_sig
-else if (i_var .eq. 2) then
-   T_diff_TOPO_CTR(itime*3:itime*3+2,:,:,:)  = diff_TOPO_CTR
-   T_diff_TOPO_CTR_sig(itime*3:itime*3+2,:,:,:)  = diff_TOPO_CTR_sig
-end if
 end if
 end if
 
@@ -138,8 +136,6 @@ printVarSummary(OMEGA_diff_TOPO_CTR)
 printVarSummary(OMEGA_diff_TOPO_CTR_sig)
 printVarSummary(Q_diff_TOPO_CTR)
 printVarSummary(Q_diff_TOPO_CTR_sig)
-printVarSummary(T_diff_TOPO_CTR)
-printVarSummary(T_diff_TOPO_CTR_sig)
 ;
 ;================ plot ===========
 
@@ -162,38 +158,64 @@ pr_levels = (/500.0/)
 ;total_hrs = 48
 total_hrs = 96
 
-do i_pr = 0,dimsizes(pr_levels) - 1
+Q_diff_TOPO_CTR = Q_diff_TOPO_CTR + 0.0001 ; so that only the 0.02 line will be plot as the magenta line.
 
-do i_hr = 0,total_hrs-1
-;do i_day = 0,3
+color_strings = (/"red","brown","orange","yellow","green","blue","cyan","purple"/) ; for hour=4~11
+
+i_pr = 0
+
+plot = new(7,graphic)
  
-wks = gsn_open_wks("x11","../Figures/3_TEMP_Regional_OMEGA_Q_T_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
+wks = gsn_open_wks("png","../Figures/3_Regional_Q_rainbow_TOPO_vs_CTR_"+tostring(pr_levels(i_pr))+"hPa")
 ;wks_sig = gsn_open_wks("x11","../Figures/3_Sig_Regional_OMEGA_Q_T_TOPO_vs_CTR_ihr_"+tostring(pr_levels(i_pr))+"hPa_"+tostring(i_hr+1))
 
 res = True
 res@gsnDraw = False
 res@gsnFrame = False
-res@cnLinesOn = False
+;res@cnLinesOn = False
 res@cnLineLabelsOn = False
-res@cnFillOn = True
+res@cnFillOn = False
 
-res@mpMaxLatF = 60.0
-res@mpMinLatF = -60.0
-res@mpMaxLonF = 350.0
-res@mpMinLonF = 230.0
+;res@mpMaxLatF = 60.0
+;res@mpMinLatF = -60.0
+;res@mpMaxLonF = 350.0
+;res@mpMinLonF = 230.0
 
-res@cnLevelSelectionMode = "ManualLevels"
-res@cnMinLevelValF = -0.2
-res@cnMaxLevelValF = 0.2
-res@cnLevelSpacingF = 0.02
+res@mpMaxLatF = Amazon_lat_test2(1)+5.0
+res@mpMinLatF = Amazon_lat_test2(0)-5.0
+res@mpMaxLonF = Amazon_lon_test2(1)+5.0
+res@mpMinLonF = Amazon_lon_test2(0)-15.0
+
+;res@cnLevelSelectionMode = "ManualLevels"
+;res@cnMinLevelValF = -0.02
+;res@cnMaxLevelValF = 0.02
+;res@cnLevelSpacingF = 0.02   ; only plot 0.02 contour line ( minus 0.02 has been done in the above )
+res@gsnContourZeroLineThicknessF = 0.8
+
+res@cnLevelSelectionMode = "ExplicitLevels"   ; set explicit contour levels
+res@cnLevels    = (/ 0.0/)   ; set levels
+
 ;res@gsnContourNegLineDashPattern = 1
 
 ;res@gsnAddCyclic = True
+i_hr = 7
+res@gsnCenterString = "Q, -0.0001 g/g contour, "+ "CTR-TOPO, time=8-15 hr, "+tostring(sprintf("%5.2f",pr_levels(i_pr)))+"hPa" 
+res@cnMonoLineColor = True
+res@cnLineColor = color_strings(i_hr-7)
+plot_base = gsn_csm_contour_map(wks,Q_diff_TOPO_CTR(3,{pr_levels(i_pr)},:,:),res)
+;plot_base = ColorNegDashZeroPosContour(plot_base,"grey",color_strings(i_hr-3),"grey")  ; zero line uses magenta, negative, positive uses black
 
-plot = new(3,graphic)
+delete(res@gsnCenterString)
 
-res@gsnCenterString = "OMEGA"
-plot(0) = gsn_csm_contour_map(wks,OMEGA_diff_TOPO_CTR(i_hr,{pr_levels(i_pr)},:,:),res)
+do i_hr = 8,14
+res@cnLineColor = color_strings(i_hr-7)
+plot(i_hr-8) = gsn_csm_contour(wks,Q_diff_TOPO_CTR(i_hr,{pr_levels(i_pr)},:,:),res)
+
+;plot(i_hr-4) = ColorNegDashZeroPosContour(plot(i_hr-4),"grey",color_strings(i_hr-4),"grey")  ; zero line uses magenta, negative, positive uses black
+
+overlay(plot_base,plot(i_hr-8))
+
+end do ; do i_hr 
 
 ;------- add box -----
 dum_Amazon_pr_MMM1 = new(4,graphic)
@@ -207,57 +229,65 @@ respoly@gsLineColor      = "red"                     ; color of lines
 respoly@gsLineThicknessF = 2.0                       ; thickness of lines
 
 do i = 0 , 3
-  dum_Amazon_pr_MMM1(i)=gsn_add_polyline(wks,plot(0),xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)      
+  dum_Amazon_pr_MMM1(i)=gsn_add_polyline(wks,plot_base,xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)      
 end do 
 
 do i = 0 , 3
-  dum_Amazon_pr_MMM2(i)=gsn_add_polyline(wks,plot(0),xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)      
+  dum_Amazon_pr_MMM2(i)=gsn_add_polyline(wks,plot_base,xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)      
 end do 
 
+;------- add some legend ---------
+  gres = True
+  gres@YPosPercent = 95.    ; expressed as %, 0->100, sets position of top border of legend 
+                            ;  when gres@Position is set to its default setting of "Top" (Default = 95.)
+  gres@XPosPercent = 85.      ; expressed as %, 0->100, sets position of left border of legend(Default = 5.)
+
+  lineres = True
+  lineres@lgLineColors = color_strings ; line colors
+
+  textres = True
+  textres@lgLabels = (/"hr=8","hr=9","hr=10","hr=11","hr=12","hr=13","hr=14","hr=15"/)  ; legend labels (required)
+
+  plot = simple_legend(wks,plot_base,gres,lineres,textres)
+
+draw(plot_base)
+frame(wks)
 ;----------------
-
-;res@cnLinesOn = False
-;res@cnLineLabelsOn = False
-;res@cnFillOn = True
-;res@cnLevelSelectionMode = "ManualLevels"
 ;
-res@cnMinLevelValF = -0.001
-res@cnMaxLevelValF = 0.001
-res@cnLevelSpacingF = 0.0001
+;;res@cnLinesOn = False
+;;res@cnLineLabelsOn = False
+;;res@cnFillOn = True
+;;res@cnLevelSelectionMode = "ManualLevels"
+;;
+;res@cnMinLevelValF = -0.001
+;res@cnMaxLevelValF = 0.001
+;res@cnLevelSpacingF = 0.0001
+;;
+;res@gsnCenterString = "Q"
+;plot(1) = gsn_csm_contour_map(wks,Q_diff_TOPO_CTR(i_hr,{pr_levels(i_pr)},:,:),res)
+;plot(1) = ColorNegDashZeroPosContour(plot(1),"red","magenta","blue")
 ;
-res@gsnCenterString = "Q"
-plot(1) = gsn_csm_contour_map(wks,Q_diff_TOPO_CTR(i_hr,{pr_levels(i_pr)},:,:),res)
-
-do i = 0 , 3
-  dum_Amazon_pr_MMM3(i)=gsn_add_polyline(wks,plot(1),xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)      
-end do 
-do i = 0 , 3
-  dum_Amazon_pr_MMM4(i)=gsn_add_polyline(wks,plot(1),xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)      
-end do 
-
-
-printVarSummary(f_TOPO_mean->lat)
-printVarSummary(f_TOPO_mean->lon)
-
-res@gsnCenterString = "T"
-
-res@cnMinLevelValF = -3.0
-res@cnMaxLevelValF = 3.0
-res@cnLevelSpacingF = 0.2
-plot(2) = gsn_csm_contour_map(wks,T_diff_TOPO_CTR(i_hr,{pr_levels(i_pr)},:,:),res)
+;do i = 0 , 3
+;  dum_Amazon_pr_MMM3(i)=gsn_add_polyline(wks,plot(1),xpts_Amazon_test1(i:i+1),ypts_Amazon_test1(i:i+1),respoly)      
+;end do 
+;do i = 0 , 3
+;  dum_Amazon_pr_MMM4(i)=gsn_add_polyline(wks,plot(1),xpts_Amazon_test2(i:i+1),ypts_Amazon_test2(i:i+1),respoly)      
+;end do 
+;
+;
+;printVarSummary(f_TOPO_mean->lat)
+;printVarSummary(f_TOPO_mean->lon)
 
 
-resP                     = True                ; modify the panel plot
-;resP@gsnPanelMainString = "CTR-TOPO, ihr="+tostring(i_hr+1)
-resP@txString = "CTR-TOPO, ihr="+tostring(i_hr+1)+", @ "+tostring(sprintf("%5.2f",pr_levels(i_pr)))+"hPa"
-;resP@gsnPanelLabelBar    = True                ; add common colorbar
-resP@lbLabelFontHeightF  = 0.007               ; make labels smaller
+;resP                     = True                ; modify the panel plot
+;;resP@gsnPanelMainString = "CTR-TOPO, ihr="+tostring(i_hr+1)
+;resP@txString = "CTR-TOPO, ihr="+tostring(i_hr+1)+", @ "+tostring(sprintf("%5.2f",pr_levels(i_pr)))+"hPa"
+;;resP@gsnPanelLabelBar    = True                ; add common colorbar
+;resP@lbLabelFontHeightF  = 0.007               ; make labels smaller
+;
+;gsn_panel(wks,plot(0),(/1,1/),resP)               ; now draw as one plot
+;;
 
-gsn_panel(wks,plot,(/1,3/),resP)               ; now draw as one plot
-
-end do ; do i_hr 
-
-end do ; do i_pr
 
 
 end

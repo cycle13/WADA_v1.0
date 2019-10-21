@@ -20,8 +20,8 @@ WADA_labels = (/"CCSM4",          "CanAM4",      "ACCESS1-3",    "CNRM-CM5",    
               "MPI-ESM-LR",   "MRI-AGCM3-2H",     "inmcm4",     "MIROC-ESM",    "MRI-CGCM3",    "MIROC5" ,\
               "HadGEM2-A" ,  "GFDL-CM3", "GFDL-HIRAM-C360", "GFDL-HIRAM-C180" /)
 
-precip_diff_y = new(dimsizes(WADA_labels),double)
-wap_x = new(dimsizes(WADA_labels),double)
+precip_diff_y = new(dimsizes(WADA_labels)+1,double)   ; additional one for ERA5
+wap_x = new(dimsizes(WADA_labels)+1,double) ; additional one for ERA5
 
 precip_models = (/pr_dir_name+"pr_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
                  pr_dir_name+"pr_Amon_CanAM4_amip_r1i1p1_198201-200812.clim.nc",\
@@ -95,6 +95,8 @@ wap_models = (/wap_dir_name+"wap_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
 GPCP_file  = (/"/lustre/DATA/pritchard/hongcheq/GPCP/mon/v2.3/GPCP_198201-200812_clim.regrid.288x192.nc"/)
 
 MTE_file  = (/"/lustre/DATA/pritchard/hongcheq/ET_datasets/FLUXNET_MTE_post_processing/FLUXNET-MTE_198201-200812_clim.nc"/)
+
+ERA5_file = "/DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.r_q_w.500hPa.regrid.nc"
 
 ;======== Raw precipitation and precipitation minus GPCP ======
 
@@ -173,6 +175,10 @@ f_GPCP = addfile(GPCP_file,"r")
 pr_clim_GPCP = f_GPCP->pr_clim_GPCP
 printVarSummary(pr_clim_GPCP)
 
+pr_mon_clim_GPCP = f_GPCP->pr_mon_clim_GPCP
+pr_clim_GPCP_DJF = pr_mon_clim_GPCP(0,:,:) ; metadata
+pr_clim_GPCP_DJF = ( pr_mon_clim_GPCP(0,:,:) + pr_mon_clim_GPCP(1,:,:) + pr_mon_clim_GPCP(11,:,:) ) / 3
+
 diff_pr_MMM_GPCP = pr_MMM  ; meta data
 diff_pr_MMM_GPCP = pr_MMM - pr_clim_GPCP
 printVarSummary(diff_pr_MMM_GPCP)
@@ -213,6 +219,10 @@ frame(wks_MMM_GPCP_precip)
 ;====================== =====================
 rad  = 4.*atan(1.)/180.    ;
 
+ERA5_temp = addfile(ERA5_file,"r")
+wap_ERA5 = ERA5_temp->w_regrid ; 500hPa, regridded
+printVarSummary(wap_ERA5)
+
 ;do imodel = 8,8
 do imodel = 0,dimsizes(WADA_labels) - 1
 ;------------ Diff of precip ----------
@@ -233,6 +243,8 @@ pr_DJF_clim_regrid = (pr_mon_clim_regrid(0,:,:) + pr_mon_clim_regrid(1,:,:) + pr
 coslat_Amazon_pr2 = cos(pr_file->lat({Amazon_lat_test2(0):Amazon_lat_test2(1)})*rad) 
 
 Amazon_ave2 = wgt_areaave_Wrap(pr_DJF_clim_regrid({Amazon_lat_test2(0):Amazon_lat_test2(1)},{Amazon_lon_test2(0):Amazon_lon_test2(1)}),coslat_Amazon_pr2,1.0,0)
+
+Amazon_pr_GPCP = wgt_areaave_Wrap(pr_clim_GPCP_DJF({Amazon_lat_test2(0):Amazon_lat_test2(1)},{Amazon_lon_test2(0):Amazon_lon_test2(1)}),coslat_Amazon_pr2,1.0,0) ; in mm/day 
 
 precip_diff_y(imodel) = Amazon_ave2
 
@@ -257,6 +269,8 @@ coslat_Amazon_wap1 = cos(wap_file->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)}
 
 Amazon_ave_wap1 = wgt_areaave_Wrap(wap_DJF_clim_regrid({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_wap1,1.0,0)
 
+Amazon_wap_ERA5 = wgt_areaave_Wrap(wap_ERA5({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_wap1,1.0,0) ; Pa/sec
+
 wap_x(imodel) = Amazon_ave_wap1
 
 delete(wap_mon_clim_regrid)
@@ -266,11 +280,14 @@ delete(coslat_Amazon_wap1)
 end do ; do imodel
 
 precip_diff_y = precip_diff_y * 86400.0 ; from kg/m2/sec to mm/day
-precip_diff_y@long_name = "precip_DJF(Amazon) for a multitude of models"
+precip_diff_y@long_name = "precip_DJF(Amazon) for a multitude of models, and last one from GPCP"
 precip_diff_y@units = "mm/day"
 
+precip_diff_y(22) = Amazon_pr_GPCP   ; this already in mm/day
+
+wap_x(22) = Amazon_wap_ERA5 ; in Pa/sec
 wap_x = wap_x * 3600.0 / 100.0 ; from Pa/sec to hPa/hr, 
-wap_x@long_name = "wap_DJF (Amazon), "+sprintf("%5.2f",level_target/100.0)+"hPa, for a multitude of models"
+wap_x@long_name = "wap_DJF (Amazon), "+sprintf("%5.2f",level_target/100.0)+"hPa, for a multitude of models, and the last one from ERA5"
 wap_x@units = "hPa/hr"
 
 print(precip_diff_y)
@@ -291,18 +308,18 @@ rc    = regline(wap_x, precip_diff_y)          ; slope
 pltarry = rc*wap_x + rc@yintercept              ; use solid line
 
 ;====================== Plot precip_diff_y VS hfss_y ========
-wks_CMIP   = gsn_open_wks ("png","WADA_CMIP5_9_plev_"+sprintf("%5.1f",level_target/100.0))
+wks_CMIP   = gsn_open_wks ("png","WADA_CMIP5_ERA_GPCP_9_plev_"+sprintf("%5.1f",level_target/100.0))
 
 colors  = (/"wheat4","dodgerblue2","firebrick","forestgreen","thistle3",\
             "tomato","deeppink2","darkorange2","purple","turquoise",\
             "turquoise4","violet","violetred","yellow4","yellowgreen",\
             "darkorchid","darksalmon","deepskyblue","firebrick4","deepskyblue3",\
-            "aquamarine4",   "blue3",  "brown2",    "burlywood2","cadetblue3"/)
+            "aquamarine4",   "blue3",  "black", "brown2",    "burlywood2","cadetblue3"/)
 markers = (/0 , 2, 3, 4, 5,\
             6 , 7, 8, 9,10,\
             11,12,13,14,15,\
             0 , 2, 3, 4, 5,\
-            6 , 7, 8, 9, 10/)    ; some models are same marker, but different color
+            6 , 7, 6, 9, 10/)    ; some models are same marker, but different color
 
 res_CMIP                   = True                    
 res_CMIP@gsnFrame = False
@@ -312,18 +329,18 @@ res_CMIP@tiMainString      = "Precip(Amazon) vs Omega500(EastFlank), 1982-2008 D
 res_CMIP@tiYAxisString = "pr_DJF(Amazon), mm/day"
 res_CMIP@tiXAxisString = "Omega500_DJF(EastFlank), hP/hr"
 res_CMIP@xyMarkLineMode    = "Markers"                
-res_CMIP@xyMarkers         =  markers(0:dimsizes(WADA_labels)-1)                   
+res_CMIP@xyMarkers         =  markers(0:dimsizes(WADA_labels)-1 + 1)  ; + 1 to plot GPCP_ERA5                   
 res_CMIP@xyMonoMarkerColor  = False
-res_CMIP@xyMarkerColors     = colors(0:dimsizes(WADA_labels)-1) 
+res_CMIP@xyMarkerColors     = colors(0:dimsizes(WADA_labels)-1 + 1)      ; + 1 to plot GPCP_ERA5
 res_CMIP@xyMarkerSizeF     = 0.02                    
 
 res_CMIP@gsnLeftString = "correlation="+sprintf("%7.3e",r)
 res_CMIP@gsnRightString = "p="+sprintf("%7.3e",p)
 
-res_CMIP@trXMinF = -5.0
-res_CMIP@trXMaxF = 5.0
+res_CMIP@trXMinF = -4.0
+res_CMIP@trXMaxF = 3.0
 res_CMIP@trYMinF = 2.0
-res_CMIP@trYMaxF = 15.0
+res_CMIP@trYMaxF = 13.0
 
 plot_CMIP  = gsn_csm_xy(wks_CMIP,transpose((/wap_x,wap_x/)),transpose((/precip_diff_y,precip_diff_y/)),res_CMIP)              
 ;------- linear regression ----
@@ -390,6 +407,12 @@ do i = 20,dimsizes(WADA_labels)-1
      gsn_polymarker_ndc(wks_CMIP,xpos_marker1(i-20),0.70,mkres)
      gsn_text_ndc      (wks_CMIP,WADA_labels(i),xpos_text1(i-20),0.70,txres)
 end do
+;------- observation data label ----
+     mkres@gsMarkerIndex  = markers(22)
+     mkres@gsMarkerColor  = colors(22)
+     gsn_polymarker_ndc(wks_CMIP,xpos_marker1(22-20),0.70,mkres)
+     gsn_text_ndc      (wks_CMIP,"GPCP_ERA5",xpos_text1(22-20),0.70,txres)
+
 
 ;-------- add a linear equation to it ---
 
