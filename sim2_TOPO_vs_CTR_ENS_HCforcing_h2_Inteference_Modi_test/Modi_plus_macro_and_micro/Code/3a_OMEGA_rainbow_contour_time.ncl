@@ -142,8 +142,8 @@ printVarSummary(Q_diff_TOPO_CTR_sig)
 Amazon_lon_test1 = (/286.0,293.0/)
 Amazon_lat_test1 = (/-8.0,0.0/)
 
-Amazon_lon_test2 = (/293.0,306.0/)
-Amazon_lat_test2 = (/-12.0,4.0/)
+Amazon_lon_test2 = (/293.0,304.0/)
+Amazon_lat_test2 = (/-10.0,1.0/)
 
  xpts_Amazon_test1 = (/Amazon_lon_test1(0),Amazon_lon_test1(1),Amazon_lon_test1(1),Amazon_lon_test1(0),Amazon_lon_test1(0)/)
  ypts_Amazon_test1 = (/Amazon_lat_test1(0),Amazon_lat_test1(0),Amazon_lat_test1(1),Amazon_lat_test1(1),Amazon_lat_test1(0)/) 
