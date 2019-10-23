@@ -29,7 +29,8 @@ var_names1 = ['DH']
 
 data_vars = np.zeros((1,96)) # 1 vars x 95 hours
 
-cases = ['CTR', 'TOPO', 'CTR_TOPO']
+#cases = ['CTR', 'TOPO', 'CTR_TOPO']
+cases = ['CTR', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
     ds1 = xr.open_dataset(data_path1+file_names1[0]+'.new.nc', decode_times=False)
@@ -46,10 +47,11 @@ for i_case in range(len(cases)):
 
     # Plot the time series
     #fig = plt.figure()
-    ax1 = plt.subplot(3,1,i_case+1)
+    ax1 = plt.subplot(2,1,i_case+1)
     x = np.arange(1,97,1)
     for i in range(len(data_vars[:,0])):
         plt.plot(x, data_vars[i,:], label = 'DiabaticHeating / NGMS')
+    plt.xticks(np.arange(0,101,10))
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
     #plt.ylabel('Q tendency, kg/kg /hr')
@@ -57,8 +59,9 @@ for i_case in range(len(cases)):
     plt.title(cases[i_case]+', Amazon avg')
     plt.grid(True)
 
+plt.axhline(y=0,linewidth=1.5,color = 'k')
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
 plt.tight_layout()
 #plt.show()
-plt.savefig('../Figures/1_Raymond_Diabatic_heating_over_NGMS_decomp.new.png',dpi=400)
+plt.savefig('../Figures/1_Raymond_Diabatic_heating_over_NGMS_decomp.refinement.png',dpi=400)

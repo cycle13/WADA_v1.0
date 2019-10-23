@@ -38,14 +38,17 @@ for i_case in range(len(cases)):
     for i in range(len(data_vars[:,0])):
         plt.plot(x, data_vars[i,:], label = name_strings[i])
 
+    plt.xticks(np.arange(0,101,10))
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
     plt.ylabel('g/kg/hr')
     plt.title(cases[i_case]+', Amazon avg, sfc_top')
     plt.grid(True)
 
+plt.axhline(y=0, linewidth=1.5, color='k')
 #plt.legend(loc = 'best')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(loc='lower right')
 plt.tight_layout()
 #plt.show()
 plt.savefig('./Term123_CTR_TOPO_Amazon_mean_Omega_dq_dp_decomp.png',dpi=500)

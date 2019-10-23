@@ -15,35 +15,38 @@ file_names = ['MSE','LSE','DSE']
 
 data_vars = np.zeros((3,96)) # 6 vars x 96 hours
 
-cases = ['CTR', 'TOPO', 'CTR_TOPO']
+#cases = ['CTR', 'TOPO', 'CTR_TOPO']
+cases = ['CTR', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
     for i in range(len(file_names)):
-#        ds = xr.open_dataset(data_path+file_names[i]+'L5.nc', decode_times=False)
-        ds = xr.open_dataset(data_path+file_names[i]+'L10.nc', decode_times=False)
+        ds = xr.open_dataset(data_path+file_names[i]+'L5.nc', decode_times=False)
+#        ds = xr.open_dataset(data_path+file_names[i]+'L10.nc', decode_times=False)
         data_vars[i,:] = ds['Amazon_mean_'+cases[i_case]]
         print(data_vars[i,:])
         print('==')
 
     # Plot the time series
     #fig = plt.figure()
-    plt.subplot(3,1,i_case+1)
+    plt.subplot(2,1,i_case+1)
     x = np.arange(1,97,1)
     for i in range(len(data_vars[:,0])):
         plt.plot(x, data_vars[i,:], label = file_names[i])
 
+    plt.xticks(np.arange(0,101,10))
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
     plt.ylabel('kJ/kg')
-    #plt.title(cases[i_case]+', Amazon avg, lowest 5 layers')
-    plt.title(cases[i_case]+', Amazon avg, lowest 10 layers')
+    plt.title(cases[i_case]+', Amazon avg, lowest 5 layers')
+    #plt.title(cases[i_case]+', Amazon avg, lowest 10 layers')
     plt.grid(True)
 
+plt.axhline(y=0,linewidth=1.5,color='k')
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.tight_layout()
 #plt.show()
-#plt.savefig('../Figures/CTR_TOPO_Amazon_mean_MSE_L5_decomp.png')
-plt.savefig('../Figures/CTR_TOPO_Amazon_mean_MSE_L10_decomp.png')
+plt.savefig('../Figures/CTR_TOPO_Amazon_mean_MSE_L5_decomp.refinement.png')
+#plt.savefig('../Figures/CTR_TOPO_Amazon_mean_MSE_L10_decomp.png')
 
 

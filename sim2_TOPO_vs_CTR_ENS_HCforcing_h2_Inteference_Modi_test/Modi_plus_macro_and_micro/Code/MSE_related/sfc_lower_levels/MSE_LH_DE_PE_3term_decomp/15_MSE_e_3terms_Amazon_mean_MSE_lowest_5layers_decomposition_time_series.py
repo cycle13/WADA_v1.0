@@ -40,7 +40,7 @@ for i_case in range(len(cases)):
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.tight_layout()
-#plt.show()
-plt.savefig('./CTR_TOPO_Amazon_mean_LH_DE_PE_L5_decomp.png')
+plt.show()
+#plt.savefig('./CTR_TOPO_Amazon_mean_LH_DE_PE_L5_decomp.png')
 
 

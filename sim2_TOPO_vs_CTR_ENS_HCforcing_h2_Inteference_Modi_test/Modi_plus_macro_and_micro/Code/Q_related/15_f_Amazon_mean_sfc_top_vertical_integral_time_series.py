@@ -17,7 +17,8 @@ Qadv_acc_file = 'Qt_PTEQ_Qadv'
 
 data_vars = np.zeros((4,96)) # 4+1 vars x 96 hours
 
-cases = ['CTR', 'TOPO', 'CTR_TOPO']
+#cases = ['CTR', 'TOPO', 'CTR_TOPO']
+cases = ['CTR', 'CTR_TOPO']
 
 for i_case in range(len(cases)):
     for i in range(len(file_names)):
@@ -34,7 +35,7 @@ for i_case in range(len(cases)):
 
     # Plot the time series
     #fig = plt.figure()
-    plt.subplot(3,1,i_case+1)
+    plt.subplot(2,1,i_case+1)
     x = np.arange(1,97,1)
     for i in range(len(data_vars[:,0])):
         plt.plot(x, data_vars[i,:], label = file_names[i])
@@ -42,15 +43,17 @@ for i_case in range(len(cases)):
     plt.plot(x[1:96],Qadv, label = 'Qadv_accurate')
     # plot Qadv inferred from (QAP(n)-QAP(n-1)) /time interval - PTEQ
 
+    plt.xticks(np.arange(0,101,10))
     #plt.ylim([-2.0, 5.0])
     plt.xlabel('time, hr')
     plt.ylabel('g/kg/hr')
     plt.title(cases[i_case]+', Amazon avg, sfc_top')
     plt.grid(True)
 
+plt.axhline(y=0,linewidth=1.5,color='k')
 #plt.legend(loc = 'best')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.tight_layout()
-#plt.show()
-plt.savefig('./Modi_midlevel_CTR_TOPO_Amazon_mean_Q_bugdet_MF_sfc_top_decomp.png',dpi=500)
+plt.show()
+#plt.savefig('./Modi_midlevel_CTR_TOPO_Amazon_mean_Q_bugdet_MF_sfc_top_decomp.png',dpi=500)
 

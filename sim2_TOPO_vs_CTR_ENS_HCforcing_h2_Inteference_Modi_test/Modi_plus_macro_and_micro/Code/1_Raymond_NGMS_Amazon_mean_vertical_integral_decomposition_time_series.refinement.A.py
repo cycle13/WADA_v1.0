@@ -15,30 +15,33 @@ file_names = ['Numerator','Denominator','inte_numerator_hori','inte_numerator_ve
 
 data_vars = np.zeros((len(file_names),96)) # X vars x 96 hours
 
-cases = ['CTR', 'TOPO', 'CTR_TOPO']
+#cases = ['CTR', 'TOPO', 'CTR_TOPO']
+cases = ['CTR', 'CTR_TOPO']
 
-for i_case in range(len(cases)):
-    for i in range(len(file_names)):
-        #ds = xr.open_dataset(data_path+file_names[i]+'.nc', decode_times=False)
-        ds = xr.open_dataset(data_path+file_names[i]+'.new.nc', decode_times=False)
-        data_vars[i,:] = ds['Amazon_mean_'+cases[i_case]]
-        print(data_vars[i,:])
-        print('==')
-
-    # Plot the time series
-    #fig = plt.figure()
-    plt.subplot(3,2,i_case*2+2)
-    x = np.arange(1,97,1)
-    for i in range(len(data_vars[:,0])):
-        plt.plot(x, data_vars[i,:], label = file_names[i])
-
-    #plt.ylim([-2.0, 5.0])
-    plt.xlabel('time, hr')
-    plt.ylabel('watts/m2')
-    plt.title(cases[i_case]+', Amazon avg')
-    plt.grid(True)
-
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+#for i_case in range(len(cases)):
+#    for i in range(len(file_names)):
+#        #ds = xr.open_dataset(data_path+file_names[i]+'.nc', decode_times=False)
+#        ds = xr.open_dataset(data_path+file_names[i]+'.new.nc', decode_times=False)
+#        data_vars[i,:] = ds['Amazon_mean_'+cases[i_case]]
+#        print(data_vars[i,:])
+#        print('==')
+#
+#    # Plot the time series
+#    #fig = plt.figure()
+#    plt.subplot(4,1,i_case+1)
+#    x = np.arange(1,97,1)
+#    for i in range(len(data_vars[:,0])):
+#        plt.plot(x, data_vars[i,:], label = file_names[i])
+#
+#    plt.xticks(np.arange(0,101,10))
+#    #plt.ylim([-2.0, 5.0])
+#    plt.xlabel('time, hr')
+#    plt.ylabel('watts/m2')
+#    plt.title(cases[i_case]+', Amazon avg')
+#    plt.grid(True)
+#
+#plt.axhline(y=0, linewidth=1.5, color='k')
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 
 file_names2 = ['NGMS']
 data_vars2 = np.zeros((len(file_names2),96)) # X vars x 96 hours
@@ -52,22 +55,25 @@ for i_case in range(len(cases)):
 
         # Plot the time series
         #fig = plt.figure()
-        plt.subplot(3,2,i_case*2+1)
+        plt.subplot(2,1,i_case+1)
         x = np.arange(1,97,1)
         for i in range(len(data_vars2[:,0])):
             plt.plot(x, data_vars2[0,:], label = file_names2[0])
 
+        plt.xticks(np.arange(0,101,10))
         #plt.ylim([-2.0, 5.0])
         plt.xlabel('time, hr')
         plt.ylabel('NGMS, Unitless')
         plt.title(cases[i_case]+', Amazon avg')
         plt.grid(True)
 
+plt.axhline(y=0, linewidth=1.5, color='k')
+
 #plt.legend(loc = 'best')
 #plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 #plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 
 plt.tight_layout()
-plt.show()
-#plt.savefig('../Figures/CTR_TOPO_Amazon_mean_NGMS_decomp.new.png',dpi=400)
+#plt.show()
+plt.savefig('../Figures/CTR_TOPO_Amazon_mean_NGMS_decomp.refine.NGMS.png',dpi=400)
 
