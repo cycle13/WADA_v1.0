@@ -21,7 +21,13 @@ printVarSummary(r)
 printVarSummary(q)
 printVarSummary(w)
 
-;---------- step 2: to climatology --------
+;----------- read specific humidity from AIRS file -------
+AIRS = addfile("/lustre/DATA/pritchard/hongcheq/AIRS/hus_mon_AIRS-2-0_BE_gn_200209-201105.nc","r")
+AIRS_hus = AIRS->hus(4:75,{50000},:,:) ; from 2003 Jan - 2008 Dec
+printVarSummary(AIRS_hus)
+
+
+;--------- step 2: to climatology --------
 r_new_clim = dim_avg_n_Wrap(r_new,0)
 q_new_clim = dim_avg_n_Wrap(q_new,0)
 w_new_clim = dim_avg_n_Wrap(w_new,0)
@@ -29,6 +35,14 @@ w_new_clim = dim_avg_n_Wrap(w_new,0)
 printVarSummary(r_new_clim)
 printVarSummary(q_new_clim)
 printVarSummary(w_new_clim)
+
+;--------- AIRS specific humidity ------
+AIRS_hus_mon_clim = clmMonTLL(AIRS_hus)
+printVarSummary(AIRS_hus_mon_clim)
+AIRS_hus_DJF = AIRS_hus_mon_clim(0,:,:) ; metadata
+AIRS_hus_DJF = (AIRS_hus_mon_clim(0,:,:) + AIRS_hus_mon_clim(1,:,:) + AIRS_hus_mon_clim(11,:,:) )/3.0
+printVarSummary(AIRS_hus_DJF)
+; "AIRS 2003-2008 DJF climatology"
 
 ;------- step 3: ERA5, regrid to grid structures other CMIP models use
 
@@ -45,15 +59,19 @@ printVarSummary(r_regrid)
 printVarSummary(q_regrid)
 printVarSummary(w_regrid)
 
+AIRS_hus_regrid = linint2_Wrap(AIRS_hus_DJF&lon,AIRS_hus_DJF&lat,AIRS_hus_DJF,True,newlon,newlat,0)
+printVarSummary(AIRS_hus_regrid)
+;------------- step 4 -------------------
 ;------------- output to nc files ------
-system("rm -f /DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.r_q_w.500hPa.regrid.nc")
-ncdf = addfile("/DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.r_q_w.500hPa.regrid.nc","c")
+system("rm -f /DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.AIRS.r_q_w.500hPa.regrid.nc")
+ncdf = addfile("/DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.AIRS.r_q_w.500hPa.regrid.nc","c")
 
 filedimdef(ncdf,"time",-1,True)
 ncdf->r_regrid = r_regrid
 ncdf->q_regrid = q_regrid
 ncdf->w_regrid = w_regrid
 
+ncdf->AIRS_hus_regrid = AIRS_hus_regrid
 
 
 

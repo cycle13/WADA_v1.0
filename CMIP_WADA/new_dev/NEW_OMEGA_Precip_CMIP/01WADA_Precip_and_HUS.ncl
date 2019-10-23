@@ -20,8 +20,8 @@ WADA_labels = (/"CCSM4",          "CanAM4",      "ACCESS1-3",    "CNRM-CM5",    
               "MPI-ESM-LR",   "MRI-AGCM3-2H",     "inmcm4",     "MIROC-ESM",    "MRI-CGCM3",    "MIROC5" ,\
               "HadGEM2-A" ,  "GFDL-CM3", "GFDL-HIRAM-C360", "GFDL-HIRAM-C180" /)
 
-precip_diff_y = new(dimsizes(WADA_labels)+1,double) ; for GPCP_ERA5
-hus_x = new(dimsizes(WADA_labels)+1,double)  ; for GPCP_ERA5
+precip_diff_y = new(dimsizes(WADA_labels)+2,double) ; for GPCP_ERA5, and GPCP_AIRS03-08
+hus_x = new(dimsizes(WADA_labels)+2,double)  ; for GPCP_ERA5, and GPCP_AIRS03-08
 
 precip_models = (/pr_dir_name+"pr_Amon_CCSM4_amip_r1i1p1_198201-200812.clim.nc",\
                  pr_dir_name+"pr_Amon_CanAM4_amip_r1i1p1_198201-200812.clim.nc",\
@@ -96,7 +96,8 @@ GPCP_file  = (/"/lustre/DATA/pritchard/hongcheq/GPCP/mon/v2.3/GPCP_198201-200812
 
 MTE_file  = (/"/lustre/DATA/pritchard/hongcheq/ET_datasets/FLUXNET_MTE_post_processing/FLUXNET-MTE_198201-200812_clim.nc"/)
 
-ERA5_file = "/DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.r_q_w.500hPa.regrid.nc"
+;ERA5_file = "/DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.r_q_w.500hPa.regrid.nc"
+ERA5_file = "/DFS-L/DATA/pritchard/hongcheq/ERA5/ERA5.AIRS.r_q_w.500hPa.regrid.nc"
 
 ;======== Raw precipitation and precipitation minus GPCP ======
 
@@ -226,6 +227,9 @@ ERA5_temp = addfile(ERA5_file,"r")
 q_ERA5 = ERA5_temp->q_regrid ; 500hPa, regridded
 printVarSummary(q_ERA5)
 
+hus_AIRS = ERA5_temp->AIRS_hus_regrid ; note this is from 2003-2008 DJF. AIRS only available starting from 2002 Sep.
+printVarSummary(hus_AIRS)
+
 ;do imodel = 8,8
 do imodel = 0,dimsizes(WADA_labels) - 1
 ;------------ Diff of precip ----------
@@ -273,7 +277,9 @@ coslat_Amazon_hus1 = cos(hus_file->lat({Amazon_lat_test1(0):Amazon_lat_test1(1)}
 
 Amazon_ave_hus1 = wgt_areaave_Wrap(hus_DJF_clim_regrid({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_hus1,1.0,0)
 
-Amazon_q_ERA5 = wgt_areaave_Wrap(q_ERA5({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_hus1,1.0,0) ; Pa/sec
+Amazon_q_ERA5 = wgt_areaave_Wrap(q_ERA5({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_hus1,1.0,0) ; 
+
+Amazon_hus_AIRS = wgt_areaave_Wrap(hus_AIRS({Amazon_lat_test1(0):Amazon_lat_test1(1)},{Amazon_lon_test1(0):Amazon_lon_test1(1)}),coslat_Amazon_hus1,1.0,0) ; 
 
 hus_x(imodel) = Amazon_ave_hus1
 
@@ -288,8 +294,11 @@ precip_diff_y@long_name = "precip_DJF(Amazon) for a multitude of models"
 precip_diff_y@units = "mm/day"
 
 precip_diff_y(22) = Amazon_pr_GPCP
+precip_diff_y(23) = Amazon_pr_GPCP
 
 hus_x(22) = Amazon_q_ERA5 ; in kg/kg
+hus_x(23) = Amazon_hus_AIRS ; in kg/kg
+
 hus_x = hus_x * 1000.0 ; from kg/kg to g/kg, 
 hus_x@long_name = "hus_DJF (Amazon), "+sprintf("%5.2f",level_target/100.0)+"hPa, for a multitude of models"
 hus_x@units = "g/kg"
@@ -312,18 +321,18 @@ rc    = regline(hus_x, precip_diff_y)          ; slope
 pltarry = rc*hus_x + rc@yintercept              ; use solid line
 
 ;====================== Plot precip_diff_y VS hfss_y ========
-wks_CMIP   = gsn_open_wks ("png","WADA_CMIP5_GPCP_ERA5_Precip_HUS_9_plev_"+sprintf("%5.1f",level_target/100.0))
+wks_CMIP   = gsn_open_wks ("png","WADA_CMIP5_GPCP_ERA5_AIRS_Precip_HUS_9_plev_"+sprintf("%5.1f",level_target/100.0))
 
 colors  = (/"wheat4","dodgerblue2","firebrick","forestgreen","thistle3",\
             "tomato","deeppink2","darkorange2","purple","turquoise",\
             "turquoise4","violet","violetred","yellow4","yellowgreen",\
             "darkorchid","darksalmon","deepskyblue","firebrick4","deepskyblue3",\
-            "aquamarine4",   "blue3",  "black","brown2",    "burlywood2","cadetblue3"/)
+            "aquamarine4",   "blue3",  "black", "brown2",    "burlywood2","cadetblue3"/)
 markers = (/0 , 2, 3, 4, 5,\
             6 , 7, 8, 9,10,\
             11,12,13,14,15,\
             0 , 2, 3, 4, 5,\
-            6 , 7, 6, 9, 10/)    ; some models are same marker, but different color
+            6 , 7, 6, 6, 10/)    ; some models are same marker, but different color
 
 res_CMIP                   = True                    
 res_CMIP@gsnFrame = False
@@ -333,9 +342,9 @@ res_CMIP@tiMainString      = "Precip(Amazon) vs HUS_500(EastFlank), 1982-2008 DJ
 res_CMIP@tiYAxisString = "pr_DJF(Amazon), mm/day"
 res_CMIP@tiXAxisString = "HUS_500_DJF(EastFlank), g/kg"
 res_CMIP@xyMarkLineMode    = "Markers"                
-res_CMIP@xyMarkers         =  markers(0:dimsizes(WADA_labels)-1 + 1) ; +1 to plot GPCP_ERA5                   
+res_CMIP@xyMarkers         =  markers(0:dimsizes(WADA_labels)-1 + 2) ; +2 to plot GPCP_ERA5, GPCP_AIRS               
 res_CMIP@xyMonoMarkerColor  = False
-res_CMIP@xyMarkerColors     = colors(0:dimsizes(WADA_labels)-1 + 1)    ; +1 to plot GPCP_ERA5
+res_CMIP@xyMarkerColors     = colors(0:dimsizes(WADA_labels)-1 + 2)    ; +2 to plot GPCP_ERA5, GPCP_AIRS
 res_CMIP@xyMarkerSizeF     = 0.02                    
 
 res_CMIP@gsnLeftString = "correlation="+sprintf("%7.3e",r)
@@ -416,6 +425,12 @@ end do
      mkres@gsMarkerColor  = colors(22)
      gsn_polymarker_ndc(wks_CMIP,xpos_marker1(22-20),0.70,mkres)
      gsn_text_ndc      (wks_CMIP,"GPCP_ERA5",xpos_text1(22-20),0.70,txres)
+
+;------- observation data label ----
+     mkres@gsMarkerIndex  = markers(23)
+     mkres@gsMarkerColor  = colors(23)
+     gsn_polymarker_ndc(wks_CMIP,xpos_marker1(23-20),0.70,mkres)
+     gsn_text_ndc      (wks_CMIP,"GPCP_AIRS03-08",xpos_text1(23-20),0.70,txres)
 
 ;-------- add a linear equation to it ---
 
