@@ -74,6 +74,6 @@ plt.axhline(y=0, linewidth=1.5, color='k')
 #plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 
 plt.tight_layout()
-#plt.show()
-plt.savefig('../Figures/CTR_TOPO_Amazon_mean_NGMS_decomp.refine.NGMS.png',dpi=400)
+plt.show()
+#plt.savefig('../Figures/CTR_TOPO_Amazon_mean_NGMS_decomp.refine.NGMS.png',dpi=400)
 

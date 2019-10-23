@@ -61,7 +61,8 @@ for i_case in range(len(cases)):
 
 plt.axhline(y=0,linewidth=1.5,color = 'k')
 #plt.legend(loc = 'best')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
+plt.legend( loc='lower left')
 plt.tight_layout()
 #plt.show()
 plt.savefig('../Figures/1_Raymond_Diabatic_heating_over_NGMS_decomp.refinement.png',dpi=400)

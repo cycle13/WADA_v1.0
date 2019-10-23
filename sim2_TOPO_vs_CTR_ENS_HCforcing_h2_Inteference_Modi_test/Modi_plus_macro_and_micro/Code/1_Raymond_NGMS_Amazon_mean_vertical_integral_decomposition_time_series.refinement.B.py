@@ -34,14 +34,17 @@ for i_case in range(len(cases)):
         plt.plot(x, data_vars[i,:], label = file_names[i])
 
     plt.xticks(np.arange(0,101,10))
-    #plt.ylim([-2.0, 5.0])
+    if i_case == 1:
+        plt.ylim([-60.0, 60.0])
+
     plt.xlabel('time, hr')
     plt.ylabel('watts/m2')
     plt.title(cases[i_case]+', Amazon avg, NGMS decomposition')
     plt.grid(True)
 
 plt.axhline(y=0, linewidth=1.5, color='k')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(loc='upper left',fontsize='xx-small')
 
 #file_names2 = ['NGMS']
 #data_vars2 = np.zeros((len(file_names2),96)) # X vars x 96 hours

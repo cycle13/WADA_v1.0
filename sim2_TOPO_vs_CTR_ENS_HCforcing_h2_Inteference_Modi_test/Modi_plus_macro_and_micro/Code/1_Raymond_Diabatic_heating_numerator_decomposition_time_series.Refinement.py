@@ -83,7 +83,8 @@ for i_case in range(len(cases)):
         x = np.arange(1,97,1)
         for i in range(len(data_vars[:,0])):
             plt.plot(x, data_vars[i,:], label = var_names[i])
-        #plt.ylim([-2.0, 5.0])
+        if i_case == 2:
+            plt.ylim([-30.0, 45.0])
 
         plt.xticks(np.arange(0,101,10))
         plt.xlabel('time, hr')
@@ -95,7 +96,8 @@ for i_case in range(len(cases)):
 
 plt.axhline(y=0, linewidth=1.5, color='k')
 #plt.legend(loc = 'best')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
+plt.legend(loc='upper left', fontsize='x-small')
 plt.tight_layout()
 #plt.show()
 plt.savefig('../Figures/1_Raymond_Diabatic_heating_numerator_vertical_integral_decomp.new.png',dpi=400)

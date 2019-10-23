@@ -50,6 +50,6 @@ plt.axhline(y=0, linewidth=1.5, color='k')
 #plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.legend(loc='lower right')
 plt.tight_layout()
-#plt.show()
-plt.savefig('./Term123_CTR_TOPO_Amazon_mean_Omega_dq_dp_decomp.png',dpi=500)
+plt.show()
+#plt.savefig('./Term123_CTR_TOPO_Amazon_mean_Omega_dq_dp_decomp.png',dpi=500)
 

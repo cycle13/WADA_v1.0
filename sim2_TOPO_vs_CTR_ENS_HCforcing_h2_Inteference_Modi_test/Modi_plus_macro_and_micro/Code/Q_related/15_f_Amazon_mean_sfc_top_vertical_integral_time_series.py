@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 data_path = '/DFS-L/DATA/pritchard/hongcheq/OLD/scratch/hongcheq/\
 HCforcing_sim2_WADA_CTR_TOPO_ENSEMBLE_post-processing_h2_tapes_New_Modifications/Qadv/'
 file_names = ['var_adv','var_div','var_vert_adv','var_vert_gra']
+string_file_names = ['adv','div','vert_adv','vert_gra']
 
 Qadv_acc_file = 'Qt_PTEQ_Qadv'
 
@@ -38,13 +39,15 @@ for i_case in range(len(cases)):
     plt.subplot(2,1,i_case+1)
     x = np.arange(1,97,1)
     for i in range(len(data_vars[:,0])):
-        plt.plot(x, data_vars[i,:], label = file_names[i])
+        plt.plot(x, data_vars[i,:], label = string_file_names[i])
     plt.plot(x, sum_temp, label = 'SUM')
-    plt.plot(x[1:96],Qadv, label = 'Qadv_accurate')
+    plt.plot(x[1:96],Qadv, label = 'Qadv_accu')
     # plot Qadv inferred from (QAP(n)-QAP(n-1)) /time interval - PTEQ
 
     plt.xticks(np.arange(0,101,10))
-    #plt.ylim([-2.0, 5.0])
+    if i_case == 1:
+        plt.ylim([-0.015, 0.015])
+
     plt.xlabel('time, hr')
     plt.ylabel('g/kg/hr')
     plt.title(cases[i_case]+', Amazon avg, sfc_top')
@@ -52,8 +55,9 @@ for i_case in range(len(cases)):
 
 plt.axhline(y=0,linewidth=1.5,color='k')
 #plt.legend(loc = 'best')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(loc='upper right',fontsize = 4.5 )
 plt.tight_layout()
-plt.show()
-#plt.savefig('./Modi_midlevel_CTR_TOPO_Amazon_mean_Q_bugdet_MF_sfc_top_decomp.png',dpi=500)
+#plt.show()
+plt.savefig('./Modi_midlevel_CTR_TOPO_Amazon_mean_Q_bugdet_MF_sfc_top_decomp.png',dpi=500)
 

@@ -43,7 +43,8 @@ for i_case in range(len(cases)):
 
 plt.axhline(y=0,linewidth=1.5,color='k')
 #plt.legend(loc = 'best')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+#plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(loc='upper left')
 plt.tight_layout()
 #plt.show()
 plt.savefig('../Figures/CTR_TOPO_Amazon_mean_MSE_L5_decomp.refinement.png')
