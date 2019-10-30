@@ -72,8 +72,8 @@ printVarSummary(PS_TOPO)
 hyam = f_TOPO->hyam
 hybm = f_TOPO->hybm 
 p0   = 100000. 
-pbot = 101300.   
-ptop = 30000.    ; upper level, 300 hPa ; integral from 101300 Pa to 30000 Pa.
+pbot = 100000.   
+ptop = 10000.    ; upper level, 300 hPa ; integral from 100000 Pa to 10000 Pa.
 g = 9.8
 
 ;--------------- calculate [div(u,v) * Q ] first, then vertical integral ------

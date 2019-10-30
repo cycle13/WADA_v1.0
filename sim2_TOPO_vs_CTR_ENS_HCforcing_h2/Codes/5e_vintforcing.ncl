@@ -64,7 +64,7 @@ var_mean_TOPO = -var_mean_TOPO
 do i_hr = 0,total_hr-1
 ;do i_hr = 0,1
  
-wks = gsn_open_wks("png","../Figures/5_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/5_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 ;gsn_define_colormap(wks,"MPL_BLues")
 gsn_define_colormap(wks,"MPL_Purples")
 ;gsn_reverse_colormap(wks)  

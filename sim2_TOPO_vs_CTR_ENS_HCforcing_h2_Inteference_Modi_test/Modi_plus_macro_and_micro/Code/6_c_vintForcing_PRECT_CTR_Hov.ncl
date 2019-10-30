@@ -105,7 +105,7 @@ printVarSummary(PRECT_CTR_hov)
 
 ;================ plot ===========
 
-wks = gsn_open_wks("png","../Figures/6_c_vintForcing_PRECT_CTR_Hov")
+wks = gsn_open_wks("png","../Figures/6_c_new1000-100hPa_vert_inte_vintForcing_PRECT_CTR_Hov")
 gsn_define_colormap(wks,"MPL_BLues")
 gsn_reverse_colormap(wks)
 
@@ -163,7 +163,7 @@ res@cnMaxLevelValF = 12.0
 res@cnLevelSpacingF = 1.0
 
 res@gsnCenterString = ""
-res@tiMainString = "CTR, ENS(180), PRECT, vint_forcing_heat"
+res@tiMainString = "CTR, ENS(9), PRECT, vint_forcing_heat"
 res@gsnLeftString = "mm/day"
 
 gsn_reverse_colormap(wks)
