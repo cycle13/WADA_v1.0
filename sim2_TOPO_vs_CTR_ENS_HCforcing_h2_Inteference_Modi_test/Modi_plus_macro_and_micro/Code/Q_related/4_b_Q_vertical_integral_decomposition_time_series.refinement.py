@@ -85,5 +85,5 @@ plt.legend(loc='lower right', fontsize='x-small')
 #plt.legend(loc='best')
 plt.tight_layout()
 #plt.show()
-plt.savefig('./Q_vertical_integral_decomp.new.refinement.png')
+plt.savefig('./Q_vertical_integral_decomp.new.refinement.png',dpi=500)
 

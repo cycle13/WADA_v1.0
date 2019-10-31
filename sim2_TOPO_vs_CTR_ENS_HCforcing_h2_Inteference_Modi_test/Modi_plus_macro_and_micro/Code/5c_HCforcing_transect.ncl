@@ -74,6 +74,8 @@ DS_mean_TOPO  = HCforcing_mean_TOPO ; meta data
 DS_mean_TOPO = DS_mean_TOPO * 24 * 3600 
 DS_mean_TOPO@units = "K/day"
 
+DS_mean_TOPO = -DS_mean_TOPO
+
 ;================ plot ===========
 ;total 6hrs per batch in the TOPOTEST after branching
 
@@ -106,7 +108,8 @@ lon_2 = 320.0
 lev_1 = 100.0
 lev_2 = 1000.0
 
-res@gsnLeftString = "TOPO forcing"
+;res@gsnLeftString = "TOPO forcing"
+res@gsnLeftString = "CTR Andean forcing, (- TOPOforcing)"
 plot = gsn_csm_pres_hgt(wks,DS_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 
 ;============ panel plot ====
@@ -115,7 +118,7 @@ plot = gsn_csm_pres_hgt(wks,DS_mean_TOPO(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2
 str_LST = (/"20:00","21:00","22:00","23:00","24:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"/)
 
 pres = True
-pres@txString = "TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1) +", LST_75W ("+str_LST(mod(index*3+i_hr,24))+"), lat=" + sprintf("%5.1f",lat_t)
+pres@txString = "TOPO, ENS(9), ihr="+tostring(index*3+i_hr+1) +", LST_75W ("+str_LST(mod(index*3+i_hr,24))+"), lat=" + sprintf("%5.1f",lat_t)
 
 gsn_panel(wks,plot,(/1,1/),pres)
 
