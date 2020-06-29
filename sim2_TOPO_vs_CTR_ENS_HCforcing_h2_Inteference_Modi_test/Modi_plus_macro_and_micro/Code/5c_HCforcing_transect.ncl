@@ -86,7 +86,7 @@ lat_t = -10.0
 
 do i_hr = 0,total_hrs-1
  
-wks = gsn_open_wks("png","../Figures/5_10S_HCforcing_TOPO_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/5_10S_HCforcing_TOPO_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
 res@gsnDraw = False

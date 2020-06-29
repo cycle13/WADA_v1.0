@@ -170,10 +170,10 @@ Amazon_mean_CTR_TOPO(index*3+i_hr) = wgt_areaave_Wrap(diff_TOPO_CTR(i_hr,{Amazon
 ;print(WADA_index)
 ;print(WADA_index_sig)
 
-wks = gsn_open_wks("x11","../Figures/2_Modi_plus_macro_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("png","../Figures/2_Modi_plus_macro_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 wks_sig = gsn_open_wks("x11","../Figures/2_Sig_Modi_plus_macro_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_CTR = gsn_open_wks("x11","../Figures/2_Modi_plus_macro_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
-wks_TOPO = gsn_open_wks("x11","../Figures/2_Modi_plus_macro_TOPO_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_CTR = gsn_open_wks("png","../Figures/2_Modi_plus_macro_CTR_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks_TOPO = gsn_open_wks("png","../Figures/2_Modi_plus_macro_TOPO_Regional_"+var+"_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 gsn_reverse_colormap(wks)    ; blue color indicate positive precip changes
 gsn_reverse_colormap(wks_sig)    ; blue color indicate positive precip changes
@@ -192,12 +192,12 @@ res@gsnCenterString = "WADAi="+sprintf("%5.2f",WADA_index(index*3+i_hr))
 res@tiMainString = var+", CTR - TOPO, ENS(180), ihr="+tostring(index*3+i_hr+1)
 ;res@tiMainString = var+", TOPO - CTR, ENS(180), ihr="+tostring(index*3+i_hr+1)
 res@cnLevelSelectionMode = "ManualLevels"
-;res@cnMinLevelValF = -4.0
-;res@cnMaxLevelValF = 4.0
-;res@cnLevelSpacingF = 0.5
-res@cnMinLevelValF = -15.0
-res@cnMaxLevelValF = 15.0
+res@cnMinLevelValF = -5.0
+res@cnMaxLevelValF = 5.0
 res@cnLevelSpacingF = 0.5
+;res@cnMinLevelValF = -15.0
+;res@cnMaxLevelValF = 15.0
+;res@cnLevelSpacingF = 0.5
 
 ;res@cnMinLevelValF = -0.5
 ;res@cnMaxLevelValF = 0.5
@@ -325,7 +325,7 @@ end do ; do index
 ;===============================
 ;------------- WADA index line plot -------
 
-wks_WADA = gsn_open_wks("x11","../Figures/WADA_index_line_hrly")
+wks_WADA = gsn_open_wks("png","../Figures/WADA_index_line_hrly")
 
 data_WADA = (/WADA_index,WADA_index_sig/)
 

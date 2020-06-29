@@ -241,7 +241,7 @@ plot_sig = new(6,graphic)
 do i_hr = 0,total_hrs-1
 ;do i_day = 0,3
 
-wks = gsn_open_wks("png","../Figures/4_Refine_10S_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
+wks = gsn_open_wks("x11","../Figures/4_Refine_10S_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 wks_sig = gsn_open_wks("png","../Figures/4_Refine_Sig_10S_to100hPa_U_V_OMEGA_T_Q_Qadv_TOPO_vs_CTR_ihr_"+tostring(index*3+i_hr+1))
 
 res = True
@@ -292,9 +292,9 @@ overlay(plot_sig(2),plot_topo2_sig)
 ;frame(wks)
 ;----------------
 
-res@cnMinLevelValF = -4.0
-res@cnMaxLevelValF = 4.0
-res@cnLevelSpacingF = 0.4
+res@cnMinLevelValF = -2.0
+res@cnMaxLevelValF = 2.0
+res@cnLevelSpacingF = 0.1
 
 res@vcRefMagnitudeF = 3.0 ; define vector ref mag 
 res@vcRefLengthF    = 0.045 ; length of vec ref
@@ -315,11 +315,16 @@ delete(res@vcMinDistanceF)
 delete(res@gsnCenterString)
 ;----------
 
-res@cnMinLevelValF = -2.0
-res@cnMaxLevelValF = 2.0
-res@cnLevelSpacingF = 0.2
+res@cnMinLevelValF = -0.4
+res@cnMaxLevelValF = 0.4
+res@cnLevelSpacingF = 0.02
 plot(4) = gsn_csm_pres_hgt(wks,Q_diff_TOPO_CTR(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
 plot_sig(4) = gsn_csm_pres_hgt(wks_sig,Q_diff_TOPO_CTR_sig(i_hr,{lev_1:lev_2},{lat_t},{lon_1:lon_2}),res)
+
+plot_topo4  = gsn_csm_xy(wks,gp&lon,gp,mres)         ; overlay geopotential 'pressure' line
+plot_topo4_sig = gsn_csm_xy(wks_sig,gp&lon,gp,mres)
+overlay(plot(4),plot_topo4)
+overlay(plot_sig(4),plot_topo4_sig)
 
 res@cnMinLevelValF = -0.3
 res@cnMaxLevelValF = 0.3

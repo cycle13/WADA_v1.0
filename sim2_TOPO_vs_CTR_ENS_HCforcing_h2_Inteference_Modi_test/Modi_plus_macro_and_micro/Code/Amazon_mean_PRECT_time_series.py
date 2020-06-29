@@ -45,6 +45,20 @@ for i_case in range(len(cases)):
         plt.grid(True)
         i_count += 1
 
+
+# after the loop, data_vars saves CTR-TOPO data
+print(data_vars[0,:])
+Andes_drive_Amazon_rain = np.mean(data_vars[0,:])
+Andes_drive_Amazon_rain2 = np.mean(data_vars[0,10:])
+print(Andes_drive_Amazon_rain)
+print(Andes_drive_Amazon_rain2)
+
+text_file = open("Amazon_mean_PRECT_time_series.txt", "w")
+#text_file.write("CTR-TOPO, Amazonian rainfall mean of the 96 hours: %5.3f mm/day" % Andes_drive_Amazon_rain)
+text_file.write("CTR-TOPO, Amazonian rainfall mean of the last 72 hours: %5.3f mm/day" % Andes_drive_Amazon_rain2)
+text_file.close()
+
+####
 plt.axhline(y=0, linewidth=1.5, color='k')
 #plt.legend(loc = 'best')
 #plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)

@@ -160,7 +160,9 @@ total_hrs = 96
 
 Q_diff_TOPO_CTR = Q_diff_TOPO_CTR + 0.0001 ; so that only the 0.02 line will be plot as the magenta line.
 
-color_strings = (/"red","brown","orange","yellow","green","blue","cyan","purple"/) ; for hour=4~11
+;color_strings = (/"red","brown","orange","yellow","green","blue","cyan","purple"/) ; for hour=4~11
+
+color_strings = (/4,6,8,10,12,14,16,18/)
 
 i_pr = 0
 
@@ -201,6 +203,8 @@ res@cnLevels    = (/ 0.0/)   ; set levels
 i_hr = 7
 res@gsnCenterString = "Q, -0.0001 g/g contour, "+ "CTR-TOPO, time=8-15 hr, "+tostring(sprintf("%5.2f",pr_levels(i_pr)))+"hPa" 
 res@cnMonoLineColor = True
+
+gsn_define_colormap(wks,"precip3_16lev")
 res@cnLineColor = color_strings(i_hr-7)
 plot_base = gsn_csm_contour_map(wks,Q_diff_TOPO_CTR(3,{pr_levels(i_pr)},:,:),res)
 ;plot_base = ColorNegDashZeroPosContour(plot_base,"grey",color_strings(i_hr-3),"grey")  ; zero line uses magenta, negative, positive uses black
@@ -208,6 +212,7 @@ plot_base = gsn_csm_contour_map(wks,Q_diff_TOPO_CTR(3,{pr_levels(i_pr)},:,:),res
 delete(res@gsnCenterString)
 
 do i_hr = 8,14
+
 res@cnLineColor = color_strings(i_hr-7)
 plot(i_hr-8) = gsn_csm_contour(wks,Q_diff_TOPO_CTR(i_hr,{pr_levels(i_pr)},:,:),res)
 

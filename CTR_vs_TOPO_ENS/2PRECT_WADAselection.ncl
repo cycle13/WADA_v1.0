@@ -121,7 +121,7 @@ res@cnLevelSpacingF = 0.5
 res@tiMainString = "CTR - GPCP, 1989-2008 DJF clim"
 res@gsnRightString = "mm/day"
 
-wks_clim = gsn_open_wks("pdf","Clim_Regional_"+var+"_CTR-GPCP")
+wks_clim = gsn_open_wks("x11","Clim_Regional_"+var+"_CTR-GPCP")
 
 gsn_reverse_colormap(wks_clim)    ; blue color indicate positive precip changes
 
